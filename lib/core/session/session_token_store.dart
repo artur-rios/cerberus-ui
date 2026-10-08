@@ -23,11 +23,17 @@ class SessionTokenStore {
   /// The token held for this run only, when secure storage could not keep it.
   String? _runToken;
 
+  /// Set when [clear] could not delete the stored token: it stays in secure
+  /// storage until the next sign-in overwrites it (UC-06 AF-03), but for the
+  /// rest of this run it is not read, so no request carries it again.
+  bool _discarded = false;
+
   /// The current token, or `null`. An unavailable secure store reads as no
   /// token rather than an error: a device without one can still sign in.
   Future<String?> read() async {
     final runToken = _runToken;
     if (runToken != null) return runToken;
+    if (_discarded) return null;
     try {
       return await _secureStore.read(SecureKey.sessionToken);
     } on SecureStoreUnavailableException {
@@ -40,20 +46,33 @@ class SessionTokenStore {
   Future<void> keep(String token) async {
     await _secureStore.write(SecureKey.sessionToken, token);
     _runToken = null;
+    _discarded = false;
   }
 
   /// Holds [token] in memory until [clear] or the end of the process. Only
   /// after the user accepted that the session will not be kept.
-  void holdForThisRun(String token) => _runToken = token;
+  void holdForThisRun(String token) {
+    _runToken = token;
+    _discarded = false;
+  }
 
-  /// Forgets the token wherever it is. Not an error when there is none, nor
-  /// when secure storage is unavailable — then nothing was ever written there.
-  Future<void> clear() async {
+  /// Forgets the token wherever it is, and says whether it is gone.
+  ///
+  /// Not a failure when there is none, nor when the token was held for this
+  /// run only and secure storage is unavailable — then nothing was written
+  /// there. A stored token that secure storage cannot delete is a failure: it
+  /// is no longer read, and the caller reports it (UC-06 AF-03).
+  Future<bool> clear() async {
+    final heldForThisRun = _runToken != null;
     _runToken = null;
     try {
       await _secureStore.delete(SecureKey.sessionToken);
+      _discarded = false;
+      return true;
     } on SecureStoreUnavailableException {
-      return;
+      if (heldForThisRun) return true;
+      _discarded = true;
+      return false;
     }
   }
 }

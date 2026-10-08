@@ -13,6 +13,10 @@ class RecordingSecureStore implements SecureStore {
   /// unavailable.
   SecureStoreUnavailableException? failure;
 
+  /// When set, only deleting throws it — a store that kept the token but
+  /// cannot remove it (UC-06 AF-03).
+  SecureStoreUnavailableException? deleteFailure;
+
   @override
   Future<String?> read(SecureKey key) async {
     _failIfSet();
@@ -29,6 +33,8 @@ class RecordingSecureStore implements SecureStore {
   @override
   Future<void> delete(SecureKey key) async {
     _failIfSet();
+    final deleteFailure = this.deleteFailure;
+    if (deleteFailure != null) throw deleteFailure;
     values.remove(key);
   }
 

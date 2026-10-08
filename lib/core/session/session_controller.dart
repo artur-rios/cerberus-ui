@@ -10,6 +10,7 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../logging/app_log.dart';
+import 'session_notice.dart';
 import 'session_state.dart';
 import 'session_token_store.dart';
 import 'vault_state.dart';
@@ -76,25 +77,55 @@ class SessionController extends Notifier<SessionState> {
     ref
         .read(vaultStateProvider.notifier)
         .recordProtection(exists: hasProtection);
+    ref.read(sessionNoticeProvider.notifier).clear();
     state = const SignedIn(accountId: null);
     AppLog.event('session.restored', {'protection': hasProtection});
   }
 
   void _signIn(String accountId) {
     ref.read(vaultStateProvider.notifier).lock();
+    ref.read(sessionNoticeProvider.notifier).clear();
     state = SignedIn(accountId: accountId);
     AppLog.event('session.established');
   }
 
-  /// Ends the session: the vault locks, the token is deleted, and the state is
-  /// signed out. Used for sign-out and for a token the API rejected
-  /// (`FR-SE-09`, `FR-SE-11`). Safe to call when already signed out.
-  Future<void> end() async {
+  /// Ends the session (UC-06 steps 3–5, `FR-SE-09`, `FR-SE-11`): the vault
+  /// locks, the token is deleted, and the in-memory state goes — the session,
+  /// and the notices an earlier ending left. The guard then presents sign-in
+  /// (step 7). Safe to call when already signed out.
+  ///
+  /// [cause] says whether the user asked, or the API rejected the token, in
+  /// which case sign-in says that the session ended (UC-06 AF-04). A token
+  /// secure storage cannot delete is reported the same way, and the rest of
+  /// the ending still happens (AF-03).
+  Future<void> end({SessionEndCause cause = SessionEndCause.signOut}) async {
+    final notices = ref.read(sessionNoticeProvider.notifier)..clear();
     ref.read(vaultStateProvider.notifier).reset();
     state = const SignedOut();
-    await ref.read(sessionTokenStoreProvider).clear();
-    AppLog.event('session.ended');
+    if (cause == SessionEndCause.tokenRejected) {
+      notices.post(SessionNotice.sessionEnded);
+    }
+
+    final deleted = await ref.read(sessionTokenStoreProvider).clear();
+    if (!deleted && ref.mounted) {
+      ref
+          .read(sessionNoticeProvider.notifier)
+          .post(SessionNotice.tokenNotDeleted);
+    }
+    AppLog.event('session.ended', {
+      'cause': cause.name,
+      'tokenDeleted': deleted,
+    });
   }
+}
+
+/// Why a session ends.
+enum SessionEndCause {
+  /// The user signed out (UC-06).
+  signOut,
+
+  /// The API rejected the token (UC-05 AF-02, UC-06 AF-04, UC-07 AF-01).
+  tokenRejected,
 }
 
 /// The session.

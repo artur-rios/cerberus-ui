@@ -11,3 +11,6 @@ Future<LocalStore?> openLocalStore() async => null;
 
 /// Nothing to delete on the web.
 Future<void> deleteLocalStore() async {}
+
+/// The web holds no edits.
+Future<int> countPendingEdits() async => 0;

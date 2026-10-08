@@ -41,6 +41,10 @@ enum FailureKind {
   /// The flow depends on the Cerberus protocol and the protocol gate is
   /// closed (`FR-CR-02`). Not retryable until a release opens the gate.
   protocolUnavailable,
+
+  /// This device's own storage could not be read or changed — the local
+  /// store's file, for instance. Nothing was sent anywhere.
+  deviceStorage,
 }
 
 /// The outcome of an operation: [Success] or [Failure], and nothing else.

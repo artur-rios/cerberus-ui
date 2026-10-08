@@ -4,6 +4,7 @@ import 'package:cerberus_ui/core/config/app_config.dart';
 import 'package:cerberus_ui/core/network/http_client.dart';
 import 'package:cerberus_ui/core/result/result.dart';
 import 'package:cerberus_ui/core/session/session_controller.dart';
+import 'package:cerberus_ui/core/session/session_notice.dart';
 import 'package:cerberus_ui/core/session/session_state.dart';
 import 'package:cerberus_ui/core/session/vault_state.dart';
 import 'package:cerberus_ui/core/storage/preferences_store.dart';
@@ -195,9 +196,12 @@ void main() {
       expect(container.read(sessionProvider), const SignedOut());
       expect(
         container.read(sessionRestoreProvider),
-        const SessionRestoreSettled(sessionEnded: true),
+        const SessionRestoreSettled(),
       );
       expect(container.read(sessionRestoreProvider).holdsStart, isFalse);
+      expect(container.read(sessionNoticeProvider), {
+        SessionNotice.sessionEnded,
+      });
     });
 
     test('Given an unreachable instance '
@@ -288,25 +292,6 @@ void main() {
       await _restore(container);
 
       expect(repository.verifications, 0);
-      expect(
-        container.read(sessionRestoreProvider),
-        const SessionRestoreSettled(),
-      );
-    });
-
-    test('Given a session that ended at start '
-        'When the user acknowledges it '
-        'Then sign-in no longer says so', () async {
-      final repository = FakeSessionRepository()
-        ..nextVerification = const Failure(
-          message: 'authentication_required',
-          kind: FailureKind.unauthenticated,
-        );
-      final container = _container(LeakRecorder(), repository: repository);
-      await _restore(container);
-
-      container.read(sessionRestoreProvider.notifier).acknowledgeSessionEnded();
-
       expect(
         container.read(sessionRestoreProvider),
         const SessionRestoreSettled(),

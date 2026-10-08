@@ -3,9 +3,10 @@
 /// Shows the API's own reason for any refusal (FR-DA-06), and suggests nothing
 /// the API did not say: not whether the email exists (AF-01), and nothing
 /// about the account's state that a refusal did not report (AF-04). Where a
-/// session leads is the guard's decision, not this screen's (step 7). When the
-/// API rejected the session stored from an earlier run, it says the session
-/// ended (UC-05 AF-02).
+/// session leads is the guard's decision, not this screen's (step 7). It also
+/// says how the last session ended, when there is something to say: the API
+/// rejected it (UC-05 AF-02, UC-06 AF-04), its token could not be deleted
+/// (UC-06 AF-03), or the vault could not be removed from the device.
 library;
 
 import 'package:flutter/material.dart';
@@ -13,8 +14,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/routes.dart';
+import '../../../core/session/session_notice.dart';
 import '../../../l10n/app_localizations.dart';
-import '../state/session_restore_controller.dart';
 import '../state/sign_in_controller.dart';
 import 'session_not_kept_notice.dart';
 
@@ -30,8 +31,16 @@ class SignInScreen extends ConsumerStatefulWidget {
   static const retryButton = Key('sign-in.retry');
   static const continueButton = Key('sign-in.continue');
   static const discardButton = Key('sign-in.discard');
-  static const sessionEndedNotice = Key('sign-in.session-ended');
-  static const dismissNoticeButton = Key('sign-in.dismiss-notice');
+  static const sessionEndedNotice = Key('sign-in.notice.sessionEnded');
+  static const dismissNoticeButton = Key('sign-in.notice.sessionEnded.dismiss');
+
+  /// The card showing [notice].
+  static Key noticeFor(SessionNotice notice) =>
+      Key('sign-in.notice.${notice.name}');
+
+  /// The button dismissing [notice].
+  static Key dismissFor(SessionNotice notice) =>
+      Key('sign-in.notice.${notice.name}.dismiss');
 
   @override
   ConsumerState<SignInScreen> createState() => _SignInScreenState();
@@ -64,7 +73,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   Future<void> _submit() async {
     if (!_canSubmit) return;
-    ref.read(sessionRestoreProvider.notifier).acknowledgeSessionEnded();
+    ref.read(sessionNoticeProvider.notifier).clear();
     await ref
         .read(signInControllerProvider.notifier)
         .submit(email: _email.text.trim(), password: _password.text);
@@ -100,10 +109,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     final submitting = state is SignInSubmitting;
     final decisionPending = state is SignInSessionNotKept;
     final editable = !submitting && !decisionPending;
-    final sessionEnded = switch (ref.watch(sessionRestoreProvider)) {
-      SessionRestoreSettled(:final sessionEnded) => sessionEnded,
-      _ => false,
-    };
+    final notices = ref.watch(sessionNoticeProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.signInTitle)),
@@ -117,15 +123,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // UC-05 AF-02: the stored session was rejected at start.
-                  if (sessionEnded) ...[
-                    _SessionEndedNotice(
-                      onDismiss: ref
-                          .read(sessionRestoreProvider.notifier)
-                          .acknowledgeSessionEnded,
+                  for (final notice in notices) ...[
+                    _SessionNoticeCard(
+                      notice: notice,
+                      onDismiss: () => ref
+                          .read(sessionNoticeProvider.notifier)
+                          .dismiss(notice),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                   ],
+                  if (notices.isNotEmpty) const SizedBox(height: 8),
                   TextField(
                     key: SignInScreen.emailField,
                     controller: _email,
@@ -262,21 +269,27 @@ class _FailureNotice extends StatelessWidget {
   }
 }
 
-/// Says that the session kept from an earlier run ended (UC-05 AF-02).
-class _SessionEndedNotice extends StatelessWidget {
-  const _SessionEndedNotice({required this.onDismiss});
+/// Says one thing about how the last session ended.
+class _SessionNoticeCard extends StatelessWidget {
+  const _SessionNoticeCard({required this.notice, required this.onDismiss});
 
+  final SessionNotice notice;
   final VoidCallback onDismiss;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final colors = Theme.of(context).colorScheme;
+    final message = switch (notice) {
+      SessionNotice.sessionEnded => l10n.signInSessionEnded,
+      SessionNotice.tokenNotDeleted => l10n.signInTokenNotDeleted,
+      SessionNotice.vaultNotRemoved => l10n.signInVaultNotRemoved,
+    };
 
     return Semantics(
       liveRegion: true,
       child: Card(
-        key: SignInScreen.sessionEndedNotice,
+        key: SignInScreen.noticeFor(notice),
         color: colors.secondaryContainer,
         child: Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 8, 8),
@@ -284,12 +297,12 @@ class _SessionEndedNotice extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  l10n.signInSessionEnded,
+                  message,
                   style: TextStyle(color: colors.onSecondaryContainer),
                 ),
               ),
               TextButton(
-                key: SignInScreen.dismissNoticeButton,
+                key: SignInScreen.dismissFor(notice),
                 onPressed: onDismiss,
                 child: Text(l10n.signInDismissNotice),
               ),

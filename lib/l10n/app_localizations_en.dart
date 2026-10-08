@@ -121,4 +121,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signInDismissNotice => 'Dismiss';
+
+  @override
+  String get signInTokenNotDeleted =>
+      'You\'re signed out, but this device\'s secure storage couldn\'t delete the session token. It will be replaced the next time you sign in.';
+
+  @override
+  String get signInVaultNotRemoved =>
+      'You\'re signed out, but the vault copy on this device couldn\'t be removed. It is still encrypted.';
+
+  @override
+  String get signOutAction => 'Sign out';
+
+  @override
+  String get signOutStorageTitle => 'Keep the vault on this device?';
+
+  @override
+  String get signOutStorageBody =>
+      'This device can keep its copy of your vault for offline use. The copy is ciphertext only: it can\'t be read without unlocking the vault. Removing it deletes it from this device.';
+
+  @override
+  String get signOutKeepVault => 'Keep on this device';
+
+  @override
+  String get signOutRemoveVault => 'Remove from this device';
+
+  @override
+  String get signOutCancel => 'Cancel';
+
+  @override
+  String get signOutLossTitle => 'Lose offline edits?';
+
+  @override
+  String signOutLossBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count edits made offline haven\'t been uploaded yet. Removing the vault from this device loses them.',
+      one: '1 edit made offline hasn\'t been uploaded yet. Removing the vault from this device loses it.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get signOutRemoveAnyway => 'Remove and lose them';
 }

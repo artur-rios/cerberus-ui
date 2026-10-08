@@ -82,15 +82,58 @@ void main() {
 
     test('Given a kept token '
         'When the store is cleared '
-        'Then secure storage no longer holds it', () async {
+        'Then secure storage no longer holds it, and the clearing reports '
+        'success', () async {
       final secure = RecordingSecureStore();
       final store = SessionTokenStore(secure);
       await store.keep('token');
 
-      await store.clear();
+      final cleared = await store.clear();
 
+      expect(cleared, isTrue);
       expect(await store.read(), isNull);
       expect(secure.values, isEmpty);
+    });
+
+    test('Given a token held for this run and unavailable secure storage '
+        'When the store is cleared '
+        'Then the clearing reports success: nothing was ever stored', () async {
+      final secure = RecordingSecureStore()
+        ..failure = const SecureStoreUnavailableException('x');
+      final store = SessionTokenStore(secure)..holdForThisRun('token');
+
+      expect(await store.clear(), isTrue);
+    });
+
+    test('Given a kept token secure storage cannot delete '
+        'When the store is cleared '
+        'Then the clearing reports failure, and the token is no longer read '
+        'for the rest of the run (UC-06 AF-03)', () async {
+      final secure = RecordingSecureStore();
+      final store = SessionTokenStore(secure);
+      await store.keep('TOKEN-MARKER');
+      secure.deleteFailure = const SecureStoreUnavailableException('locked');
+
+      final cleared = await store.clear();
+
+      expect(cleared, isFalse);
+      expect(await store.read(), isNull);
+      expect(secure.values[SecureKey.sessionToken], 'TOKEN-MARKER');
+    });
+
+    test('Given a token that could not be deleted '
+        'When the next sign-in keeps a new one '
+        'Then the new token overwrites it and is read (UC-06 AF-03)', () async {
+      final secure = RecordingSecureStore();
+      final store = SessionTokenStore(secure);
+      await store.keep('old-token');
+      secure.deleteFailure = const SecureStoreUnavailableException('locked');
+      await store.clear();
+
+      await store.keep('new-token');
+
+      expect(await store.read(), 'new-token');
+      expect(secure.values[SecureKey.sessionToken], 'new-token');
     });
   });
 }
