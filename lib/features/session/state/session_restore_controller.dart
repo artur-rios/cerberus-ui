@@ -25,20 +25,17 @@ sealed class SessionRestoreState {
   bool get holdsStart => false;
 }
 
-/// Nothing is being restored: not started, or finished.
+/// Nothing is being restored: not started, or finished. A stored session the
+/// API rejected was discarded, and sign-in says so (AF-02) through the session
+/// notices.
 final class SessionRestoreSettled extends SessionRestoreState {
-  const SessionRestoreSettled({this.sessionEnded = false});
-
-  /// The API rejected the stored session, which was discarded; sign-in says
-  /// so until the user acknowledges it or signs in (AF-02).
-  final bool sessionEnded;
+  const SessionRestoreSettled();
 
   @override
-  bool operator ==(Object other) =>
-      other is SessionRestoreSettled && other.sessionEnded == sessionEnded;
+  bool operator ==(Object other) => other is SessionRestoreSettled;
 
   @override
-  int get hashCode => sessionEnded.hashCode;
+  int get hashCode => (SessionRestoreSettled).hashCode;
 }
 
 /// The stored token is being verified with the API (steps 2–4).
@@ -123,9 +120,11 @@ class SessionRestoreController extends Notifier<SessionRestoreState> {
       // AF-02, and AF-06 until the API reports a pending closure distinctly:
       // the token is deleted and sign-in says the session ended.
       case Failure(kind: FailureKind.unauthenticated):
-        await ref.read(sessionProvider.notifier).end();
+        await ref
+            .read(sessionProvider.notifier)
+            .end(cause: SessionEndCause.tokenRejected);
         if (!ref.mounted) return;
-        state = const SessionRestoreSettled(sessionEnded: true);
+        state = const SessionRestoreSettled();
         AppLog.event('session.restore-rejected');
 
       // AF-04: a lost connection, or any refusal other than of the token, is
@@ -140,13 +139,6 @@ class SessionRestoreController extends Notifier<SessionRestoreState> {
 
   /// Retries a verification that did not complete (AF-04).
   Future<void> retry() => restore();
-
-  /// The user has seen that their session ended (AF-02).
-  void acknowledgeSessionEnded() {
-    if (state case SessionRestoreSettled(sessionEnded: true)) {
-      state = const SessionRestoreSettled();
-    }
-  }
 }
 
 /// Restoring the stored session at start.

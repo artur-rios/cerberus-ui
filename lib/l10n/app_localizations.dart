@@ -292,17 +292,83 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get startingRetry;
 
-  /// Notice on the sign-in screen when the instance rejected the stored session at start (UC-05 AF-02).
+  /// Notice on the sign-in screen when the instance rejected the session's token, at start or mid-session (UC-05 AF-02, UC-06 AF-04).
   ///
   /// In en, this message translates to:
   /// **'Your session ended. Sign in again to continue.'**
   String get signInSessionEnded;
 
-  /// Dismisses the session-ended notice on the sign-in screen (UC-05 AF-02).
+  /// Dismisses a notice on the sign-in screen about how the last session ended.
   ///
   /// In en, this message translates to:
   /// **'Dismiss'**
   String get signInDismissNotice;
+
+  /// Notice on the sign-in screen when secure storage could not delete the token at sign-out (UC-06 AF-03).
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re signed out, but this device\'s secure storage couldn\'t delete the session token. It will be replaced the next time you sign in.'**
+  String get signInTokenNotDeleted;
+
+  /// Notice on the sign-in screen when the user chose to remove the local store at sign-out and it could not be removed or read (UC-06 step 6).
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re signed out, but the vault copy on this device couldn\'t be removed. It is still encrypted.'**
+  String get signInVaultNotRemoved;
+
+  /// The action that signs the user out (UC-06 step 1).
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get signOutAction;
+
+  /// Title of the question asked at sign-out in the default storage mode (UC-06 step 2).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the vault on this device?'**
+  String get signOutStorageTitle;
+
+  /// Explains the keep-or-remove choice at sign-out, stating the kept copy is ciphertext only (UC-06 step 2).
+  ///
+  /// In en, this message translates to:
+  /// **'This device can keep its copy of your vault for offline use. The copy is ciphertext only: it can\'t be read without unlocking the vault. Removing it deletes it from this device.'**
+  String get signOutStorageBody;
+
+  /// Keeps the local store at sign-out (UC-06 step 2, AF-01).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep on this device'**
+  String get signOutKeepVault;
+
+  /// Removes the local store at sign-out (UC-06 step 2).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from this device'**
+  String get signOutRemoveVault;
+
+  /// Cancels signing out (UC-06 step 2).
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get signOutCancel;
+
+  /// Title of the second question when removing the local store would lose pending edits (UC-06 AF-01).
+  ///
+  /// In en, this message translates to:
+  /// **'Lose offline edits?'**
+  String get signOutLossTitle;
+
+  /// States how many pending edits removing the local store would lose (UC-06 AF-01).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 edit made offline hasn\'t been uploaded yet. Removing the vault from this device loses it.} other{{count} edits made offline haven\'t been uploaded yet. Removing the vault from this device loses them.}}'**
+  String signOutLossBody(int count);
+
+  /// Confirms removing the local store although pending edits are lost (UC-06 AF-01).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove and lose them'**
+  String get signOutRemoveAnyway;
 }
 
 class _AppLocalizationsDelegate

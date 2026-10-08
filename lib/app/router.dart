@@ -19,6 +19,7 @@ import '../core/session/session_controller.dart';
 import '../features/session/state/session_restore_controller.dart';
 import '../features/session/ui/challenge_screen.dart';
 import '../features/session/ui/sign_in_screen.dart';
+import '../features/session/ui/sign_out_button.dart';
 import '../features/session/ui/starting_screen.dart';
 import '../shared/widgets/not_available_screen.dart';
 import '../shared/widgets/not_found_screen.dart';
@@ -75,12 +76,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: Routes.challenge,
         builder: (context, state) => const ChallengeScreen(),
       ),
+      // Signed in only, and where a signed-in user lands while the protocol
+      // gate is closed — so signing out is offered here (UC-06).
       GoRoute(
         path: Routes.unavailable,
         builder: (context, state) => NotAvailableScreen(
           reason: UnavailableReason.fromParameter(
             state.uri.queryParameters[Routes.reasonParameter],
           ),
+          actions: const [SignOutButton()],
         ),
       ),
     ],

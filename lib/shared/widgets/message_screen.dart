@@ -9,6 +9,7 @@ class MessageScreen extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.body,
+    this.actions = const [],
     super.key,
   });
 
@@ -16,12 +17,16 @@ class MessageScreen extends StatelessWidget {
   final String title;
   final String body;
 
+  /// What the user can do from here, in the app bar — signing out, for a
+  /// signed-in user the guard sent here.
+  final List<Widget> actions;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(title: Text(title), actions: actions),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 480),

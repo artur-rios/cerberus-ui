@@ -134,10 +134,59 @@
   },
   "signInSessionEnded": "Your session ended. Sign in again to continue.",
   "@signInSessionEnded": {
-    "description": "Notice on the sign-in screen when the instance rejected the stored session at start (UC-05 AF-02)."
+    "description": "Notice on the sign-in screen when the instance rejected the session's token, at start or mid-session (UC-05 AF-02, UC-06 AF-04)."
   },
   "signInDismissNotice": "Dismiss",
   "@signInDismissNotice": {
-    "description": "Dismisses the session-ended notice on the sign-in screen (UC-05 AF-02)."
+    "description": "Dismisses a notice on the sign-in screen about how the last session ended."
+  },
+  "signInTokenNotDeleted": "You're signed out, but this device's secure storage couldn't delete the session token. It will be replaced the next time you sign in.",
+  "@signInTokenNotDeleted": {
+    "description": "Notice on the sign-in screen when secure storage could not delete the token at sign-out (UC-06 AF-03)."
+  },
+  "signInVaultNotRemoved": "You're signed out, but the vault copy on this device couldn't be removed. It is still encrypted.",
+  "@signInVaultNotRemoved": {
+    "description": "Notice on the sign-in screen when the user chose to remove the local store at sign-out and it could not be removed or read (UC-06 step 6)."
+  },
+  "signOutAction": "Sign out",
+  "@signOutAction": {
+    "description": "The action that signs the user out (UC-06 step 1)."
+  },
+  "signOutStorageTitle": "Keep the vault on this device?",
+  "@signOutStorageTitle": {
+    "description": "Title of the question asked at sign-out in the default storage mode (UC-06 step 2)."
+  },
+  "signOutStorageBody": "This device can keep its copy of your vault for offline use. The copy is ciphertext only: it can't be read without unlocking the vault. Removing it deletes it from this device.",
+  "@signOutStorageBody": {
+    "description": "Explains the keep-or-remove choice at sign-out, stating the kept copy is ciphertext only (UC-06 step 2)."
+  },
+  "signOutKeepVault": "Keep on this device",
+  "@signOutKeepVault": {
+    "description": "Keeps the local store at sign-out (UC-06 step 2, AF-01)."
+  },
+  "signOutRemoveVault": "Remove from this device",
+  "@signOutRemoveVault": {
+    "description": "Removes the local store at sign-out (UC-06 step 2)."
+  },
+  "signOutCancel": "Cancel",
+  "@signOutCancel": {
+    "description": "Cancels signing out (UC-06 step 2)."
+  },
+  "signOutLossTitle": "Lose offline edits?",
+  "@signOutLossTitle": {
+    "description": "Title of the second question when removing the local store would lose pending edits (UC-06 AF-01)."
+  },
+  "signOutLossBody": "{count, plural, =1{1 edit made offline hasn't been uploaded yet. Removing the vault from this device loses it.} other{{count} edits made offline haven't been uploaded yet. Removing the vault from this device loses them.}}",
+  "@signOutLossBody": {
+    "description": "States how many pending edits removing the local store would lose (UC-06 AF-01).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "signOutRemoveAnyway": "Remove and lose them",
+  "@signOutRemoveAnyway": {
+    "description": "Confirms removing the local store although pending edits are lost (UC-06 AF-01)."
   }
 }

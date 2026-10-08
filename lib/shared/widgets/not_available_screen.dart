@@ -9,9 +9,16 @@ import 'message_screen.dart';
 
 /// States why a route is not available — never pretending it does not exist.
 class NotAvailableScreen extends StatelessWidget {
-  const NotAvailableScreen({required this.reason, super.key});
+  const NotAvailableScreen({
+    required this.reason,
+    this.actions = const [],
+    super.key,
+  });
 
   final UnavailableReason reason;
+
+  /// What the user can do from here, in the app bar.
+  final List<Widget> actions;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +27,7 @@ class NotAvailableScreen extends StatelessWidget {
     return MessageScreen(
       icon: Icons.lock_clock_outlined,
       title: l10n.notAvailableTitle,
+      actions: actions,
       body: switch (reason) {
         UnavailableReason.protocol => l10n.notAvailableProtocol,
         UnavailableReason.storageMode => l10n.notAvailableStorageMode,

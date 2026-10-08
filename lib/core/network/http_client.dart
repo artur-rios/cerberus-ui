@@ -104,6 +104,8 @@ final httpClientProvider = Provider<Dio>((ref) {
   return createHttpClient(
     baseUrl: address.uri,
     readToken: tokens.read,
-    onUnauthenticated: () => ref.read(sessionProvider.notifier).end(),
+    onUnauthenticated: () => ref
+        .read(sessionProvider.notifier)
+        .end(cause: SessionEndCause.tokenRejected),
   );
 });
