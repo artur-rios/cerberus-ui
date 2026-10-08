@@ -24,6 +24,13 @@ No release has been tagged yet.
   through the API's challenge endpoint. A refused code shows the API's reason, keeps the challenge for another attempt
   and offers to sign in again; the API does not yet report an expired challenge apart from a wrong code, so nothing is
   inferred from the refusal. Leaving the screen discards the challenge, and nothing about it is ever stored.
+- Restoring a session at start (#6, UC-05). A session kept from an earlier run is verified with the API before any
+  screen that depends on it is shown, behind a neutral starting screen, by asking for the account's vault protection
+  and reading only the outcome — the protection material itself is discarded unread. An accepted session resumes with
+  the vault locked and goes on to unlock, to protection setup, or to the route a link asked for; a rejected one is
+  deleted and sign-in says the session ended; an unreachable instance is reported with a retry, the session kept.
+  A session ends only when the API states that its token was rejected (`authentication_required`), never on another
+  401.
 - The protocol gate, **closed**: every flow that encrypts, decrypts, wraps, proves or recovers stays unavailable, and
   the interface says why, until the Cerberus protocol passes its review.
 - The API client generated from the Cerberus API's OpenAPI document, by one command.
