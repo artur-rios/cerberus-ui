@@ -34,7 +34,8 @@ jobs:
         run: dart run tool/check_protocol_gate.dart
       - name: Read the version
         id: version
-        run: echo "version=$(sed -n 's/^version: \([0-9.]*\).*/\1/p' pubspec.yaml)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "version=$(sed -n 's/^version: \([0-9.]*\).*/\1/p' pubspec.yaml)" >> "$GITHUB_OUTPUT"
 
   web:
     name: Web

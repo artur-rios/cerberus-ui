@@ -2,7 +2,9 @@
 # request into, and every push to, develop and main — failing on any of them.
 # IR-06: the protocol gate cannot be opened without its vectors. IR-18: the web
 # bundle registers no service worker, fetches no third-party font and carries
-# no local store. This is the gate for merging.
+# no local store. Every workflow file is linted first, so one that only a tag
+# or a manual run starts cannot reach develop unparseable. This is the gate for
+# merging.
 
 name: CI
 
@@ -26,6 +28,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+
+      # Every workflow, including the ones only a tag or a manual run starts,
+      # so a file GitHub cannot parse fails here rather than after the merge.
+      - name: Lint workflows
+        uses: docker://rhysd/actionlint:1.7.12
+        with:
+          args: -color
 
       - uses: subosito/flutter-action@v2
         with:

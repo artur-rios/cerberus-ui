@@ -22,7 +22,7 @@ No release has been tagged yet.
 - Screen-capture protection on Android, and no backup of application data.
 - The web build registers no service worker, uses no browser storage, and fetches nothing from a third party: CanvasKit
   and the Roboto font are bundled.
-- CI: formatting, analysis, the import-boundary and protocol-gate checks, the test suite, a web bundle check, a
+- CI: workflow linting, formatting, analysis, the import-boundary and protocol-gate checks, the test suite, a web bundle check, a
   generated-code drift check and the branching-model check on every pull request; per-target builds — a web image,
   a Windows installer and portable archive, a Linux package and an Android APK — on a version tag.
 - The specifications: the brainstorm and the initial documents (project overview, technology stack, workflow and
