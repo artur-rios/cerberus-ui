@@ -301,7 +301,10 @@ void main() {
       container.read(routerProvider).go(Routes.records);
       await tester.pumpAndSettle();
 
-      expect(_location(container), Routes.signIn);
+      expect(
+        _location(container),
+        Routes.carrying(Routes.signIn, Routes.records),
+      );
       expect(find.byType(SignInScreen), findsOneWidget);
       expect(container.read(sessionProvider), const SignedOut());
     });

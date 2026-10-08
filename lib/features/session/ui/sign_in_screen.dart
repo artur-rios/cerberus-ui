@@ -90,8 +90,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       case SignInChallengedState():
         _email.clear();
         _password.clear();
-        // AF-02: the challenge continues on its own screen (UC-04).
-        context.go(Routes.challenge);
+        // AF-02: the challenge continues on its own screen (UC-04), still
+        // carrying any route the guard remembered (UC-07 step 7).
+        context.go(
+          Routes.carrying(
+            Routes.challenge,
+            Routes.rememberedIn(GoRouterState.of(context).uri),
+          ),
+        );
       // AF-01: the password goes; the email stays, to correct or retry.
       case SignInFailed(credentialsRejected: true):
         _password.clear();

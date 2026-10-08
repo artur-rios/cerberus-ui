@@ -53,8 +53,9 @@ abstract final class Routes {
   /// The neutral screen shown while a stored session is verified (UC-05).
   static const starting = '/starting';
 
-  /// The query parameter carrying where the user was going when the start
-  /// held them (UC-05 step 6).
+  /// The query parameter carrying the route the user asked for while the
+  /// guard sends them somewhere first — the start (UC-05 step 6), sign-in,
+  /// the challenge, protection setup or unlock (UC-07 steps 5 and 7).
   static const continueParameter = 'continue';
   static const register = '/register';
   static const signIn = '/sign-in';
@@ -103,20 +104,64 @@ abstract final class Routes {
   /// Where the starting screen at [location] should release the user to: the
   /// destination it remembered, if that is a location within this
   /// application, and home otherwise.
-  static String destinationAfterStart(Uri location) {
+  static String destinationAfterStart(Uri location) =>
+      rememberedIn(location) ?? home;
+
+  /// The routes the guard sends a user to so that a requirement can be met.
+  /// Each carries the route that was asked for, and none is ever remembered
+  /// itself — so a remembered route cannot lead back to one (UC-07 step 7).
+  static const Set<String> interstitial = {
+    starting,
+    signIn,
+    challenge,
+    vaultSetup,
+    unlock,
+    recover,
+  };
+
+  /// The route [location] carries in its [continueParameter], if it names a
+  /// location within this application that is worth returning to; `null`
+  /// otherwise. The parameter arrives in an address anyone can type, so a
+  /// scheme, an authority, a protocol-relative path or a route that only
+  /// sends the user elsewhere is never followed.
+  static String? rememberedIn(Uri location) {
     final target = location.queryParameters[continueParameter];
     if (target == null || !target.startsWith('/') || target.startsWith('//')) {
-      return home;
+      return null;
     }
     final parsed = Uri.tryParse(target);
     if (parsed == null ||
         parsed.hasScheme ||
         parsed.hasAuthority ||
-        isWithin(parsed.path, starting)) {
-      return home;
+        !_worthRemembering(parsed.path)) {
+      return null;
     }
     return target;
   }
+
+  /// What a redirect away from [location] should remember: the route the
+  /// [location] itself carries when it is a step on the way somewhere, the
+  /// [location] when it is a destination, and nothing for home or a place the
+  /// guard only lands people on (UC-07 step 5).
+  static String? rememberFrom(Uri location) {
+    final path = location.path.isEmpty ? home : location.path;
+    if (interstitial.contains(path)) return rememberedIn(location);
+    return _worthRemembering(path) ? location.toString() : null;
+  }
+
+  /// [path], remembering [target] when there is one.
+  static String carrying(String path, String? target) => target == null
+      ? path
+      : Uri(
+          path: path,
+          queryParameters: {continueParameter: target},
+        ).toString();
+
+  static bool _worthRemembering(String path) =>
+      path != home &&
+      path != unavailable &&
+      !interstitial.contains(path) &&
+      !anonymous.contains(path);
 
   /// The not-available location for [reason].
   static String unavailableFor(UnavailableReason reason) => Uri(
