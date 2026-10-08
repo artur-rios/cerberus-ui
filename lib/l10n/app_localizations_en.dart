@@ -166,4 +166,104 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signOutRemoveAnyway => 'Remove and lose them';
+
+  @override
+  String get settingsAction => 'Settings';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsThemeLabel => 'Theme';
+
+  @override
+  String get settingsThemeLight => 'Light';
+
+  @override
+  String get settingsThemeDark => 'Dark';
+
+  @override
+  String get settingsThemeSystem => 'System';
+
+  @override
+  String get settingsAutoLockLabel => 'Auto-lock';
+
+  @override
+  String get settingsAutoLockHelp =>
+      'Lock the vault after this long without interaction.';
+
+  @override
+  String get settingsClipboardLabel => 'Clear the clipboard';
+
+  @override
+  String get settingsClipboardHelp =>
+      'Clear a copied value from the clipboard after this long, unless something else replaced it.';
+
+  @override
+  String get settingsWaitsForProtocol =>
+      'Takes effect once the vault can be unlocked, which waits for the Cerberus protocol to pass its security review.';
+
+  @override
+  String get settingsIntervalNever => 'Never';
+
+  @override
+  String settingsIntervalSeconds(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count seconds',
+      one: '1 second',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String settingsIntervalMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count minutes',
+      one: '1 minute',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String settingsIntervalHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hours',
+      one: '1 hour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsNeverAutoLockTitle => 'Never lock automatically?';
+
+  @override
+  String get settingsNeverAutoLockBody =>
+      'An unattended device would stay unlocked: anyone who picks it up could read your vault until you lock it or sign out.';
+
+  @override
+  String get settingsNeverClipboardTitle => 'Never clear the clipboard?';
+
+  @override
+  String get settingsNeverClipboardBody =>
+      'Copied secrets would stay on the clipboard, readable by every other application on this device.';
+
+  @override
+  String get settingsNeverConfirm => 'Turn off';
+
+  @override
+  String get settingsNeverCancel => 'Cancel';
+
+  @override
+  String get settingsWebNotice =>
+      'These preferences last only for this visit. The next visit starts from the defaults.';
+
+  @override
+  String get settingsNotKept =>
+      'This choice applies until the app closes, but it couldn\'t be saved on this device.';
 }

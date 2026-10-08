@@ -49,11 +49,17 @@ class RecordingPreferencesStore implements PreferencesStore {
   final Map<PreferenceKey, String> values = {};
   final List<String> writes = [];
 
+  /// When set, writing throws it — preference storage that cannot be written
+  /// (UC-10 AF-04).
+  Exception? writeFailure;
+
   @override
   Future<String?> read(PreferenceKey key) async => values[key];
 
   @override
   Future<void> write(PreferenceKey key, String value) async {
+    final writeFailure = this.writeFailure;
+    if (writeFailure != null) throw writeFailure;
     writes.add('${key.storageKey}=$value');
     values[key] = value;
   }

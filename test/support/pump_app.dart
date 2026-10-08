@@ -25,6 +25,8 @@ Future<ProviderContainer> pumpCerberusApp(
   WidgetTester tester, {
   String instance = 'https://vault.example',
   SecureStore? secureStore,
+  PreferencesStore? preferences,
+  bool isWeb = false,
   List<Override> overrides = const [],
   bool restoreSession = false,
   bool settle = true,
@@ -34,11 +36,13 @@ Future<ProviderContainer> pumpCerberusApp(
       appConfigProvider.overrideWithValue(
         AppConfig(apiBaseUrl: instance, allowPlainHttp: false),
       ),
-      isWebProvider.overrideWithValue(false),
+      isWebProvider.overrideWithValue(isWeb),
       secureStoreProvider.overrideWithValue(
         secureStore ?? RecordingSecureStore(),
       ),
-      preferencesStoreProvider.overrideWithValue(RecordingPreferencesStore()),
+      preferencesStoreProvider.overrideWithValue(
+        preferences ?? RecordingPreferencesStore(),
+      ),
       ...overrides,
     ],
   );
