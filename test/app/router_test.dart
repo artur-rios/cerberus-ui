@@ -1,6 +1,7 @@
 import 'package:cerberus_ui/app/router.dart';
 import 'package:cerberus_ui/app/routes.dart';
 import 'package:cerberus_ui/core/session/session_controller.dart';
+import 'package:cerberus_ui/features/session/ui/sign_in_screen.dart';
 import 'package:cerberus_ui/shared/widgets/not_available_screen.dart';
 import 'package:cerberus_ui/shared/widgets/not_found_screen.dart';
 import 'package:cerberus_ui/shared/widgets/pending_feature_screen.dart';
@@ -33,7 +34,33 @@ void main() {
       final container = await pumpCerberusApp(tester);
 
       expect(_location(container), Routes.signIn);
+      expect(find.byType(SignInScreen), findsOneWidget);
+    });
+
+    testWidgets('Given an outstanding second-factor challenge '
+        'When the challenge route is requested '
+        'Then it is admitted, reserved for UC-04', (tester) async {
+      final container = await pumpCerberusApp(tester);
+      container
+          .read(sessionProvider.notifier)
+          .challenge(challengeToken: 'c', methods: ['totp']);
+
+      container.read(routerProvider).go(Routes.challenge);
+      await tester.pumpAndSettle();
+
+      expect(_location(container), Routes.challenge);
       expect(find.byType(PendingFeatureScreen), findsOneWidget);
+    });
+
+    testWidgets('Given no challenge '
+        'When the challenge route is requested '
+        'Then the guard sends the visitor to sign-in', (tester) async {
+      final container = await pumpCerberusApp(tester);
+
+      container.read(routerProvider).go(Routes.challenge);
+      await tester.pumpAndSettle();
+
+      expect(_location(container), Routes.signIn);
     });
 
     testWidgets('Given a session and the closed protocol gate '

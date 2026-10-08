@@ -1,5 +1,6 @@
 import 'package:cerberus_ui/core/session/session_controller.dart';
 import 'package:cerberus_ui/core/session/session_state.dart';
+import 'package:cerberus_ui/core/session/session_token_store.dart';
 import 'package:cerberus_ui/core/session/vault_state.dart';
 import 'package:cerberus_ui/core/storage/preferences_store.dart';
 import 'package:cerberus_ui/core/storage/secure_store.dart';
@@ -77,6 +78,64 @@ void main() {
         'TOKEN-MARKER',
       );
       leaks.expectOnlyIn('TOKEN-MARKER', {LeakChannel.secureStorage});
+    });
+
+    test('Given unavailable secure storage '
+        'When a session is established '
+        'Then it throws and no session exists (UC-03 AF-05)', () async {
+      final leaks = LeakRecorder();
+      leaks.secureStore.failure = const SecureStoreUnavailableException('x');
+      final container = _container(leaks);
+
+      await expectLater(
+        container
+            .read(sessionProvider.notifier)
+            .establish(token: 'TOKEN-MARKER', accountId: 'acct-1'),
+        throwsA(isA<SecureStoreUnavailableException>()),
+      );
+
+      expect(container.read(sessionProvider), const SignedOut());
+      leaks.expectNoLeak('TOKEN-MARKER');
+    });
+
+    test('Given unavailable secure storage the user accepted '
+        'When the session is established for this run '
+        'Then it is signed in with the vault locked, and the token is held in '
+        'memory and written nowhere (UC-03 AF-05)', () async {
+      final leaks = LeakRecorder();
+      leaks.secureStore.failure = const SecureStoreUnavailableException('x');
+      final container = _container(leaks);
+
+      container
+          .read(sessionProvider.notifier)
+          .establishForThisRun(token: 'TOKEN-MARKER', accountId: 'acct-1');
+
+      expect(
+        container.read(sessionProvider),
+        const SignedIn(accountId: 'acct-1'),
+      );
+      expect(container.read(vaultStateProvider), const VaultLocked());
+      expect(
+        await container.read(sessionTokenStoreProvider).read(),
+        'TOKEN-MARKER',
+      );
+      leaks.expectNoLeak('TOKEN-MARKER');
+    });
+
+    test('Given a session held for this run '
+        'When the session ends '
+        'Then the token is gone from memory too', () async {
+      final leaks = LeakRecorder();
+      leaks.secureStore.failure = const SecureStoreUnavailableException('x');
+      final container = _container(leaks);
+      container
+          .read(sessionProvider.notifier)
+          .establishForThisRun(token: 'token', accountId: 'acct-1');
+
+      await container.read(sessionProvider.notifier).end();
+
+      expect(container.read(sessionProvider), const SignedOut());
+      expect(await container.read(sessionTokenStoreProvider).read(), isNull);
     });
 
     test('Given an unlocked vault '

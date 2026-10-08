@@ -9,8 +9,8 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../logging/app_log.dart';
-import '../storage/secure_store.dart';
 import 'session_state.dart';
+import 'session_token_store.dart';
 import 'vault_state.dart';
 
 /// Holds the session.
@@ -32,11 +32,26 @@ class SessionController extends Notifier<SessionState> {
 
   /// Establishes a session: the token goes to secure storage — memory on the
   /// web — and the vault stays locked, because signing in never unlocks it.
+  ///
+  /// Throws `SecureStoreUnavailableException`, leaving the state unchanged,
+  /// when the platform cannot keep the token (UC-03 AF-05).
   Future<void> establish({
     required String token,
     required String accountId,
   }) async {
-    await ref.read(secureStoreProvider).write(SecureKey.sessionToken, token);
+    await ref.read(sessionTokenStoreProvider).keep(token);
+    _signIn(accountId);
+  }
+
+  /// Establishes a session whose token is held in memory for this run only,
+  /// after the user accepted that secure storage could not keep it (UC-03
+  /// AF-05). Nothing is written anywhere.
+  void establishForThisRun({required String token, required String accountId}) {
+    ref.read(sessionTokenStoreProvider).holdForThisRun(token);
+    _signIn(accountId);
+  }
+
+  void _signIn(String accountId) {
     ref.read(vaultStateProvider.notifier).lock();
     state = SignedIn(accountId: accountId);
     AppLog.event('session.established');
@@ -48,7 +63,7 @@ class SessionController extends Notifier<SessionState> {
   Future<void> end() async {
     ref.read(vaultStateProvider.notifier).lock();
     state = const SignedOut();
-    await ref.read(secureStoreProvider).delete(SecureKey.sessionToken);
+    await ref.read(sessionTokenStoreProvider).clear();
     AppLog.event('session.ended');
   }
 }

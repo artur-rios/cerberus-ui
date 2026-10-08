@@ -16,6 +16,10 @@ No release has been tagged yet.
   secure-storage and preference wrappers (memory only on the web), the drift local store with its schema and
   migration test, the configured HTTP client with no cache, the redacting debug-only log, and the result type every
   repository returns.
+- Sign-in with an email and a password (#4, UC-03). The session token is kept in secure storage on desktop and
+  Android and in memory on the web; a refusal shows the API's own reason and nothing inferred from it; a second-factor
+  challenge is held in memory until it is completed; and a device whose secure storage is unavailable may continue for
+  the run with the token in memory, never falling back to preferences or a file. Signing in never unlocks the vault.
 - The protocol gate, **closed**: every flow that encrypts, decrypts, wraps, proves or recovers stays unavailable, and
   the interface says why, until the Cerberus protocol passes its review.
 - The API client generated from the Cerberus API's OpenAPI document, by one command.

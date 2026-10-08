@@ -13,8 +13,8 @@ device, and decrypts only what the user is looking at.
 [![Milestones](https://img.shields.io/github/milestones/all/artur-rios/cerberus-ui?style=flat-square&label=milestones)](https://github.com/artur-rios/cerberus-ui/milestones)
 [![Project board](https://img.shields.io/badge/project-Cerberus%20UI-8250df?style=flat-square)](https://github.com/users/artur-rios/projects/16)
 
-> **Status:** the foundation is in place; the use cases are next. Most of them wait on the Cerberus
-> API, and everything that encrypts waits on its protocol review: see
+> **Status:** the foundation and sign-in are in place; the other use cases are next. Most of them
+> wait on the Cerberus API, and everything that encrypts waits on its protocol review: see
 > [Dependencies on the Cerberus API](#dependencies-on-the-cerberus-api). The
 > [project board](https://github.com/users/artur-rios/projects/16) is the live view.
 
@@ -176,7 +176,7 @@ protocol is what produces and checks the interoperability vectors it requires.
 |---|---|---|---|
 | [#2](https://github.com/artur-rios/cerberus-ui/issues/2) | ⬜ | UC-01 — Configure the instance | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-01-configure-the-instance) |
 | [#3](https://github.com/artur-rios/cerberus-ui/issues/3) | ⬜ | UC-02 — Register an account | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-02-register-an-account) |
-| [#4](https://github.com/artur-rios/cerberus-ui/issues/4) | ⬜ | UC-03 — Sign in | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-03-sign-in) |
+| [#4](https://github.com/artur-rios/cerberus-ui/issues/4) | ✅ | UC-03 — Sign in | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-03-sign-in) |
 | [#5](https://github.com/artur-rios/cerberus-ui/issues/5) | ⬜ | UC-04 — Complete a second-factor challenge | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-04-complete-a-second-factor-challenge) |
 | [#6](https://github.com/artur-rios/cerberus-ui/issues/6) | ⬜ | UC-05 — Restore a session at start | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-05-restore-a-session-at-start) |
 | [#7](https://github.com/artur-rios/cerberus-ui/issues/7) | ⬜ | UC-06 — Sign out | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-06-sign-out) |

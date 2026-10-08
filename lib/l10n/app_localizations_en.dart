@@ -36,4 +36,38 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pendingFeatureBody =>
       'This screen is not available in this version yet.';
+
+  @override
+  String get signInTitle => 'Sign in';
+
+  @override
+  String get signInEmailLabel => 'Email';
+
+  @override
+  String get signInPasswordLabel => 'Password';
+
+  @override
+  String get signInSubmit => 'Sign in';
+
+  @override
+  String get signInVaultStaysLocked => 'Signing in does not unlock your vault.';
+
+  @override
+  String get signInConnectionLostTitle => 'Connection lost';
+
+  @override
+  String get signInRetry => 'Try again';
+
+  @override
+  String get signInSessionNotKeptTitle => 'This session can\'t be kept';
+
+  @override
+  String get signInSessionNotKeptBody =>
+      'This device\'s secure storage is unavailable, so Cerberus can\'t keep your session. Nothing will be saved to a file or to preferences instead. You can continue until you close Cerberus, and you\'ll need to sign in again next time.';
+
+  @override
+  String get signInContinueForThisRun => 'Continue for now';
+
+  @override
+  String get signInDiscardSession => 'Cancel';
 }
