@@ -16,6 +16,7 @@ import 'recording_stores.dart';
 Future<ProviderContainer> pumpCerberusApp(
   WidgetTester tester, {
   String instance = 'https://vault.example',
+  SecureStore? secureStore,
   List<Override> overrides = const [],
 }) async {
   final container = ProviderContainer(
@@ -24,7 +25,9 @@ Future<ProviderContainer> pumpCerberusApp(
         AppConfig(apiBaseUrl: instance, allowPlainHttp: false),
       ),
       isWebProvider.overrideWithValue(false),
-      secureStoreProvider.overrideWithValue(RecordingSecureStore()),
+      secureStoreProvider.overrideWithValue(
+        secureStore ?? RecordingSecureStore(),
+      ),
       preferencesStoreProvider.overrideWithValue(RecordingPreferencesStore()),
       ...overrides,
     ],

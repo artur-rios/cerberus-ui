@@ -173,6 +173,73 @@ void main() {
       );
     });
 
+    test('Given a session held in memory for this run '
+        'When a request is made '
+        'Then the token is attached as a header, exactly like a stored one '
+        '(UC-03 AF-05, FR-DA-04)', () async {
+      final secure = RecordingSecureStore()
+        ..failure = const SecureStoreUnavailableException('x');
+      final c = ProviderContainer(
+        overrides: [
+          appConfigProvider.overrideWithValue(
+            const AppConfig(
+              apiBaseUrl: 'https://vault.example',
+              allowPlainHttp: false,
+            ),
+          ),
+          preferencesStoreProvider.overrideWithValue(
+            RecordingPreferencesStore(),
+          ),
+          secureStoreProvider.overrideWithValue(secure),
+        ],
+      );
+      addTearDown(c.dispose);
+      c
+          .read(sessionProvider.notifier)
+          .establishForThisRun(token: 'TOKEN-MARKER', accountId: 'acct-1');
+      final adapter = StubHttpAdapter()
+        ..on('GET', '/api/accounts/me', const StubResponse(200, {}));
+      final dio = c.read(httpClientProvider)..httpClientAdapter = adapter;
+
+      await dio.get<Object?>('/api/accounts/me');
+
+      expect(
+        adapter.requests.single.headers['Authorization'],
+        'Bearer TOKEN-MARKER',
+      );
+      expect('${adapter.requests.single.uri}', isNot(contains('TOKEN-MARKER')));
+    });
+
+    test('Given unavailable secure storage and no session '
+        'When a request is made '
+        'Then it is sent without a token rather than failing', () async {
+      final c = ProviderContainer(
+        overrides: [
+          appConfigProvider.overrideWithValue(
+            const AppConfig(
+              apiBaseUrl: 'https://vault.example',
+              allowPlainHttp: false,
+            ),
+          ),
+          preferencesStoreProvider.overrideWithValue(
+            RecordingPreferencesStore(),
+          ),
+          secureStoreProvider.overrideWithValue(
+            RecordingSecureStore()
+              ..failure = const SecureStoreUnavailableException('x'),
+          ),
+        ],
+      );
+      addTearDown(c.dispose);
+      final adapter = StubHttpAdapter()
+        ..on('POST', '/api/auth/login', const StubResponse(200, {}));
+      final dio = c.read(httpClientProvider)..httpClientAdapter = adapter;
+
+      await dio.post<Object?>('/api/auth/login', data: const {});
+
+      expect(adapter.requests.single.headers, isNot(contains('Authorization')));
+    });
+
     test('Given a signed-in session '
         'When the API rejects the token '
         'Then the session ends', () async {
