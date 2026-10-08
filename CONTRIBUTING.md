@@ -78,6 +78,13 @@ deliberately:
 flutter test integration_test -d linux
 ```
 
+CI also lints every workflow file with [actionlint](https://github.com/rhysd/actionlint), including
+the Build workflow that only a tag or a manual run starts. After editing one, run the same check:
+
+```bash
+docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12
+```
+
 There is no numeric coverage floor. The standard is that every use case's main flow and each of its
 `AF-xx` alternative flows has a test that names it, and that every flow sending or storing content
 carries a leak assertion proving no plaintext went where it must not. Every use case ships with its
