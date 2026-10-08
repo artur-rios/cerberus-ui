@@ -2,9 +2,9 @@
 ///
 /// Every route, however reached, passes `resolveRedirect`. The router listens
 /// to everything the guard decides by, so a change of session, lock state,
-/// device settings or instance re-evaluates the current route at once — a
-/// session ending mid-screen sends the user to sign-in without waiting for
-/// them to navigate.
+/// device settings, instance or session restore re-evaluates the current
+/// route at once — a session ending mid-screen sends the user to sign-in
+/// without waiting for them to navigate.
 library;
 
 import 'package:flutter/foundation.dart';
@@ -16,8 +16,10 @@ import '../core/config/device_settings.dart';
 import '../core/config/instance_config.dart';
 import '../core/crypto/protocol_gate.dart';
 import '../core/session/session_controller.dart';
+import '../features/session/state/session_restore_controller.dart';
 import '../features/session/ui/challenge_screen.dart';
 import '../features/session/ui/sign_in_screen.dart';
+import '../features/session/ui/starting_screen.dart';
 import '../shared/widgets/not_available_screen.dart';
 import '../shared/widgets/not_found_screen.dart';
 import '../shared/widgets/pending_feature_screen.dart';
@@ -31,6 +33,7 @@ GuardState readGuardState(Ref ref) => GuardState(
   vault: ref.read(vaultStateProvider),
   protocolGateOpen: ref.read(protocolGateProvider).isOpen,
   device: ref.read(deviceSettingsProvider),
+  startHeld: ref.read(sessionRestoreProvider).holdsStart,
 );
 
 /// The application's router.
@@ -44,6 +47,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   reevaluateOn(vaultStateProvider);
   reevaluateOn(deviceSettingsProvider);
   reevaluateOn(protocolGateProvider);
+  reevaluateOn(sessionRestoreProvider);
 
   final router = GoRouter(
     initialLocation: Routes.home,
@@ -56,6 +60,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: Routes.setup,
         builder: (context, state) => const PendingFeatureScreen(),
+      ),
+      // Held here while a stored session is verified (UC-05).
+      GoRoute(
+        path: Routes.starting,
+        builder: (context, state) => const StartingScreen(),
       ),
       GoRoute(
         path: Routes.signIn,

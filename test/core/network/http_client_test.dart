@@ -87,7 +87,8 @@ void main() {
       expect(adapter.requests.single.headers, isNot(contains('Authorization')));
     });
 
-    test('Given a request the API rejects as unauthenticated '
+    test('Given a request whose token the API rejects with '
+        'authentication_required '
         'When it fails '
         'Then the session is told, once, and nothing is retried (FR-SE-09, '
         'FR-SE-10)', () async {
@@ -97,7 +98,7 @@ void main() {
           'GET',
           '/api/thing',
           const StubResponse(401, {
-            'errors': ['No.'],
+            'errors': ['authentication_required'],
           }),
         );
       final dio = createHttpClient(
@@ -143,6 +144,39 @@ void main() {
 
       expect(told, 0);
     });
+
+    for (final (code, why) in const [
+      ('vault_access_required', 'a valid session whose vault is locked'),
+      ('No.', 'a refusal that states no token rejection'),
+    ]) {
+      test('Given a request that carried a token '
+          'When the API answers 401 with $code '
+          'Then the session is not told, because it rejected no token — '
+          '$why (FR-SE-09)', () async {
+        var told = 0;
+        final adapter = StubHttpAdapter()
+          ..on(
+            'GET',
+            '/api/accounts/me',
+            StubResponse(401, {
+              'errors': [code],
+            }),
+          );
+        final dio = createHttpClient(
+          baseUrl: Uri.parse('https://vault.example'),
+          readToken: () async => 'token',
+          onUnauthenticated: () => told++,
+          adapter: adapter,
+        );
+
+        await expectLater(
+          dio.get<Object?>('/api/accounts/me'),
+          throwsA(isA<DioException>()),
+        );
+
+        expect(told, 0);
+      });
+    }
 
     test('Given a request that fails for another reason '
         'When it fails '
@@ -276,7 +310,13 @@ void main() {
           .read(sessionProvider.notifier)
           .establish(token: 'token', accountId: 'acct-1');
       final adapter = StubHttpAdapter()
-        ..on('GET', '/api/accounts/me', const StubResponse(401));
+        ..on(
+          'GET',
+          '/api/accounts/me',
+          const StubResponse(401, {
+            'errors': ['authentication_required'],
+          }),
+        );
       final dio = c.read(httpClientProvider)..httpClientAdapter = adapter;
 
       await expectLater(
@@ -286,6 +326,32 @@ void main() {
       await pumpEventQueue();
 
       expect(c.read(sessionProvider), const SignedOut());
+    });
+
+    test('Given a signed-in session '
+        'When the API answers 401 vault_access_required '
+        'Then the session stays signed in (FR-SE-09)', () async {
+      final c = container(address: 'https://vault.example');
+      await c
+          .read(sessionProvider.notifier)
+          .establish(token: 'token', accountId: 'acct-1');
+      final adapter = StubHttpAdapter()
+        ..on(
+          'GET',
+          '/api/accounts/me',
+          const StubResponse(401, {
+            'errors': ['vault_access_required'],
+          }),
+        );
+      final dio = c.read(httpClientProvider)..httpClientAdapter = adapter;
+
+      await expectLater(
+        dio.get<Object?>('/api/accounts/me'),
+        throwsA(isA<DioException>()),
+      );
+      await pumpEventQueue();
+
+      expect(c.read(sessionProvider), const SignedIn(accountId: 'acct-1'));
     });
   });
 }

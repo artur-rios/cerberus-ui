@@ -16,12 +16,14 @@ GuardState _state({
   bool gateOpen = false,
   StorageMode mode = StorageMode.defaultMode,
   String? deviceProfileId,
+  bool startHeld = false,
 }) => GuardState(
   instanceConfigured: configured,
   session: session,
   vault: vault,
   protocolGateOpen: gateOpen,
   device: DeviceSettings(storageMode: mode, deviceProfileId: deviceProfileId),
+  startHeld: startHeld,
 );
 
 String? _redirect(GuardState state, String location) =>
@@ -265,6 +267,87 @@ void main() {
       );
       expect(_redirect(state, '/profiles/profile-1'), isNull);
       expect(_redirect(state, Routes.profiles), isNull);
+    });
+  });
+
+  group('resolveRedirect — a stored session verified at start (UC-05)', () {
+    test('Given a stored session being verified '
+        'When any route is requested '
+        'Then it is held on the starting screen, remembering where it was '
+        'going — nothing that depends on the session is shown (step 2)', () {
+      final state = _state(startHeld: true);
+
+      expect(_redirect(state, Routes.home), Routes.starting);
+      expect(
+        _redirect(state, Routes.signIn),
+        Routes.startingFor(Uri.parse(Routes.signIn)),
+      );
+      expect(
+        _redirect(state, '/records/r-1'),
+        Routes.startingFor(Uri.parse('/records/r-1')),
+      );
+      expect(_redirect(state, Routes.starting), isNull);
+      expect(
+        _redirect(state, Routes.startingFor(Uri.parse('/records'))),
+        isNull,
+      );
+    });
+
+    test('Given no instance '
+        'When the start is held '
+        'Then setup still comes first', () {
+      expect(
+        _redirect(_state(configured: false, startHeld: true), Routes.home),
+        Routes.setup,
+      );
+    });
+
+    test('Given the verification settled '
+        'When the starting screen is current '
+        'Then the user goes on to where they were going, or home — as the '
+        'rest of the guard decides it, in one answer (step 6)', () {
+      final settled = _state(session: _signedIn);
+
+      expect(
+        _redirect(
+          settled,
+          Routes.startingFor(Uri.parse(Routes.accountSettings)),
+        ),
+        Routes.accountSettings,
+      );
+      // The gate refuses vault routes, and home, as ever.
+      expect(
+        _redirect(settled, Routes.startingFor(Uri.parse('/records'))),
+        Routes.unavailableFor(UnavailableReason.protocol),
+      );
+      expect(
+        _redirect(settled, Routes.starting),
+        Routes.unavailableFor(UnavailableReason.protocol),
+      );
+      // Signed out — a discarded session — it is sign-in.
+      expect(
+        _redirect(_state(), Routes.startingFor(Uri.parse('/records'))),
+        Routes.signIn,
+      );
+    });
+
+    test('Given a restored session whose account has no protection '
+        'When home is requested '
+        'Then the closed gate refuses setup as it refuses unlock '
+        '(step 6, FR-CR-02)', () {
+      final state = _state(
+        session: const SignedIn(accountId: null),
+        vault: const VaultProtectionUninitialized(),
+      );
+
+      expect(
+        _redirect(state, Routes.home),
+        Routes.unavailableFor(UnavailableReason.protocol),
+      );
+      expect(
+        _redirect(state, Routes.vaultSetup),
+        Routes.unavailableFor(UnavailableReason.protocol),
+      );
     });
   });
 }

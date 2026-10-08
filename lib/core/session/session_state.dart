@@ -55,8 +55,10 @@ final class ChallengePending extends SessionState {
 final class SignedIn extends SessionState {
   const SignedIn({required this.accountId});
 
-  /// The Cerberus account's public identifier, carried opaquely.
-  final String accountId;
+  /// The Cerberus account's public identifier, carried opaquely — or `null`
+  /// for a session restored at start, whose verification names no account
+  /// (UC-05 step 3).
+  final String? accountId;
 
   @override
   bool operator ==(Object other) =>

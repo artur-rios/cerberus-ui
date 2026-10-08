@@ -26,6 +26,7 @@ class GuardState {
     required this.vault,
     required this.protocolGateOpen,
     required this.device,
+    this.startHeld = false,
   });
 
   /// Whether an instance address has been adopted (UC-01).
@@ -35,6 +36,10 @@ class GuardState {
   final VaultState vault;
   final bool protocolGateOpen;
   final DeviceSettings device;
+
+  /// Whether a stored session is being verified at start, or failed to be,
+  /// so that no route may be shown yet (UC-05 step 2, AF-04).
+  final bool startHeld;
 }
 
 /// Where a request for [location] should go: `null` to admit it, or the
@@ -46,6 +51,20 @@ String? resolveRedirect(GuardState state, Uri location) {
   // sign-in.
   if (!state.instanceConfigured) {
     return path == Routes.setup ? null : Routes.setup;
+  }
+
+  // A stored session is unverified: nothing that depends on it is shown, and
+  // where the user was going is remembered for afterwards (UC-05).
+  if (state.startHeld) {
+    return path == Routes.starting ? null : Routes.startingFor(location);
+  }
+
+  // Verified, or discarded: on to where the user was going. The destination
+  // passes the guard here rather than on a second pass, so the answer is
+  // final; it is never the starting screen again.
+  if (path == Routes.starting) {
+    final destination = Routes.destinationAfterStart(location);
+    return resolveRedirect(state, Uri.parse(destination)) ?? destination;
   }
 
   final access = Routes.accessFor(path);

@@ -40,6 +40,27 @@ Failure<T> failureFromDioException<T>(DioException exception) {
   return Failure<T>(message: message, kind: kind);
 }
 
+/// The code the API answers with when it rejects a session token (FR-SE-09).
+const tokenRejectedCode = 'authentication_required';
+
+/// Whether [exception] is the API rejecting the session token: a 401 whose
+/// stated code is [tokenRejectedCode].
+///
+/// Other 401s say something else — `vault_access_required`, for one, answers
+/// a valid session that has not unlocked the vault — and end nothing.
+bool isTokenRejection(DioException exception) =>
+    exception.response?.statusCode == 401 &&
+    errorCodesFromResponse(exception.response?.data)
+        .contains(tokenRejectedCode);
+
+/// The codes in the `errors` of the API's `DataOutput` envelope, as sent.
+List<String> errorCodesFromResponse(Object? data) {
+  if (data is! Map) return const [];
+  final errors = data['errors'];
+  if (errors is! List) return const [];
+  return List.unmodifiable(errors.whereType<String>());
+}
+
 /// Reads the reason out of the API's `DataOutput` envelope, or `null`.
 ///
 /// A refusal's reasons travel in `errors`; `messages` carries informational

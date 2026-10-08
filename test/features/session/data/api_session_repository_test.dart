@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:cerberus_api_client/export.dart';
 import 'package:cerberus_ui/core/network/http_client.dart';
 import 'package:cerberus_ui/core/result/result.dart';
 import 'package:cerberus_ui/features/session/data/api_session_repository.dart';
@@ -10,18 +9,17 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../../support/auth_payloads.dart';
 import '../../../support/leak_recorder.dart';
 import '../../../support/stub_http_adapter.dart';
+import '../../../support/vault_payloads.dart';
 
 const _email = 'owner@example.com';
 const _password = 'PASSWORD-MARKER';
 
 ApiSessionRepository _repository(StubHttpAdapter adapter) =>
-    ApiSessionRepository(
-      AuthClient(
-        createHttpClient(
-          baseUrl: Uri.parse('https://vault.example'),
-          readToken: () async => null,
-          adapter: adapter,
-        ),
+    ApiSessionRepository.over(
+      createHttpClient(
+        baseUrl: Uri.parse('https://vault.example'),
+        readToken: () async => null,
+        adapter: adapter,
       ),
     );
 
@@ -365,6 +363,165 @@ void main() {
       expect(
         result,
         const Failure<SignInCompleted>(
+          message: ApiSessionRepository.unreadableAnswer,
+          kind: FailureKind.serverError,
+        ),
+      );
+    });
+  });
+  group('ApiSessionRepository.verifySession', () {
+    const token = 'TOKEN-MARKER';
+
+    ApiSessionRepository repository(StubHttpAdapter adapter) =>
+        ApiSessionRepository.over(
+          createHttpClient(
+            baseUrl: Uri.parse('https://vault.example'),
+            readToken: () async => token,
+            adapter: adapter,
+          ),
+        );
+
+    test('Given a token the API accepts and an account with protection '
+        'When the session is verified '
+        'Then the protection is found, through GET /api/vault/protection '
+        'with the token as a header (UC-05 steps 3–4)', () async {
+      final adapter = StubHttpAdapter()
+        ..on('GET', protectionPath, protectionFound());
+
+      final result = await repository(adapter).verifySession();
+
+      expect(result, const Success(SessionVerification.protectionFound));
+      final request = adapter.requests.single;
+      expect(request.method, 'GET');
+      expect(request.uri.path, protectionPath);
+      expect(request.headers['Authorization'], 'Bearer $token');
+    });
+
+    test('Given a token the API accepts and no protection, or no active '
+        'account, for it '
+        'When the session is verified '
+        'Then the protection is not found — an accepted token, not a '
+        'failure (UC-05 steps 4–5)', () async {
+      final adapter = StubHttpAdapter()
+        ..on('GET', protectionPath, protectionNotFound());
+
+      final result = await repository(adapter).verifySession();
+
+      expect(result, const Success(SessionVerification.protectionNotFound));
+    });
+
+    test('Given protection material in the answer '
+        'When the session is verified '
+        'Then none of it reaches a request, a store, a preference or a log, '
+        'and the token travels only as a header (UC-05 step 3, Testing '
+        'Specification §6.4)', () async {
+      final leaks = LeakRecorder();
+      leaks.adapter.on(
+        'GET',
+        protectionPath,
+        protectionFound(marker: 'MATERIAL-MARKER'),
+      );
+
+      await repository(leaks.adapter).verifySession();
+
+      leaks
+        ..expectNoLeak('MATERIAL-MARKER')
+        ..expectOnlyIn(token, {LeakChannel.requestHeader});
+    });
+
+    test('Given a token the API rejects with authentication_required '
+        'When the session is verified '
+        'Then it is an unauthenticated failure in the API\'s words (UC-05 '
+        'AF-02)', () async {
+      final adapter = StubHttpAdapter()
+        ..on(
+          'GET',
+          protectionPath,
+          protectionRefused(401, 'authentication_required'),
+        );
+
+      final result = await repository(adapter).verifySession();
+
+      expect(
+        result,
+        const Failure<SessionVerification>(
+          message: 'authentication_required',
+          kind: FailureKind.unauthenticated,
+        ),
+      );
+    });
+
+    test(
+      'Given a 401 that states something other than a token rejection '
+      'When the session is verified '
+      'Then it is a refusal, but not one that ends the session (FR-SE-09)',
+      () async {
+        final adapter = StubHttpAdapter()
+          ..on(
+            'GET',
+            protectionPath,
+            protectionRefused(401, 'vault_access_required'),
+          );
+
+        final result = await repository(adapter).verifySession();
+
+        expect(
+          result,
+          const Failure<SessionVerification>(
+            message: 'vault_access_required',
+            kind: FailureKind.forbidden,
+          ),
+        );
+      },
+    );
+
+    for (final code in ['identity_unavailable', 'persistence_unavailable']) {
+      test('Given the API answers 503 $code '
+          'When the session is verified '
+          'Then it is a failure carrying exactly the API\'s reason '
+          '(UC-05 AF-04, FR-DA-06)', () async {
+        final adapter = StubHttpAdapter()
+          ..on('GET', protectionPath, protectionRefused(503, code));
+
+        final result = await repository(adapter).verifySession();
+
+        expect(
+          result,
+          Failure<SessionVerification>(
+            message: code,
+            kind: FailureKind.serverError,
+          ),
+        );
+      });
+    }
+
+    test('Given an unreachable instance '
+        'When the session is verified '
+        'Then it is an unreachable failure (UC-05 AF-04)', () async {
+      final result = await repository(StubHttpAdapter()).verifySession();
+
+      expect(result, isA<Failure<SessionVerification>>());
+      expect(
+        (result as Failure<SessionVerification>).kind,
+        FailureKind.unreachable,
+      );
+    });
+
+    test('Given a found answer the client cannot decode '
+        'When the session is verified '
+        'Then it is a failure value rather than a throw (FR-DA-03)', () async {
+      final adapter = StubHttpAdapter()
+        ..on(
+          'GET',
+          protectionPath,
+          const StubResponse(200, {'data': 'not-an-object'}),
+        );
+
+      final result = await repository(adapter).verifySession();
+
+      expect(
+        result,
+        const Failure<SessionVerification>(
           message: ApiSessionRepository.unreadableAnswer,
           kind: FailureKind.serverError,
         ),

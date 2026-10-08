@@ -1,9 +1,10 @@
 /// The session and vault lock providers (Operations & Infrastructure §2.1).
 ///
 /// The transitions every session use case builds on: a challenge, a session
-/// established with its token kept in secure storage, and an ending that
-/// clears the token and locks the vault (`FR-SE-06`, `FR-SE-11`). The screens
-/// that drive them are UC-03 … UC-06's.
+/// established with its token kept in secure storage, a stored session
+/// restored at start, and an ending that clears the token and locks the vault
+/// (`FR-SE-06`, `FR-SE-08`, `FR-SE-11`). The screens that drive them are
+/// UC-03 … UC-06's.
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -67,6 +68,18 @@ class SessionController extends Notifier<SessionState> {
     _signIn(accountId);
   }
 
+  /// Resumes the stored session the API has just accepted (UC-05 step 5).
+  /// Nothing is written: the token is already where it belongs. The vault is
+  /// locked, and records whether the account has vault protection to unlock —
+  /// or none, so that it has to be set up (UC-12).
+  void restore({required bool hasProtection}) {
+    ref
+        .read(vaultStateProvider.notifier)
+        .recordProtection(exists: hasProtection);
+    state = const SignedIn(accountId: null);
+    AppLog.event('session.restored', {'protection': hasProtection});
+  }
+
   void _signIn(String accountId) {
     ref.read(vaultStateProvider.notifier).lock();
     state = SignedIn(accountId: accountId);
@@ -77,7 +90,7 @@ class SessionController extends Notifier<SessionState> {
   /// signed out. Used for sign-out and for a token the API rejected
   /// (`FR-SE-09`, `FR-SE-11`). Safe to call when already signed out.
   Future<void> end() async {
-    ref.read(vaultStateProvider.notifier).lock();
+    ref.read(vaultStateProvider.notifier).reset();
     state = const SignedOut();
     await ref.read(sessionTokenStoreProvider).clear();
     AppLog.event('session.ended');
@@ -99,6 +112,17 @@ class VaultStateController extends Notifier<VaultState> {
   void lock() {
     if (state is VaultUnlocked) state = const VaultLocked();
   }
+
+  /// Records whether the account has vault protection, as the API reported it
+  /// for a restored session (UC-05 step 5): locked when it has, and awaiting
+  /// setup (UC-12) when it has none.
+  void recordProtection({required bool exists}) => state = exists
+      ? const VaultLocked()
+      : const VaultProtectionUninitialized();
+
+  /// Locks the vault and forgets what was known about the account's
+  /// protection, which belonged to the session that ended.
+  void reset() => state = const VaultLocked();
 }
 
 /// The vault lock state.

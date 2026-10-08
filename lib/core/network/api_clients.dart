@@ -18,3 +18,8 @@ final accountClientProvider = Provider<AccountClient>(
 final authClientProvider = Provider<AuthClient>(
   (ref) => AuthClient(ref.watch(httpClientProvider)),
 );
+
+/// `/api/vault`.
+final vaultClientProvider = Provider<VaultClient>(
+  (ref) => VaultClient(ref.watch(httpClientProvider)),
+);

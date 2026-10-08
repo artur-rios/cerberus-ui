@@ -21,6 +21,41 @@ class _AccountClient implements AccountClient {
   final ParseErrorLogger? errorLogger;
 
   @override
+  Future<UpdateAccountOutputDataOutput> putApiAccountsMe({
+    String? xCerberusVaultAccess,
+    UpdateAccountCommand? body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{
+      r'X-Cerberus-Vault-Access': xCerberusVaultAccess,
+    };
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(body?.toJson() ?? <String, dynamic>{});
+    final _options = _setStreamType<UpdateAccountOutputDataOutput>(
+      Options(method: 'PUT', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/accounts/me',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late UpdateAccountOutputDataOutput _value;
+    try {
+      _value = UpdateAccountOutputDataOutput.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<AccountOutputDataOutput> getApiAccountsMe({
     String? xCerberusVaultAccess,
   }) async {

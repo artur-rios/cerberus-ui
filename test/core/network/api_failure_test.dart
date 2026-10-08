@@ -107,4 +107,73 @@ void main() {
       );
     });
   });
+
+  group('isTokenRejection', () {
+    test('Given a 401 stating authentication_required '
+        'When it is classified '
+        'Then it rejects the session token (FR-SE-09)', () {
+      expect(
+        isTokenRejection(
+          _answered(401, {
+            'errors': ['authentication_required'],
+          }),
+        ),
+        isTrue,
+      );
+    });
+
+    test('Given a 401 stating anything else, or nothing '
+        'When it is classified '
+        'Then it rejects no token — vault_access_required answers a valid '
+        'session whose vault is locked', () {
+      for (final data in <Object?>[
+        {
+          'errors': ['vault_access_required'],
+        },
+        {'errors': <String>[]},
+        null,
+        'authentication_required',
+      ]) {
+        expect(
+          isTokenRejection(_answered(401, data)),
+          isFalse,
+          reason: '$data',
+        );
+      }
+    });
+
+    test('Given authentication_required with another status '
+        'When it is classified '
+        'Then it rejects no token', () {
+      expect(
+        isTokenRejection(
+          _answered(403, {
+            'errors': ['authentication_required'],
+          }),
+        ),
+        isFalse,
+      );
+    });
+  });
+
+  group('errorCodesFromResponse', () {
+    test('Given the API\'s envelope '
+        'When its codes are read '
+        'Then they are the errors, as sent, and nothing else', () {
+      expect(
+        errorCodesFromResponse({
+          'errors': ['not_found', 7, 'b'],
+          'messages': ['m'],
+        }),
+        ['not_found', 'b'],
+      );
+      expect(
+        errorCodesFromResponse({
+          'messages': ['m'],
+        }),
+        isEmpty,
+      );
+      expect(errorCodesFromResponse('not a map'), isEmpty);
+    });
+  });
 }

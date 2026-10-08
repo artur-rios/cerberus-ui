@@ -94,4 +94,53 @@ void main() {
       expect(UnavailableReason.fromParameter(null), UnavailableReason.protocol);
     });
   });
+
+  group('Routes.startingFor and destinationAfterStart', () {
+    test('Given a requested location '
+        'When the start holds it '
+        'Then the starting location remembers it, query included, and '
+        'releases the user to it afterwards (UC-05 step 6)', () {
+      final starting = Routes.startingFor(Uri.parse('/records/r-1?tab=x'));
+
+      expect(Uri.parse(starting).path, Routes.starting);
+      expect(
+        Routes.destinationAfterStart(Uri.parse(starting)),
+        '/records/r-1?tab=x',
+      );
+    });
+
+    test('Given home '
+        'When the start holds it '
+        'Then nothing is remembered, and home follows', () {
+      expect(Routes.startingFor(Uri.parse(Routes.home)), Routes.starting);
+      expect(Routes.startingFor(Uri()), Routes.starting);
+      expect(
+        Routes.destinationAfterStart(Uri.parse(Routes.starting)),
+        Routes.home,
+      );
+    });
+
+    test('Given a remembered destination outside this application, or the '
+        'starting screen itself '
+        'When the start releases the user '
+        'Then it is home instead', () {
+      for (final target in [
+        'https://elsewhere.example/',
+        '//elsewhere.example/x',
+        'records',
+        Routes.starting,
+        '${Routes.starting}?continue=/records',
+      ]) {
+        final location = Uri(
+          path: Routes.starting,
+          queryParameters: {Routes.continueParameter: target},
+        );
+        expect(
+          Routes.destinationAfterStart(location),
+          Routes.home,
+          reason: target,
+        );
+      }
+    });
+  });
 }

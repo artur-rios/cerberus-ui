@@ -261,6 +261,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to sign in'**
   String get challengeBackToSignIn;
+
+  /// Title of the neutral screen shown while a stored session is verified at start (UC-05 step 2).
+  ///
+  /// In en, this message translates to:
+  /// **'Cerberus'**
+  String get startingTitle;
+
+  /// Shown while a stored session is verified with the instance at start (UC-05 step 2). Names no account and no vault.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking your session…'**
+  String get startingVerifying;
+
+  /// Heading shown when the instance cannot be reached to verify a stored session (UC-05 AF-04).
+  ///
+  /// In en, this message translates to:
+  /// **'Connection lost'**
+  String get startingConnectionLostTitle;
+
+  /// Heading shown above the API's own reason when it did not verify a stored session but did not reject it (UC-05 AF-04).
+  ///
+  /// In en, this message translates to:
+  /// **'Your session couldn\'t be checked'**
+  String get startingNotVerifiedTitle;
+
+  /// Retries verifying a stored session (UC-05 AF-04).
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get startingRetry;
+
+  /// Notice on the sign-in screen when the instance rejected the stored session at start (UC-05 AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Your session ended. Sign in again to continue.'**
+  String get signInSessionEnded;
+
+  /// Dismisses the session-ended notice on the sign-in screen (UC-05 AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get signInDismissNotice;
 }
 
 class _AppLocalizationsDelegate

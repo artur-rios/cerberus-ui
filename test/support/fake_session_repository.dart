@@ -7,11 +7,12 @@ import 'package:cerberus_ui/core/result/result.dart';
 import 'package:cerberus_ui/features/session/data/session_repository.dart';
 
 /// Answers each sign-in with [next], recording the email it was asked for,
-/// and each challenge completion with [nextChallenge], recording the
-/// reference and code it was given.
+/// each challenge completion with [nextChallenge], recording the reference
+/// and code it was given, and each session verification with
+/// [nextVerification], counting them in [verifications].
 ///
-/// Set [pending] or [pendingChallenge] to hold the answer until it is
-/// completed, which is how a test sees the loading state.
+/// Set [pending], [pendingChallenge] or [pendingVerification] to hold the
+/// answer until it is completed, which is how a test sees the loading state.
 class FakeSessionRepository implements SessionRepository {
   FakeSessionRepository([this.next]);
 
@@ -22,6 +23,24 @@ class FakeSessionRepository implements SessionRepository {
   Result<SignInCompleted>? nextChallenge;
   Completer<Result<SignInCompleted>>? pendingChallenge;
   final List<(String challengeToken, String code)> challenges = [];
+
+  Result<SessionVerification>? nextVerification;
+  Completer<Result<SessionVerification>>? pendingVerification;
+  int verifications = 0;
+
+  @override
+  Future<Result<SessionVerification>> verifySession() {
+    verifications++;
+    final pending = pendingVerification;
+    if (pending != null) return pending.future;
+    return Future.value(
+      nextVerification ??
+          const Failure(
+            message: 'No answer set.',
+            kind: FailureKind.serverError,
+          ),
+    );
+  }
 
   @override
   Future<Result<SignInCompleted>> completeChallenge({
