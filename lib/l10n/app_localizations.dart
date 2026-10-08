@@ -369,6 +369,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove and lose them'**
   String get signOutRemoveAnyway;
+
+  /// Opens the preferences (UC-10 step 1).
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsAction;
+
+  /// Title of the preferences screen (UC-10).
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// Label of the theme choice (UC-10 step 3, FR-PS-01).
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get settingsThemeLabel;
+
+  /// The light theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsThemeLight;
+
+  /// The dark theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsThemeDark;
+
+  /// Follow the operating system's theme.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settingsThemeSystem;
+
+  /// Label of the auto-lock timeout choice (UC-10 step 4, FR-PS-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-lock'**
+  String get settingsAutoLockLabel;
+
+  /// Explains the auto-lock timeout (BR-13).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock the vault after this long without interaction.'**
+  String get settingsAutoLockHelp;
+
+  /// Label of the clipboard clearing interval choice (UC-10 step 5, FR-PS-03).
+  ///
+  /// In en, this message translates to:
+  /// **'Clear the clipboard'**
+  String get settingsClipboardLabel;
+
+  /// Explains the clipboard clearing interval (BR-14).
+  ///
+  /// In en, this message translates to:
+  /// **'Clear a copied value from the clipboard after this long, unless something else replaced it.'**
+  String get settingsClipboardHelp;
+
+  /// States that a preference governs a protocol-dependent flow while the protocol gate is closed (FR-CR-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Takes effect once the vault can be unlocked, which waits for the Cerberus protocol to pass its security review.'**
+  String get settingsWaitsForProtocol;
+
+  /// The interval choice that turns the timer off (UC-10 AF-01, AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get settingsIntervalNever;
+
+  /// An interval in seconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 second} other{{count} seconds}}'**
+  String settingsIntervalSeconds(int count);
+
+  /// An interval in minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 minute} other{{count} minutes}}'**
+  String settingsIntervalMinutes(int count);
+
+  /// An interval in hours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 hour} other{{count} hours}}'**
+  String settingsIntervalHours(int count);
+
+  /// Title of the warning for never auto-locking (UC-10 AF-01).
+  ///
+  /// In en, this message translates to:
+  /// **'Never lock automatically?'**
+  String get settingsNeverAutoLockTitle;
+
+  /// Warning for never auto-locking (UC-10 AF-01).
+  ///
+  /// In en, this message translates to:
+  /// **'An unattended device would stay unlocked: anyone who picks it up could read your vault until you lock it or sign out.'**
+  String get settingsNeverAutoLockBody;
+
+  /// Title of the warning for never clearing the clipboard (UC-10 AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Never clear the clipboard?'**
+  String get settingsNeverClipboardTitle;
+
+  /// Warning for never clearing the clipboard (UC-10 AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Copied secrets would stay on the clipboard, readable by every other application on this device.'**
+  String get settingsNeverClipboardBody;
+
+  /// Confirms choosing never (UC-10 AF-01, AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get settingsNeverConfirm;
+
+  /// Keeps the previous interval (UC-10 AF-01, AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get settingsNeverCancel;
+
+  /// Notice on the web, where preferences are held in memory only (UC-10 AF-03, FR-PS-04).
+  ///
+  /// In en, this message translates to:
+  /// **'These preferences last only for this visit. The next visit starts from the defaults.'**
+  String get settingsWebNotice;
+
+  /// Reported when preference storage cannot be written (UC-10 AF-04).
+  ///
+  /// In en, this message translates to:
+  /// **'This choice applies until the app closes, but it couldn\'t be saved on this device.'**
+  String get settingsNotKept;
 }
 
 class _AppLocalizationsDelegate

@@ -188,5 +188,112 @@
   "signOutRemoveAnyway": "Remove and lose them",
   "@signOutRemoveAnyway": {
     "description": "Confirms removing the local store although pending edits are lost (UC-06 AF-01)."
+  },
+  "settingsAction": "Settings",
+  "@settingsAction": {
+    "description": "Opens the preferences (UC-10 step 1)."
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Title of the preferences screen (UC-10)."
+  },
+  "settingsThemeLabel": "Theme",
+  "@settingsThemeLabel": {
+    "description": "Label of the theme choice (UC-10 step 3, FR-PS-01)."
+  },
+  "settingsThemeLight": "Light",
+  "@settingsThemeLight": {
+    "description": "The light theme."
+  },
+  "settingsThemeDark": "Dark",
+  "@settingsThemeDark": {
+    "description": "The dark theme."
+  },
+  "settingsThemeSystem": "System",
+  "@settingsThemeSystem": {
+    "description": "Follow the operating system's theme."
+  },
+  "settingsAutoLockLabel": "Auto-lock",
+  "@settingsAutoLockLabel": {
+    "description": "Label of the auto-lock timeout choice (UC-10 step 4, FR-PS-02)."
+  },
+  "settingsAutoLockHelp": "Lock the vault after this long without interaction.",
+  "@settingsAutoLockHelp": {
+    "description": "Explains the auto-lock timeout (BR-13)."
+  },
+  "settingsClipboardLabel": "Clear the clipboard",
+  "@settingsClipboardLabel": {
+    "description": "Label of the clipboard clearing interval choice (UC-10 step 5, FR-PS-03)."
+  },
+  "settingsClipboardHelp": "Clear a copied value from the clipboard after this long, unless something else replaced it.",
+  "@settingsClipboardHelp": {
+    "description": "Explains the clipboard clearing interval (BR-14)."
+  },
+  "settingsWaitsForProtocol": "Takes effect once the vault can be unlocked, which waits for the Cerberus protocol to pass its security review.",
+  "@settingsWaitsForProtocol": {
+    "description": "States that a preference governs a protocol-dependent flow while the protocol gate is closed (FR-CR-02)."
+  },
+  "settingsIntervalNever": "Never",
+  "@settingsIntervalNever": {
+    "description": "The interval choice that turns the timer off (UC-10 AF-01, AF-02)."
+  },
+  "settingsIntervalSeconds": "{count, plural, =1{1 second} other{{count} seconds}}",
+  "@settingsIntervalSeconds": {
+    "description": "An interval in seconds.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsIntervalMinutes": "{count, plural, =1{1 minute} other{{count} minutes}}",
+  "@settingsIntervalMinutes": {
+    "description": "An interval in minutes.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsIntervalHours": "{count, plural, =1{1 hour} other{{count} hours}}",
+  "@settingsIntervalHours": {
+    "description": "An interval in hours.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsNeverAutoLockTitle": "Never lock automatically?",
+  "@settingsNeverAutoLockTitle": {
+    "description": "Title of the warning for never auto-locking (UC-10 AF-01)."
+  },
+  "settingsNeverAutoLockBody": "An unattended device would stay unlocked: anyone who picks it up could read your vault until you lock it or sign out.",
+  "@settingsNeverAutoLockBody": {
+    "description": "Warning for never auto-locking (UC-10 AF-01)."
+  },
+  "settingsNeverClipboardTitle": "Never clear the clipboard?",
+  "@settingsNeverClipboardTitle": {
+    "description": "Title of the warning for never clearing the clipboard (UC-10 AF-02)."
+  },
+  "settingsNeverClipboardBody": "Copied secrets would stay on the clipboard, readable by every other application on this device.",
+  "@settingsNeverClipboardBody": {
+    "description": "Warning for never clearing the clipboard (UC-10 AF-02)."
+  },
+  "settingsNeverConfirm": "Turn off",
+  "@settingsNeverConfirm": {
+    "description": "Confirms choosing never (UC-10 AF-01, AF-02)."
+  },
+  "settingsNeverCancel": "Cancel",
+  "@settingsNeverCancel": {
+    "description": "Keeps the previous interval (UC-10 AF-01, AF-02)."
+  },
+  "settingsWebNotice": "These preferences last only for this visit. The next visit starts from the defaults.",
+  "@settingsWebNotice": {
+    "description": "Notice on the web, where preferences are held in memory only (UC-10 AF-03, FR-PS-04)."
+  },
+  "settingsNotKept": "This choice applies until the app closes, but it couldn't be saved on this device.",
+  "@settingsNotKept": {
+    "description": "Reported when preference storage cannot be written (UC-10 AF-04)."
   }
 }
