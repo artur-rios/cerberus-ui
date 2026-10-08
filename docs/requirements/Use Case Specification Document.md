@@ -251,7 +251,7 @@ graph LR
 | AF-01 | The API rejects the credentials | The API's generic message is shown; the client does not suggest whether the email exists. The password field is cleared. |
 | AF-02 | The API answers with a second-factor challenge | No token is stored; the system continues with UC-04. |
 | AF-03 | The instance is unreachable | A failure result is shown as a lost connection with a retry; no session is assumed. |
-| AF-04 | The API refuses for another reason, such as an inactive account or a pending closure | The API's own reason is shown; for a pending closure, the cancellation path of UC-46 is offered. |
+| AF-04 | The API refuses for another reason, such as an inactive account or a pending closure | The API's own reason is shown. The cancellation path of UC-46 is offered only once the API reports a pending closure distinctly at sign-in ([System Requirements](System%20Requirements%20Document.md) §5.4); until then a pending closure is refused like any other sign-in, and the client infers nothing from the refusal. |
 | AF-05 | Secure storage is unavailable on a desktop or Android device | The system reports that the session cannot be kept and does not fall back to preferences or a file; the user may continue for this run with the token held in memory. |
 | AF-06 | The response carries a field the generated client does not know | The unknown field is ignored; the generated client is never hand-edited to accommodate it. |
 
@@ -323,7 +323,7 @@ graph LR
 | AF-03 | The instance is unreachable, the device is in the default mode, and a valid offline lease exists | The system offers offline unlock (UC-13, UC-41) instead of failing; online-only features stay unavailable. |
 | AF-04 | The instance is unreachable and no valid lease exists, or the device is online only | A lost connection is reported with a retry; no vault screen is shown. |
 | AF-05 | The application runs on the web | There is never a stored token; the user signs in (UC-03). |
-| AF-06 | The account is pending closure | The API's answer is shown and the cancellation path of UC-46 offered. |
+| AF-06 | The account is pending closure | The API's answer is shown. The cancellation path of UC-46 is offered only once the API reports a pending closure distinctly ([System Requirements](System%20Requirements%20Document.md) §5.4); until then the answer is handled like any other refusal of the stored session. |
 
 ---
 
@@ -1789,7 +1789,8 @@ graph LR
 
 **Main Flow**
 
-1. The user signs in; the API reports the account as pending closure (UC-03 AF-04).
+1. The user signs in; the API reports the account as pending closure (UC-03 AF-04). This step needs
+   the distinct report listed in [System Requirements](System%20Requirements%20Document.md) §5.4.
 2. The system shows the deadline and offers to cancel the closure.
 3. The system performs fresh authentication if the sign-in was not itself fresh.
 4. The system submits the cancellation.
