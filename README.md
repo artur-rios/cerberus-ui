@@ -160,6 +160,7 @@ cases here and are recorded in the
 | Listing the account's software grants | UC-36 |
 | Publication of the offline lease verification keys | UC-39 |
 | A distinct report that an account is pending closure, at sign-in and on session restore | UC-46 (and its offer from UC-03 and UC-05) |
+| A distinct report that a second-factor challenge has expired, apart from a refused code | UC-04 (its AF-02 return to sign-in) |
 
 The protocol review needs this repository too: an independent client implementation of the
 protocol is what produces and checks the interoperability vectors it requires.

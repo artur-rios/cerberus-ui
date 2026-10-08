@@ -284,8 +284,8 @@ graph LR
 
 | ID | Condition | Outcome |
 | --- | --- | --- |
-| AF-01 | The code is refused | The API's message is shown and the code field cleared; the challenge stays outstanding while the API allows it. |
-| AF-02 | The challenge has expired | The system discards it and returns to sign-in, stating that the sign-in must be repeated. |
+| AF-01 | The code is refused | The API's message is shown and the code field cleared. The API does not yet tell a refused code apart from an expired or exhausted challenge ([System Requirements](System%20Requirements%20Document.md) §5.4), so the challenge stays outstanding for another attempt and the screen also offers to repeat the sign-in. |
+| AF-02 | The challenge has expired | Once the API reports an expired challenge distinctly ([System Requirements](System%20Requirements%20Document.md) §5.4), the system discards it and returns to sign-in, stating that the sign-in must be repeated. Until then an expired challenge is refused like a wrong code (AF-01), and the offer to repeat the sign-in is how the user leaves it; the client infers nothing from the refusal. |
 | AF-03 | The user navigates away or closes the application | The challenge is discarded; no partial session survives. |
 | AF-04 | The connection is lost on submission | A retry is offered with the same challenge; no session is assumed. |
 | AF-05 | A route is reached by typed URL while the challenge is outstanding | The guard (UC-07) treats it as signed out. |
