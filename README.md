@@ -14,8 +14,9 @@ device, and decrypts only what the user is looking at.
 [![Project board](https://img.shields.io/badge/project-Cerberus%20UI-8250df?style=flat-square)](https://github.com/users/artur-rios/projects/16)
 
 > **Status:** the foundation, sign-in with its second-factor challenge, restoring a session at
-> start, signing out and the route guard are in place; the other use cases are next. Most of them wait on the Cerberus API, and everything that encrypts waits on its
-> protocol review: see [Dependencies on the Cerberus API](#dependencies-on-the-cerberus-api). The
+> start, signing out, the route guard and preferences are in place; the other use cases are next.
+> Most of them wait on the Cerberus API, and everything that encrypts waits on its protocol review:
+> see [Dependencies on the Cerberus API](#dependencies-on-the-cerberus-api). The
 > [project board](https://github.com/users/artur-rios/projects/16) is the live view.
 
 ## What it does
@@ -183,7 +184,7 @@ protocol is what produces and checks the interoperability vectors it requires.
 | [#7](https://github.com/artur-rios/cerberus-ui/issues/7) | ✅ | UC-06 — Sign out | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-06-sign-out) |
 | [#8](https://github.com/artur-rios/cerberus-ui/issues/8) | ✅ | UC-07 — Guard a route | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-07-guard-a-route) |
 | [#10](https://github.com/artur-rios/cerberus-ui/issues/10) | ⬜ | UC-09 — Update identity details | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-09-update-identity-details) |
-| [#11](https://github.com/artur-rios/cerberus-ui/issues/11) | ⬜ | UC-10 — Choose preferences | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-10-choose-preferences) |
+| [#11](https://github.com/artur-rios/cerberus-ui/issues/11) | ✅ | UC-10 — Choose preferences | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-10-choose-preferences) |
 
 ### M-03 — Vault protection
 

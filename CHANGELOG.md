@@ -43,6 +43,12 @@ No release has been tagged yet.
   that is done; only locations within the application are followed. Another profile's content is sent to unlock that
   profile instead of being shown under the open one, and a device restricted to a profile is never offered another.
   The API's refusals are honored as the API states them, and nothing the guard hides is relied on as protection.
+- Preferences (#11, UC-10): the theme — light, dark or the system's — the auto-lock timeout and the clipboard
+  clearing interval, opened from the app bar. Each choice applies at once and is kept on desktop and Android; on the
+  web it lasts for the visit, and the screen says so. Choosing never for either interval warns first and applies only
+  after confirmation, and a choice that could not be kept still applies for the run and the screen says it was not
+  kept. Preference storage holds these three values and nothing else. While the protocol gate is closed, the two
+  intervals say they take effect once the vault can be unlocked.
 - The protocol gate, **closed**: every flow that encrypts, decrypts, wraps, proves or recovers stays unavailable, and
   the interface says why, until the Cerberus protocol passes its review.
 - The API client generated from the Cerberus API's OpenAPI document, by one command.
