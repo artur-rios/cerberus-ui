@@ -31,6 +31,12 @@ No release has been tagged yet.
   deleted and sign-in says the session ended; an unreachable instance is reported with a retry, the session kept.
   A session ends only when the API states that its token was rejected (`authentication_required`), never on another
   401.
+- Signing out (#7, UC-06). The vault locks, the token is deleted and every in-memory trace of the session is
+  discarded. In the default mode the user chooses whether to keep the vault on the device — told that the kept copy is
+  ciphertext only — or remove it, and removing it while offline edits were never uploaded states how many would be
+  lost and asks again. Online only and on the web nothing is asked. A token secure storage cannot delete is reported,
+  is no longer read for the rest of the run, and is overwritten by the next sign-in; a session the API rejects
+  mid-session ends the same way, keeping the store, and sign-in says the session ended.
 - The protocol gate, **closed**: every flow that encrypts, decrypts, wraps, proves or recovers stays unavailable, and
   the interface says why, until the Cerberus protocol passes its review.
 - The API client generated from the Cerberus API's OpenAPI document, by one command.
