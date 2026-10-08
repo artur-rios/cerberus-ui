@@ -472,7 +472,7 @@ they exist:
 | Listing a collection's grants | UC-30, UC-33 | API FR-SH-04 (grants are addressed by identifier) |
 | Listing the account's software grants | UC-36 | API FR-SW-05 (grants are addressed by identifier) |
 | Publication of the lease verification keys | UC-39 | Protocol review, *Offline lease binding and rotation* |
-| A distinct report that an account is pending closure, at sign-in and when a session is restored | UC-46, and the offers in UC-03 AF-04 and UC-05 AF-06 | API UC-07 (FR-AC-02); today `POST /api/auth/login` answers `authentication_required` and `GET /api/accounts/me` answers `not_found` for a pending-closure account, exactly as for unknown credentials or a missing account |
+| A distinct report that an account is pending closure, at sign-in and when a session is restored | UC-46, and the offers in UC-03 AF-04 and UC-05 AF-06 | API UC-07 (FR-AC-02); today `POST /api/auth/login` answers `authentication_required` and `GET /api/vault/protection` (the session check of UC-05) answers `not_found` for a pending-closure account, exactly as for unknown credentials or an account without vault protection |
 | A distinct report that a second-factor challenge has expired, been exhausted or been redeemed, apart from a refused code | UC-04 (AF-02) | API UC-02 AF-04; Heimdall reports it as `ChallengeTokenInvalid`, but `POST /api/auth/2fa/verify` answers `authentication_required` for both, because the API maps every Heimdall 401 and 404 to it |
 
 ---
