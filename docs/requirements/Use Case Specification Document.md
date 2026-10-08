@@ -303,23 +303,31 @@ graph LR
 | **Preconditions** | The application starts on desktop or Android with an adopted instance. |
 | **Postconditions** | A verified session with the vault locked, or a signed-out application with the stale token discarded. |
 | **Requirements** | FR-SE-08 |
-| **API** | `GET /api/accounts/me` (API UC-03) |
+| **API** | `GET /api/vault/protection` (API UC-38) |
 
 **Main Flow**
 
 1. The application starts and finds a token in secure storage.
 2. The system shows a neutral starting screen — no vault, no account detail.
-3. The system requests the current account from the API with the token.
-4. The API accepts the token.
-5. The system marks the session signed in, with the vault locked.
-6. The system routes to the unlock screen, or to the route a deep link asked for, through the guard.
+3. The system requests the account's vault protection from the API with the token. It reads only the
+   answer's outcome: the protection material in the answer is protocol material and is discarded
+   unread.
+4. The API accepts the token: it returns the protection, or reports that none was found.
+5. The system marks the session signed in, with the vault locked, and records whether the account has
+   vault protection — returned means it has; not found means it has none, or that the API holds no
+   active account for it, which the API does not tell apart.
+6. The system routes to the unlock screen when the account has protection, to vault protection setup
+   (UC-12) when it has none, or to the route a deep link asked for, through the guard.
+
+`GET /api/accounts/me` is not used to verify the session: it needs a vault-access handle, which only
+an unlocked vault has, and answers `vault_access_required` for any session without one.
 
 **Alternative Flows**
 
 | ID | Condition | Outcome |
 | --- | --- | --- |
 | AF-01 | No token is stored | The system routes to sign-in. |
-| AF-02 | The API rejects the token | The token is deleted from secure storage and the user is sent to sign-in with a notice that the session ended. |
+| AF-02 | The API rejects the token (`authentication_required`) | The token is deleted from secure storage and the user is sent to sign-in with a notice that the session ended. |
 | AF-03 | The instance is unreachable, the device is in the default mode, and a valid offline lease exists | The system offers offline unlock (UC-13, UC-41) instead of failing; online-only features stay unavailable. |
 | AF-04 | The instance is unreachable and no valid lease exists, or the device is online only | A lost connection is reported with a retry; no vault screen is shown. |
 | AF-05 | The application runs on the web | There is never a stored token; the user signs in (UC-03). |
