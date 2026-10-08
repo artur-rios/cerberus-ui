@@ -159,6 +159,7 @@ cases here and are recorded in the
 | Listing a collection's grants | UC-30, UC-33 |
 | Listing the account's software grants | UC-36 |
 | Publication of the offline lease verification keys | UC-39 |
+| A distinct report that an account is pending closure, at sign-in and on session restore | UC-46 (and its offer from UC-03 and UC-05) |
 
 The protocol review needs this repository too: an independent client implementation of the
 protocol is what produces and checks the interoperability vectors it requires.
