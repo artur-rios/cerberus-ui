@@ -88,12 +88,14 @@ graph TD
 ```
 cerberus-ui/
 ├── .github/workflows/
-│   ├── ci.yml                       format, analyze, boundaries + test on every pull request
-│   ├── check-generated.yml          regenerate the client and local store code; fail on drift
+│   ├── ci.yml                       format, analyze, boundaries, test, gate + web bundle check
+│   ├── check-generated.yml          regenerate the client, local store code and l10n; fail on drift
 │   ├── branch-policy.yml            enforce the branching model on pull requests
 │   └── build.yml                    per-target artifacts
 ├── api/
 │   └── cerberus.json                the API's OpenAPI document, copied from cerberus-api
+├── assets/fonts/                    Roboto, bundled so the web fetches no font (FR-PV-04)
+├── drift_schemas/                   the local store's schema snapshot per version
 ├── packages/
 │   └── cerberus_api_client/         generated: DTOs and retrofit clients
 ├── lib/
@@ -102,6 +104,7 @@ cerberus-ui/
 │   │   ├── config/                  build-time configuration and device settings
 │   │   ├── crypto/                  the Cerberus protocol, the protocol gate
 │   │   ├── local_store/             drift schema, migrations, outbox, cursor, lease
+│   │   ├── logging/                 the debug-only, redacting log
 │   │   ├── network/                 the configured dio instance and its interceptors
 │   │   ├── result/                  the sealed result type every repository returns
 │   │   ├── session/                 session state, vault lock state, auto-lock
@@ -114,11 +117,13 @@ cerberus-ui/
 │   ├── l10n/                        ARB files, en-US
 │   ├── shared/                      layout and reusable widgets
 │   └── main.dart
-├── test/                            mirrors lib/ exactly; test/support, test/vectors
+├── test/                            mirrors lib/ exactly; test/support, test/vectors, test/tool
 ├── integration_test/                complete journeys
 ├── tool/
 │   ├── generate_api_client.dart     the client generation pipeline
-│   └── check_boundaries.dart        the import boundary rules
+│   ├── check_boundaries.dart        the import boundary rules (boundary_rules.dart)
+│   ├── check_protocol_gate.dart     the gate's CI rule (protocol_gate_rules.dart)
+│   └── check_web_bundle.sh          no service worker, third-party font or local store on the web
 ├── packaging/
 │   ├── windows/                     installer definition and portable archive layout
 │   └── linux/                       installer definition
@@ -127,6 +132,8 @@ cerberus-ui/
 ├── android/ · linux/ · windows/ · web/
 ├── Dockerfile
 ├── analysis_options.yaml
+├── build.yaml                       drift's generation options
+├── l10n.yaml
 ├── swagger_parser.yaml
 ├── pubspec.yaml · pubspec.lock
 └── docs/
@@ -157,7 +164,10 @@ replacing it is a deliberate act of taking a new API contract, done in the chang
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-Emits drift's typed tables and queries. Schema changes come with a migration and a migration test.
+Emits drift's typed tables and queries. Schema changes come with a migration and a migration test,
+a schema snapshot in `drift_schemas/` (`dart run drift_dev make-migrations`), and regenerated
+migration test helpers (`dart run drift_dev schema generate drift_schemas/local_store/
+test/core/local_store/generated/`).
 
 Both pipelines are deterministic, which is what makes the drift check meaningful.
 
@@ -271,8 +281,8 @@ Four workflows, mirroring the sibling repositories:
 
 | Workflow | Runs | Does |
 | --- | --- | --- |
-| `ci.yml` | Every pull request into, and push to, `develop` and `main` | Verifies formatting, `flutter analyze`, the boundary check and `flutter test`, and fails on any of them. |
-| `check-generated.yml` | Every pull request into, and push to, `develop` and `main` | Regenerates the API client and drift's code and fails on any difference. |
+| `ci.yml` | Every pull request into, and push to, `develop` and `main` | Verifies formatting, `flutter analyze`, the boundary check, `flutter test` and the protocol gate, builds the web bundle and checks it, and fails on any of them. |
+| `check-generated.yml` | Every pull request into, and push to, `develop` and `main` | Regenerates the API client, drift's code and schema test helpers and the localizations, and fails on any difference. |
 | `branch-policy.yml` | Every pull request into `develop` and `main` | Enforces the branching model described in [CONTRIBUTING.md](../../CONTRIBUTING.md). |
 | `build.yml` | On a `v*` tag, and on demand | Builds all four targets and publishes the artifacts. |
 

@@ -13,8 +13,8 @@ device, and decrypts only what the user is looking at.
 [![Milestones](https://img.shields.io/github/milestones/all/artur-rios/cerberus-ui?style=flat-square&label=milestones)](https://github.com/artur-rios/cerberus-ui/milestones)
 [![Project board](https://img.shields.io/badge/project-Cerberus%20UI-8250df?style=flat-square)](https://github.com/users/artur-rios/projects/16)
 
-> **Status:** specification complete; implementation not started. All 49 issues — the foundation
-> and 48 use cases — are open. Most use cases also wait on the Cerberus API: see
+> **Status:** the foundation is in place; the use cases are next. Most of them wait on the Cerberus
+> API, and everything that encrypts waits on its protocol review: see
 > [Dependencies on the Cerberus API](#dependencies-on-the-cerberus-api). The
 > [project board](https://github.com/users/artur-rios/projects/16) is the live view.
 
@@ -78,9 +78,9 @@ the `requirements/` documents for the normative detail.
 
 ## Installation
 
-There is no application code yet: the foundation issue creates it. Once it lands, the
-prerequisite is the **Flutter SDK**, stable channel, at the latest stable release — with the
-toolchain for whichever platform you build. The version policy is in the
+The prerequisite is the **Flutter SDK**, stable channel, at the latest stable release (the lock
+file currently needs Dart 3.13.2, which ships with Flutter 3.47.2) — with the toolchain for
+whichever platform you build. The version policy is in the
 [Technology Stack Document](docs/requirements/Technology%20Stack%20Document.md) §1.1.
 
 ```bash
@@ -98,10 +98,20 @@ flutter run -d linux --dart-define=CERBERUS_API_BASE_URL=http://localhost:5000
 
 Replace `-d linux` with `windows`, `chrome` or your Android device. A run with no
 `CERBERUS_API_BASE_URL` starts at the setup screen. Plain HTTP is accepted in debug builds only.
+Building for Linux needs the GTK and libsecret development packages, as in
+[`build.yml`](.github/workflows/build.yml).
+
+The web build is served as a container image — static files behind an unprivileged nginx on port
+8080, with a `/healthz` probe:
+
+```bash
+docker build -t cerberus-ui --build-arg CERBERUS_API_BASE_URL=https://cerberus-api.example.com .
+docker run --rm -p 8080:8080 cerberus-ui
+```
 The configuration surface is in the
 [Operations & Infrastructure Document](docs/requirements/Operations%20%26%20Infrastructure%20Document.md) §3.
 
-`main` holds only released code — today, the specifications. Development happens on `develop`.
+`main` holds only released code. Development happens on `develop`.
 
 ## Roadmap
 
@@ -157,7 +167,7 @@ protocol is what produces and checks the interoperability vectors it requires.
 
 | Issue | Status | Work | Spec |
 |---|---|---|---|
-| [#1](https://github.com/artur-rios/cerberus-ui/issues/1) | ⬜ | Project scaffold and initial infrastructure | [Operations & Infrastructure](docs/requirements/Operations%20%26%20Infrastructure%20Document.md) |
+| [#1](https://github.com/artur-rios/cerberus-ui/issues/1) | ✅ | Project scaffold and initial infrastructure | [Operations & Infrastructure](docs/requirements/Operations%20%26%20Infrastructure%20Document.md) |
 
 ### M-02 — Access and session
 
