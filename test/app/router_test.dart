@@ -1,6 +1,7 @@
 import 'package:cerberus_ui/app/router.dart';
 import 'package:cerberus_ui/app/routes.dart';
 import 'package:cerberus_ui/core/session/session_controller.dart';
+import 'package:cerberus_ui/features/session/ui/challenge_screen.dart';
 import 'package:cerberus_ui/features/session/ui/sign_in_screen.dart';
 import 'package:cerberus_ui/shared/widgets/not_available_screen.dart';
 import 'package:cerberus_ui/shared/widgets/not_found_screen.dart';
@@ -39,17 +40,17 @@ void main() {
 
     testWidgets('Given an outstanding second-factor challenge '
         'When the challenge route is requested '
-        'Then it is admitted, reserved for UC-04', (tester) async {
+        'Then it is admitted and shows the challenge (UC-04)', (tester) async {
       final container = await pumpCerberusApp(tester);
       container
           .read(sessionProvider.notifier)
-          .challenge(challengeToken: 'c', methods: ['totp']);
+          .challenge(challengeToken: 'c', methods: ['App']);
 
       container.read(routerProvider).go(Routes.challenge);
       await tester.pumpAndSettle();
 
       expect(_location(container), Routes.challenge);
-      expect(find.byType(PendingFeatureScreen), findsOneWidget);
+      expect(find.byType(ChallengeScreen), findsOneWidget);
     });
 
     testWidgets('Given no challenge '

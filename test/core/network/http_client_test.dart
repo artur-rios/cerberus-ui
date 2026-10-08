@@ -116,6 +116,34 @@ void main() {
       expect(adapter.requests, hasLength(1));
     });
 
+    test('Given a request that carried no token '
+        'When the API answers 401 '
+        'Then the session is not told, because no session was rejected — a '
+        'refused password or second-factor code (UC-04 AF-01)', () async {
+      var told = 0;
+      final adapter = StubHttpAdapter()
+        ..on(
+          'POST',
+          '/api/auth/2fa/verify',
+          const StubResponse(401, {
+            'errors': ['authentication_required'],
+          }),
+        );
+      final dio = createHttpClient(
+        baseUrl: Uri.parse('https://vault.example'),
+        readToken: () async => null,
+        onUnauthenticated: () => told++,
+        adapter: adapter,
+      );
+
+      await expectLater(
+        dio.post<Object?>('/api/auth/2fa/verify', data: const {}),
+        throwsA(isA<DioException>()),
+      );
+
+      expect(told, 0);
+    });
+
     test('Given a request that fails for another reason '
         'When it fails '
         'Then the session is not told', () async {

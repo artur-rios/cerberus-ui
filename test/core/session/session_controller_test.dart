@@ -155,6 +155,53 @@ void main() {
       expect(await leaks.secureStore.read(SecureKey.sessionToken), isNull);
     });
 
+    test('Given an outstanding challenge '
+        'When it is abandoned '
+        'Then the application is signed out and nothing was stored (UC-04 '
+        'AF-03)', () {
+      final leaks = LeakRecorder();
+      final container = _container(leaks);
+      final session = container.read(sessionProvider.notifier)
+        ..challenge(challengeToken: 'CHALLENGE-MARKER', methods: ['App']);
+
+      session.abandonChallenge('CHALLENGE-MARKER');
+
+      expect(container.read(sessionProvider), const SignedOut());
+      leaks.expectNoLeak('CHALLENGE-MARKER');
+    });
+
+    test('Given a challenge replaced by a later sign-in '
+        'When the earlier one is abandoned '
+        'Then the later one stays outstanding', () {
+      final container = _container(LeakRecorder());
+      final session = container.read(sessionProvider.notifier)
+        ..challenge(challengeToken: 'first', methods: ['App'])
+        ..challenge(challengeToken: 'second', methods: ['Email']);
+
+      session.abandonChallenge('first');
+
+      expect(
+        container.read(sessionProvider),
+        const ChallengePending(challengeToken: 'second', methods: ['Email']),
+      );
+    });
+
+    test('Given a challenge completed into a session '
+        'When it is abandoned afterwards '
+        'Then the session stays', () async {
+      final container = _container(LeakRecorder());
+      final session = container.read(sessionProvider.notifier)
+        ..challenge(challengeToken: 'c', methods: ['App']);
+      await session.establish(token: 'token', accountId: 'acct-1');
+
+      session.abandonChallenge('c');
+
+      expect(
+        container.read(sessionProvider),
+        const SignedIn(accountId: 'acct-1'),
+      );
+    });
+
     test('Given no session '
         'When the session ends '
         'Then it is not an error', () async {

@@ -10,9 +10,9 @@ import 'package:cerberus_ui/core/session/session_state.dart';
 import 'package:cerberus_ui/core/storage/secure_store.dart';
 import 'package:cerberus_ui/features/session/data/api_session_repository.dart';
 import 'package:cerberus_ui/features/session/data/session_repository.dart';
+import 'package:cerberus_ui/features/session/ui/challenge_screen.dart';
 import 'package:cerberus_ui/features/session/ui/sign_in_screen.dart';
 import 'package:cerberus_ui/shared/widgets/not_available_screen.dart';
-import 'package:cerberus_ui/shared/widgets/pending_feature_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -273,7 +273,7 @@ void main() {
       await _fillAndSubmit(tester);
 
       expect(_location(container), Routes.challenge);
-      expect(find.byType(PendingFeatureScreen), findsOneWidget);
+      expect(find.byType(ChallengeScreen), findsOneWidget);
       expect(container.read(sessionProvider), isA<ChallengePending>());
       expect(secure.writes, isEmpty);
     });
