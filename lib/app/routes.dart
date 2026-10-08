@@ -49,6 +49,13 @@ enum UnavailableReason {
 abstract final class Routes {
   // §5.1 — configuration, identity and unlock.
   static const setup = '/setup';
+
+  /// The neutral screen shown while a stored session is verified (UC-05).
+  static const starting = '/starting';
+
+  /// The query parameter carrying where the user was going when the start
+  /// held them (UC-05 step 6).
+  static const continueParameter = 'continue';
   static const register = '/register';
   static const signIn = '/sign-in';
   static const challenge = '/sign-in/challenge';
@@ -81,6 +88,35 @@ abstract final class Routes {
 
   /// The query parameter carrying the [UnavailableReason].
   static const reasonParameter = 'reason';
+
+  /// The starting location, remembering [destination] unless it is home.
+  static String startingFor(Uri destination) {
+    final target = destination.toString();
+    return target.isEmpty || target == home
+        ? starting
+        : Uri(
+            path: starting,
+            queryParameters: {continueParameter: target},
+          ).toString();
+  }
+
+  /// Where the starting screen at [location] should release the user to: the
+  /// destination it remembered, if that is a location within this
+  /// application, and home otherwise.
+  static String destinationAfterStart(Uri location) {
+    final target = location.queryParameters[continueParameter];
+    if (target == null || !target.startsWith('/') || target.startsWith('//')) {
+      return home;
+    }
+    final parsed = Uri.tryParse(target);
+    if (parsed == null ||
+        parsed.hasScheme ||
+        parsed.hasAuthority ||
+        isWithin(parsed.path, starting)) {
+      return home;
+    }
+    return target;
+  }
 
   /// The not-available location for [reason].
   static String unavailableFor(UnavailableReason reason) => Uri(

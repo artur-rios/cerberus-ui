@@ -111,5 +111,33 @@
   "challengeBackToSignIn": "Back to sign in",
   "@challengeBackToSignIn": {
     "description": "Tooltip of the back button that leaves the challenge, discarding it (UC-04 AF-03)."
+  },
+  "startingTitle": "Cerberus",
+  "@startingTitle": {
+    "description": "Title of the neutral screen shown while a stored session is verified at start (UC-05 step 2)."
+  },
+  "startingVerifying": "Checking your session…",
+  "@startingVerifying": {
+    "description": "Shown while a stored session is verified with the instance at start (UC-05 step 2). Names no account and no vault."
+  },
+  "startingConnectionLostTitle": "Connection lost",
+  "@startingConnectionLostTitle": {
+    "description": "Heading shown when the instance cannot be reached to verify a stored session (UC-05 AF-04)."
+  },
+  "startingNotVerifiedTitle": "Your session couldn't be checked",
+  "@startingNotVerifiedTitle": {
+    "description": "Heading shown above the API's own reason when it did not verify a stored session but did not reject it (UC-05 AF-04)."
+  },
+  "startingRetry": "Try again",
+  "@startingRetry": {
+    "description": "Retries verifying a stored session (UC-05 AF-04)."
+  },
+  "signInSessionEnded": "Your session ended. Sign in again to continue.",
+  "@signInSessionEnded": {
+    "description": "Notice on the sign-in screen when the instance rejected the stored session at start (UC-05 AF-02)."
+  },
+  "signInDismissNotice": "Dismiss",
+  "@signInDismissNotice": {
+    "description": "Dismisses the session-ended notice on the sign-in screen (UC-05 AF-02)."
   }
 }

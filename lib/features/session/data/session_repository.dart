@@ -48,7 +48,20 @@ final class SignInChallenged extends SignInOutcome {
   String toString() => 'SignInChallenged(methods: $methods)';
 }
 
-/// Signs a user in through the Cerberus API (FR-SE-02, FR-SE-03).
+/// What verifying a stored session found (UC-05 steps 3–5). Either way the
+/// API accepted the token; the protection material it may have sent is
+/// protocol material and is not part of this — it was discarded unread.
+enum SessionVerification {
+  /// The account has vault protection, so the vault waits to be unlocked.
+  protectionFound,
+
+  /// The API found no protection — or no active account, which it does not
+  /// tell apart — so the vault waits to be set up (UC-12).
+  protectionNotFound,
+}
+
+/// Signs a user in through the Cerberus API (FR-SE-02, FR-SE-03), and
+/// verifies a stored session with it (FR-SE-08).
 abstract interface class SessionRepository {
   /// Submits [email] and [password]. The credentials are held only for the
   /// request that carries them (FR-SE-07).
@@ -64,9 +77,19 @@ abstract interface class SessionRepository {
     required String challengeToken,
     required String code,
   });
+
+  /// Asks the API whether the stored session's token is still accepted, by
+  /// requesting the account's vault protection with it (UC-05 step 3). A
+  /// rejected token is a failure of kind [FailureKind.unauthenticated] (AF-02);
+  /// an instance that cannot be reached is one of kind
+  /// [FailureKind.unreachable] (AF-04).
+  Future<Result<SessionVerification>> verifySession();
 }
 
 /// The session repository, over the generated API client.
 final sessionRepositoryProvider = Provider<SessionRepository>(
-  (ref) => ApiSessionRepository(ref.watch(authClientProvider)),
+  (ref) => ApiSessionRepository(
+    ref.watch(authClientProvider),
+    ref.watch(vaultClientProvider),
+  ),
 );

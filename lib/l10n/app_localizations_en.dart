@@ -99,4 +99,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get challengeBackToSignIn => 'Back to sign in';
+
+  @override
+  String get startingTitle => 'Cerberus';
+
+  @override
+  String get startingVerifying => 'Checking your session…';
+
+  @override
+  String get startingConnectionLostTitle => 'Connection lost';
+
+  @override
+  String get startingNotVerifiedTitle => 'Your session couldn\'t be checked';
+
+  @override
+  String get startingRetry => 'Try again';
+
+  @override
+  String get signInSessionEnded =>
+      'Your session ended. Sign in again to continue.';
+
+  @override
+  String get signInDismissNotice => 'Dismiss';
 }

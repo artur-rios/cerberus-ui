@@ -3,7 +3,9 @@
 /// Shows the API's own reason for any refusal (FR-DA-06), and suggests nothing
 /// the API did not say: not whether the email exists (AF-01), and nothing
 /// about the account's state that a refusal did not report (AF-04). Where a
-/// session leads is the guard's decision, not this screen's (step 7).
+/// session leads is the guard's decision, not this screen's (step 7). When the
+/// API rejected the session stored from an earlier run, it says the session
+/// ended (UC-05 AF-02).
 library;
 
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/routes.dart';
 import '../../../l10n/app_localizations.dart';
+import '../state/session_restore_controller.dart';
 import '../state/sign_in_controller.dart';
 import 'session_not_kept_notice.dart';
 
@@ -27,6 +30,8 @@ class SignInScreen extends ConsumerStatefulWidget {
   static const retryButton = Key('sign-in.retry');
   static const continueButton = Key('sign-in.continue');
   static const discardButton = Key('sign-in.discard');
+  static const sessionEndedNotice = Key('sign-in.session-ended');
+  static const dismissNoticeButton = Key('sign-in.dismiss-notice');
 
   @override
   ConsumerState<SignInScreen> createState() => _SignInScreenState();
@@ -59,6 +64,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   Future<void> _submit() async {
     if (!_canSubmit) return;
+    ref.read(sessionRestoreProvider.notifier).acknowledgeSessionEnded();
     await ref
         .read(signInControllerProvider.notifier)
         .submit(email: _email.text.trim(), password: _password.text);
@@ -94,6 +100,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     final submitting = state is SignInSubmitting;
     final decisionPending = state is SignInSessionNotKept;
     final editable = !submitting && !decisionPending;
+    final sessionEnded = switch (ref.watch(sessionRestoreProvider)) {
+      SessionRestoreSettled(:final sessionEnded) => sessionEnded,
+      _ => false,
+    };
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.signInTitle)),
@@ -107,6 +117,15 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // UC-05 AF-02: the stored session was rejected at start.
+                  if (sessionEnded) ...[
+                    _SessionEndedNotice(
+                      onDismiss: ref
+                          .read(sessionRestoreProvider.notifier)
+                          .acknowledgeSessionEnded,
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                   TextField(
                     key: SignInScreen.emailField,
                     controller: _email,
@@ -235,6 +254,45 @@ class _FailureNotice extends StatelessWidget {
                   ),
                 ),
               ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Says that the session kept from an earlier run ended (UC-05 AF-02).
+class _SessionEndedNotice extends StatelessWidget {
+  const _SessionEndedNotice({required this.onDismiss});
+
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colors = Theme.of(context).colorScheme;
+
+    return Semantics(
+      liveRegion: true,
+      child: Card(
+        key: SignInScreen.sessionEndedNotice,
+        color: colors.secondaryContainer,
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 8, 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.signInSessionEnded,
+                  style: TextStyle(color: colors.onSecondaryContainer),
+                ),
+              ),
+              TextButton(
+                key: SignInScreen.dismissNoticeButton,
+                onPressed: onDismiss,
+                child: Text(l10n.signInDismissNotice),
+              ),
             ],
           ),
         ),

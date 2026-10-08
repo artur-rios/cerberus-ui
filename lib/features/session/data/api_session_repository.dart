@@ -1,4 +1,4 @@
-/// [SessionRepository] over the generated API client (FR-DA-01, FR-DA-02).
+/// [SessionRepository] over the generated API clients (FR-DA-01, FR-DA-02).
 library;
 
 import 'package:cerberus_api_client/export.dart';
@@ -9,17 +9,26 @@ import '../../../core/network/api_failure.dart';
 import '../../../core/result/result.dart';
 import 'session_repository.dart';
 
-/// Signs in through `POST /api/auth/login`, and completes a second-factor
-/// challenge through `POST /api/auth/2fa/verify` (API UC-02, AF-04).
+/// Signs in through `POST /api/auth/login`, completes a second-factor
+/// challenge through `POST /api/auth/2fa/verify` (API UC-02, AF-04), and
+/// verifies a stored session through `GET /api/vault/protection` (API UC-38).
 class ApiSessionRepository implements SessionRepository {
-  ApiSessionRepository(this._client);
+  ApiSessionRepository(this._client, this._vault);
+
+  /// Over the generated clients of one configured `dio` instance.
+  ApiSessionRepository.over(Dio dio) : this(AuthClient(dio), VaultClient(dio));
 
   final AuthClient _client;
+  final VaultClient _vault;
 
   /// Stated when the API answered success without what a success carries —
   /// there is no API reason to show, because the API gave none.
   static const incompleteAnswer =
       'The instance answered the sign-in without a session.';
+
+  /// The code the API answers with when it holds no protection for the
+  /// account, or no active account (API UC-38).
+  static const notFoundCode = 'not_found';
 
   /// Stated when the answer could not be read at all.
   static const unreadableAnswer =
@@ -80,6 +89,44 @@ class ApiSessionRepository implements SessionRepository {
       return failure;
     } on Object {
       AppLog.event('challenge.unreadable');
+      return const Failure(
+        message: unreadableAnswer,
+        kind: FailureKind.serverError,
+      );
+    }
+  }
+
+  @override
+  Future<Result<SessionVerification>> verifySession() async {
+    try {
+      // Only the outcome is read. The answer's body is protection material —
+      // protocol material, which nothing here may interpret, keep or log — so
+      // it is left with the generated client and dropped with this frame.
+      await _vault.getApiVaultProtection();
+      AppLog.event('session.verified', {'protection': true});
+      return const Success(SessionVerification.protectionFound);
+    } on DioException catch (exception) {
+      if (exception.response?.statusCode == 404 &&
+          errorCodesFromResponse(exception.response?.data)
+              .contains(notFoundCode)) {
+        AppLog.event('session.verified', {'protection': false});
+        return const Success(SessionVerification.protectionNotFound);
+      }
+      final failure = failureFromDioException<SessionVerification>(exception);
+      // Only a stated token rejection ends the stored session (AF-02). Any
+      // other 401 is the API refusing for some other reason, kept as a refusal
+      // with its own words.
+      final kind = isTokenRejection(exception)
+          ? FailureKind.unauthenticated
+          : failure.kind == FailureKind.unauthenticated
+          ? FailureKind.forbidden
+          : failure.kind;
+      AppLog.event('session.verification-failed', {'kind': kind.name});
+      return Failure(message: failure.message, kind: kind);
+    } on Object {
+      // The status said the protection was found, but the body could not be
+      // decoded. The token may well be fine; the answer is not one to act on.
+      AppLog.event('session.verification-unreadable');
       return const Failure(
         message: unreadableAnswer,
         kind: FailureKind.serverError,
