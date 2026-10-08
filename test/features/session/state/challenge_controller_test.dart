@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cerberus_api_client/export.dart';
 import 'package:cerberus_ui/core/network/http_client.dart';
 import 'package:cerberus_ui/core/result/result.dart';
 import 'package:cerberus_ui/core/session/session_controller.dart';
@@ -39,13 +38,11 @@ ProviderContainer _container(
       preferencesStoreProvider.overrideWithValue(leaks.preferences),
       sessionRepositoryProvider.overrideWithValue(
         repository ??
-            ApiSessionRepository(
-              AuthClient(
-                createHttpClient(
-                  baseUrl: Uri.parse('https://vault.example'),
-                  readToken: () async => null,
-                  adapter: leaks.adapter,
-                ),
+            ApiSessionRepository.over(
+              createHttpClient(
+                baseUrl: Uri.parse('https://vault.example'),
+                readToken: () async => null,
+                adapter: leaks.adapter,
               ),
             ),
       ),

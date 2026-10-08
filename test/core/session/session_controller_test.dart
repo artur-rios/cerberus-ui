@@ -202,6 +202,45 @@ void main() {
       );
     });
 
+    for (final (hasProtection, vault) in const [
+      (true, VaultLocked()),
+      (false, VaultProtectionUninitialized()),
+    ]) {
+      test('Given a stored session the API accepted, protection '
+          '${hasProtection ? 'found' : 'not found'} '
+          'When it is restored '
+          'Then the session is signed in naming no account, the vault is '
+          '$vault, and nothing is written (UC-05 step 5)', () {
+        final leaks = LeakRecorder();
+        final container = _container(leaks);
+
+        container
+            .read(sessionProvider.notifier)
+            .restore(hasProtection: hasProtection);
+
+        expect(
+          container.read(sessionProvider),
+          const SignedIn(accountId: null),
+        );
+        expect(container.read(vaultStateProvider), vault);
+        expect(leaks.secureStore.writes, isEmpty);
+        expect(leaks.preferences.writes, isEmpty);
+      });
+    }
+
+    test('Given a restored session whose account has no protection '
+        'When the session ends '
+        'Then the vault is locked and what was known of the protection is '
+        'forgotten with the session', () async {
+      final container = _container(LeakRecorder());
+      final session = container.read(sessionProvider.notifier)
+        ..restore(hasProtection: false);
+
+      await session.end();
+
+      expect(container.read(vaultStateProvider), const VaultLocked());
+    });
+
     test('Given no session '
         'When the session ends '
         'Then it is not an error', () async {
@@ -220,6 +259,23 @@ void main() {
       final container = _container(LeakRecorder(), unlocked: true);
 
       container.read(vaultStateProvider.notifier).lock();
+
+      expect(container.read(vaultStateProvider), const VaultLocked());
+    });
+
+    test('Given a locked vault '
+        'When protection is recorded as absent, then present '
+        'Then it awaits setup, then is locked (UC-05 step 5)', () {
+      final container = _container(LeakRecorder());
+      final vault = container.read(vaultStateProvider.notifier)
+        ..recordProtection(exists: false);
+
+      expect(
+        container.read(vaultStateProvider),
+        const VaultProtectionUninitialized(),
+      );
+
+      vault.recordProtection(exists: true);
 
       expect(container.read(vaultStateProvider), const VaultLocked());
     });

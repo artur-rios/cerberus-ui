@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cerberus_api_client/export.dart';
 import 'package:cerberus_ui/app/router.dart';
 import 'package:cerberus_ui/app/routes.dart';
 import 'package:cerberus_ui/core/network/http_client.dart';
@@ -41,13 +40,11 @@ Future<ProviderContainer> _pump(
     overrides: [
       sessionRepositoryProvider.overrideWithValue(
         repository ??
-            ApiSessionRepository(
-              AuthClient(
-                createHttpClient(
-                  baseUrl: Uri.parse('https://vault.example'),
-                  readToken: () async => null,
-                  adapter: adapter ?? StubHttpAdapter(),
-                ),
+            ApiSessionRepository.over(
+              createHttpClient(
+                baseUrl: Uri.parse('https://vault.example'),
+                readToken: () async => null,
+                adapter: adapter ?? StubHttpAdapter(),
               ),
             ),
       ),

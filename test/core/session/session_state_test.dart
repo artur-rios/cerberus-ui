@@ -34,5 +34,16 @@ void main() {
         const SignedIn(accountId: 'a').hashCode,
       );
     });
+
+    test('Given a restored session '
+        'When it is compared and printed '
+        'Then it names no account and equals only another such session', () {
+      expect(const SignedIn(accountId: null), const SignedIn(accountId: null));
+      expect(
+        const SignedIn(accountId: null),
+        isNot(const SignedIn(accountId: 'a')),
+      );
+      expect(const SignedIn(accountId: null).toString(), 'SignedIn(null)');
+    });
   });
 }

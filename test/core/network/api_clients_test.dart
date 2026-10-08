@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/stub_http_adapter.dart';
+import '../../support/vault_payloads.dart';
 
 void main() {
   group('The generated client providers', () {
@@ -72,6 +73,19 @@ void main() {
       expect(
         adapter.requests.single.uri.toString(),
         'https://vault.example/api/accounts/me',
+      );
+    });
+
+    test('Given the configured client '
+        'When the vault client reads the protection '
+        'Then the request goes through it to the adopted instance', () async {
+      adapter.on('GET', '/api/vault/protection', protectionFound());
+
+      await container.read(vaultClientProvider).getApiVaultProtection();
+
+      expect(
+        adapter.requests.single.uri.toString(),
+        'https://vault.example/api/vault/protection',
       );
     });
   });

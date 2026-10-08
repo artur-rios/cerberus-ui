@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cerberus_api_client/export.dart';
 import 'package:cerberus_ui/app/router.dart';
 import 'package:cerberus_ui/app/routes.dart';
 import 'package:cerberus_ui/core/network/http_client.dart';
@@ -39,13 +38,11 @@ Future<ProviderContainer> _pump(
   overrides: [
     sessionRepositoryProvider.overrideWithValue(
       repository ??
-          ApiSessionRepository(
-            AuthClient(
-              createHttpClient(
-                baseUrl: Uri.parse('https://vault.example'),
-                readToken: () async => null,
-                adapter: adapter ?? StubHttpAdapter(),
-              ),
+          ApiSessionRepository.over(
+            createHttpClient(
+              baseUrl: Uri.parse('https://vault.example'),
+              readToken: () async => null,
+              adapter: adapter ?? StubHttpAdapter(),
             ),
           ),
     ),
@@ -360,6 +357,87 @@ void main() {
       expect(container.read(sessionProvider), const SignedOut());
       expect(find.byKey(SignInScreen.continueButton), findsNothing);
       expect(_location(container), Routes.signIn);
+    });
+
+    group('when the stored session was rejected at start (UC-05 AF-02)', () {
+      Future<(ProviderContainer, RecordingSecureStore)> start(
+        WidgetTester tester,
+        FakeSessionRepository repository,
+      ) async {
+        final secureStore = RecordingSecureStore()
+          ..values[SecureKey.sessionToken] = 'stored-token';
+        final container = await pumpCerberusApp(
+          tester,
+          secureStore: secureStore,
+          restoreSession: true,
+          overrides: [sessionRepositoryProvider.overrideWithValue(repository)],
+        );
+        return (container, secureStore);
+      }
+
+      FakeSessionRepository rejecting() => FakeSessionRepository()
+        ..nextVerification = const Failure(
+          message: 'authentication_required',
+          kind: FailureKind.unauthenticated,
+        );
+
+      testWidgets('Given a stored token the API rejects '
+          'When the application starts '
+          'Then sign-in says the session ended, and the token is gone', (
+        tester,
+      ) async {
+        final (container, secureStore) = await start(tester, rejecting());
+
+        expect(_location(container), Routes.signIn);
+        expect(find.byKey(SignInScreen.sessionEndedNotice), findsOneWidget);
+        expect(
+          find.text('Your session ended. Sign in again to continue.'),
+          findsOneWidget,
+        );
+        expect(secureStore.values, isNot(contains(SecureKey.sessionToken)));
+      });
+
+      testWidgets('Given the session-ended notice '
+          'When it is dismissed '
+          'Then it is gone', (tester) async {
+        await start(tester, rejecting());
+
+        await tester.tap(find.byKey(SignInScreen.dismissNoticeButton));
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(SignInScreen.sessionEndedNotice), findsNothing);
+      });
+
+      testWidgets('Given the session-ended notice '
+          'When the user signs in again '
+          'Then it is gone', (tester) async {
+        final repository = rejecting()
+          ..next = const Success(
+            SignInCompleted(token: 'token', accountId: 'acct-1'),
+          );
+        await start(tester, repository);
+
+        await _fillAndSubmit(tester);
+
+        expect(find.byKey(SignInScreen.sessionEndedNotice), findsNothing);
+      });
+
+      testWidgets('Given no stored session '
+          'When the application starts '
+          'Then sign-in shows no notice (UC-05 AF-01)', (tester) async {
+        final container = await pumpCerberusApp(
+          tester,
+          restoreSession: true,
+          overrides: [
+            sessionRepositoryProvider.overrideWithValue(
+              FakeSessionRepository(),
+            ),
+          ],
+        );
+
+        expect(_location(container), Routes.signIn);
+        expect(find.byKey(SignInScreen.sessionEndedNotice), findsNothing);
+      });
     });
   });
 }
