@@ -1,0 +1,61 @@
+# IR-11: generated code stays generated.
+#
+# Regenerates the API client from api/cerberus.json, drift's code for the local
+# store, its schema snapshot and migration test helpers, and the localizations,
+# and compares them with what is committed. Any difference fails the build —
+# which is what makes "never hand-edit generated code" an enforced rule rather
+# than a request (FR-DA-02, NFR-15).
+
+name: Check generated
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: check-generated-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    name: Generated code matches its sources
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get --enforce-lockfile
+
+      - name: Regenerate the API client
+        run: dart run tool/generate_api_client.dart
+
+      - name: Regenerate the local store code
+        run: |
+          dart run build_runner build --delete-conflicting-outputs
+          dart run drift_dev make-migrations
+          dart run drift_dev schema generate drift_schemas/local_store/ test/core/local_store/generated/
+
+      - name: Regenerate the localizations
+        run: flutter gen-l10n
+
+      - name: Fail on drift
+        run: |
+          git add --intent-to-add --all
+          if ! git diff --quiet; then
+            echo "::error::Committed generated code differs from what regeneration produces."
+            echo "Run the commands in CONTRIBUTING.md § Generated code and commit the result."
+            echo "Never hand-edit generated code (IR-10, IR-11, FR-DA-02)."
+            git diff --stat
+            exit 1
+          fi
+          echo "Generated code is in sync with its sources."

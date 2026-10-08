@@ -1,0 +1,35 @@
+{
+  "@@locale": "en",
+  "appTitle": "Cerberus",
+  "@appTitle": {
+    "description": "The application's name, in the window title and task switcher."
+  },
+  "notAvailableTitle": "Not available",
+  "@notAvailableTitle": {
+    "description": "Title of the screen shown when the route guard refuses a route."
+  },
+  "notAvailableProtocol": "This part of the vault waits for the Cerberus protocol to pass its security review. Nothing that encrypts, decrypts or unlocks is offered until then.",
+  "@notAvailableProtocol": {
+    "description": "Why a protocol-dependent route is refused while the protocol gate is closed (UC-07 AF-06)."
+  },
+  "notAvailableStorageMode": "This is only available when the device keeps an encrypted copy of the vault. This device runs online only.",
+  "@notAvailableStorageMode": {
+    "description": "Why a default-mode-only route is refused on an online-only device."
+  },
+  "notAvailableDeviceProfile": "This device is restricted to one profile, and this content is outside it.",
+  "@notAvailableDeviceProfile": {
+    "description": "Why content outside the device profile is refused (UC-07 AF-03)."
+  },
+  "notFoundTitle": "Page not found",
+  "@notFoundTitle": {
+    "description": "Title of the screen shown for a route that does not exist (UC-07 AF-05)."
+  },
+  "notFoundBody": "There is nothing at this address.",
+  "@notFoundBody": {
+    "description": "Body of the not-found screen."
+  },
+  "pendingFeatureBody": "This screen is not available in this version yet.",
+  "@pendingFeatureBody": {
+    "description": "Shown on a route the application reserves but does not implement yet."
+  }
+}

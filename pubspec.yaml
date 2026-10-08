@@ -1,0 +1,65 @@
+name: cerberus_ui
+description: "The Cerberus client: an end-to-end encrypted vault for the web, Windows, Linux and Android."
+publish_to: 'none'
+
+# The application version (CONTRIBUTING.md § Versioning). The build number only
+# ever increases, because Android refuses to install over a higher one.
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.2
+
+# Versions follow the Technology Stack Document §1.1: each constraint is the
+# latest stable release when the dependency was added, and pubspec.lock is the
+# authoritative record of what a build resolved.
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  flutter_riverpod: ^3.4.3
+  go_router: ^18.0.2
+  dio: ^5.11.1
+  flutter_secure_storage: ^11.2.0
+  shared_preferences: ^2.5.6
+  # The local store (IR-08). drift depends on package:sqlite3 3.x, which
+  # bundles SQLite for Android, Windows and Linux through its build hooks.
+  drift: ^2.35.2
+  path_provider: ^2.1.6
+  intl: ^0.20.3
+  meta: ^1.19.0
+
+  # Generated from api/cerberus.json (IR-10). Never hand-edited.
+  cerberus_api_client:
+    path: packages/cerberus_api_client
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  # The single mocking library (Testing Specification §6.2).
+  mocktail: ^1.0.5
+  build_runner: ^2.16.2
+  drift_dev: ^2.35.1
+  swagger_parser: ^1.45.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  # Roboto is bundled rather than left to the web engine, which would otherwise
+  # fetch it from fonts.gstatic.com on every load: the Cerberus API is the only
+  # destination (FR-PV-04). Licensed under Apache 2.0, see the license file
+  # beside the fonts.
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700

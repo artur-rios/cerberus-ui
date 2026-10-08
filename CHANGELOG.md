@@ -7,10 +7,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-No release has been tagged yet, and there is no application code yet.
+No release has been tagged yet.
 
 ### Added
 
+- The application scaffold (#1): a Flutter application for the web, Windows, Linux and Android, laid out by feature
+  over a shared core — the guarded router, configuration and device settings, the session and vault lock state, the
+  secure-storage and preference wrappers (memory only on the web), the drift local store with its schema and
+  migration test, the configured HTTP client with no cache, the redacting debug-only log, and the result type every
+  repository returns.
+- The protocol gate, **closed**: every flow that encrypts, decrypts, wraps, proves or recovers stays unavailable, and
+  the interface says why, until the Cerberus protocol passes its review.
+- The API client generated from the Cerberus API's OpenAPI document, by one command.
+- Screen-capture protection on Android, and no backup of application data.
+- The web build registers no service worker, uses no browser storage, and fetches nothing from a third party: CanvasKit
+  and the Roboto font are bundled.
+- CI: formatting, analysis, the import-boundary and protocol-gate checks, the test suite, a web bundle check, a
+  generated-code drift check and the branching-model check on every pull request; per-target builds — a web image,
+  a Windows installer and portable archive, a Linux package and an Android APK — on a version tag.
 - The specifications: the brainstorm and the initial documents (project overview, technology stack, workflow and
   business rules), and the formal requirements (vision, system requirements, use case specification, development
   workflow, testing specification, technology stack and operations & infrastructure).

@@ -6,10 +6,6 @@ in the
 [Development Workflow Document](docs/requirements/Development%20Workflow%20Document.md). Work
 branches are cut from and merged into `develop`; see the [branching model](#branching-model) below.
 
-> The application code does not exist yet. The foundation issue (#1) creates it, together with the
-> CI workflows this guide refers to. Until then, the commands below are the intended ones the
-> specifications fix.
-
 ## Prerequisites
 
 The **Flutter SDK**, stable channel, at the latest stable release — with the toolchain for whichever
@@ -33,17 +29,37 @@ cryptographic package, and no primitive is implemented by hand.
 
 ## Generated code
 
-The generated API client is committed, so a clean clone needs no generation step. Regenerate it only
-after taking a new API contract — copy `docs/contracts/openapi.json` from `cerberus-api` to
-`api/cerberus.json` — and then:
+All generated code is committed, so a clean clone needs no generation step. Never hand-edit it; the
+Check generated workflow regenerates everything below and fails on any difference from what is
+committed.
+
+**The API client**, only after taking a new API contract — copy `docs/contracts/openapi.json` from
+`cerberus-api` to `api/cerberus.json` — and then:
 
 ```bash
 dart run tool/generate_api_client.dart
+```
+
+**The local store's drift code**, after any change to `lib/core/local_store/`:
+
+```bash
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-The second command regenerates the local store's drift code. Never hand-edit generated code; CI
-regenerates both and fails on any difference from what is committed.
+A schema change also bumps `schemaVersion`, adds a migration step and a migration test, and
+snapshots the schema and regenerates the migration test helpers:
+
+```bash
+dart run drift_dev make-migrations
+dart run drift_dev schema generate drift_schemas/local_store/ test/core/local_store/generated/
+```
+
+**The localizations**, after editing `lib/l10n/app_en.arb` (also run by any `flutter run` or
+`flutter build`):
+
+```bash
+flutter gen-l10n
+```
 
 ## Testing
 
@@ -67,12 +83,20 @@ There is no numeric coverage floor. The standard is that every use case's main f
 carries a leak assertion proving no plaintext went where it must not. Every use case ships with its
 tests before its pull request is opened.
 
-CI also verifies formatting and the import boundaries:
+CI also verifies formatting, the import boundaries, the protocol gate and the web bundle:
 
 ```bash
 dart format --output=none --set-exit-if-changed lib test tool
 dart run tool/check_boundaries.dart
+dart run tool/check_protocol_gate.dart
+flutter build web --release --no-web-resources-cdn && tool/check_web_bundle.sh build/web
 ```
+
+The boundary check keeps cryptographic packages in `core/crypto`, storage packages in `core/storage`
+and `core/local_store`, `dio` and the local store in repositories, logging in `core/logging`, each
+feature off the others, and browser storage and observing packages out altogether; every rule is in
+[`tool/boundary_rules.dart`](tool/boundary_rules.dart). The gate check fails a build whose protocol
+gate is open without the Cerberus vectors in `test/vectors/cerberus/` and a test that runs them.
 
 ## Branching model
 
@@ -89,8 +113,8 @@ fix/<name> ─────┴─▶ develop ──▶ release/x.y.z ──▶ ma
 
 Use case branches are named `feature/uc-##-use-case-name`. Names are lowercase: letters, digits,
 `.`, `_` and `-`. A `release/` branch is a snapshot of `develop` and carries no commits of its own:
-a fix for a release lands on `develop` through a `fix/` branch and a new release branch is cut. A
-Branch Policy workflow, added with the foundation, checks this on every pull request.
+a fix for a release lands on `develop` through a `fix/` branch and a new release branch is cut. The
+Branch Policy workflow checks this on every pull request.
 
 ## Commits and the changelog
 
