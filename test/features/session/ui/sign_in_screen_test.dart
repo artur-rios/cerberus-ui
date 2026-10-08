@@ -275,6 +275,26 @@ void main() {
       expect(secure.writes, isEmpty);
     });
 
+    testWidgets('Given sign-in remembering a route the guard refused '
+        'When the API answers with a second-factor challenge '
+        'Then the challenge carries the remembered route on (UC-07 step 7)', (
+      tester,
+    ) async {
+      final adapter = StubHttpAdapter()
+        ..on('POST', loginPath, loginChallenged());
+      final container = await _pump(tester, adapter: adapter);
+      container.read(routerProvider).go(Routes.settings);
+      await tester.pumpAndSettle();
+
+      await _fillAndSubmit(tester);
+
+      expect(
+        _location(container),
+        Routes.carrying(Routes.challenge, Routes.settings),
+      );
+      expect(find.byType(ChallengeScreen), findsOneWidget);
+    });
+
     testWidgets('Given secure storage is unavailable '
         'When the API completes the login '
         'Then the screen says the session cannot be kept and asks, signing '

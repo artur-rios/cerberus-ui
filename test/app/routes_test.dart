@@ -143,4 +143,82 @@ void main() {
       }
     });
   });
+
+  group('Routes.rememberFrom, rememberedIn and carrying (UC-07 step 5)', () {
+    test('Given a destination '
+        'When the guard redirects away from it '
+        'Then it is remembered whole, query included, and carried there and '
+        'back unchanged', () {
+      for (final location in [
+        Routes.settings,
+        '/records/r-1',
+        '/records/r-1?tab=fields',
+        '/no/such/route',
+      ]) {
+        final remembered = Routes.rememberFrom(Uri.parse(location));
+        expect(remembered, location);
+
+        final carried = Uri.parse(Routes.carrying(Routes.signIn, remembered));
+        expect(carried.path, Routes.signIn);
+        expect(Routes.rememberedIn(carried), location);
+      }
+    });
+
+    test('Given home, the not-available screen or an anonymous route '
+        'When the guard redirects away from it '
+        'Then nothing is remembered, and the target carries no parameter', () {
+      for (final location in [
+        Routes.home,
+        Routes.unavailableFor(UnavailableReason.protocol),
+        Routes.register,
+        Routes.setup,
+      ]) {
+        expect(Routes.rememberFrom(Uri.parse(location)), isNull);
+      }
+      expect(Routes.carrying(Routes.signIn, null), Routes.signIn);
+    });
+
+    test('Given a route the guard sends people to, carrying a remembered route '
+        'When the guard redirects away from it '
+        'Then the route it carries is passed on, never the route itself', () {
+      for (final step in Routes.interstitial) {
+        expect(
+          Routes.rememberFrom(
+            Uri.parse(Routes.carrying(step, Routes.settings)),
+          ),
+          Routes.settings,
+          reason: step,
+        );
+        expect(Routes.rememberFrom(Uri.parse(step)), isNull, reason: step);
+      }
+    });
+
+    test('Given a carried value that is not a route worth returning to in this '
+        'application '
+        'When it is read '
+        'Then it is ignored', () {
+      for (final target in [
+        'https://elsewhere.example/',
+        '//elsewhere.example/',
+        'records/r-1',
+        '',
+        Routes.home,
+        Routes.unavailable,
+        Routes.signIn,
+        Routes.unlock,
+        Routes.starting,
+      ]) {
+        expect(
+          Routes.rememberedIn(
+            Uri(
+              path: Routes.signIn,
+              queryParameters: {Routes.continueParameter: target},
+            ),
+          ),
+          isNull,
+          reason: target,
+        );
+      }
+    });
+  });
 }
