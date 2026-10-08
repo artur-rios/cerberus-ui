@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../config/instance_config.dart';
 import '../session/session_controller.dart';
 import '../session/session_token_store.dart';
+import 'api_failure.dart';
 
 /// How long to wait for a connection, and for each direction of a request.
 const connectTimeout = Duration(seconds: 10);
@@ -25,9 +26,12 @@ const receiveTimeout = Duration(seconds: 30);
 /// sign-out takes effect on the very next one. [onUnauthenticated] is told when
 /// the API rejects a token, so the session can end (`FR-SE-09`); the network
 /// layer reports the fact and does not decide what to do about it, and nothing
-/// is retried (`FR-SE-10`). A 401 on a request that carried no token — a
-/// refused password or second-factor code — rejected no session, so it is not
-/// reported. [adapter] replaces the transport in tests.
+/// is retried (`FR-SE-10`). Only a 401 stating `authentication_required` on a
+/// request that carried a token rejects a session. A 401 on a request without
+/// one — a refused password or second-factor code — rejected no session, and
+/// neither did a 401 stating anything else, such as `vault_access_required`
+/// for a valid session whose vault is locked; neither is reported. [adapter]
+/// replaces the transport in tests.
 Dio createHttpClient({
   required Uri baseUrl,
   required Future<String?> Function() readToken,
@@ -77,8 +81,8 @@ class BearerTokenInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    if (err.response?.statusCode == 401 &&
-        err.requestOptions.headers.containsKey('Authorization')) {
+    if (err.requestOptions.headers.containsKey('Authorization') &&
+        isTokenRejection(err)) {
       onUnauthenticated?.call();
     }
     handler.next(err);
