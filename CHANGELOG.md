@@ -20,6 +20,10 @@ No release has been tagged yet.
   Android and in memory on the web; a refusal shows the API's own reason and nothing inferred from it; a second-factor
   challenge is held in memory until it is completed; and a device whose secure storage is unavailable may continue for
   the run with the token in memory, never falling back to preferences or a file. Signing in never unlocks the vault.
+- The second-factor challenge (#5, UC-04). The screen names each method the API offered and completes the sign-in
+  through the API's challenge endpoint. A refused code shows the API's reason, keeps the challenge for another attempt
+  and offers to sign in again; the API does not yet report an expired challenge apart from a wrong code, so nothing is
+  inferred from the refusal. Leaving the screen discards the challenge, and nothing about it is ever stored.
 - The protocol gate, **closed**: every flow that encrypts, decrypts, wraps, proves or recovers stays unavailable, and
   the interface says why, until the Cerberus protocol passes its review.
 - The API client generated from the Cerberus API's OpenAPI document, by one command.
