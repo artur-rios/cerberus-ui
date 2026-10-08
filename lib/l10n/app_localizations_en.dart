@@ -70,4 +70,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signInDiscardSession => 'Cancel';
+
+  @override
+  String get challengeTitle => 'Second factor';
+
+  @override
+  String get challengeIntro =>
+      'Your sign-in needs a second factor. Enter a code from:';
+
+  @override
+  String get challengeMethodApp => 'Your authenticator app';
+
+  @override
+  String get challengeMethodEmail => 'A code sent to your email';
+
+  @override
+  String get challengeCodeLabel => 'Code';
+
+  @override
+  String get challengeSubmit => 'Verify';
+
+  @override
+  String get challengeRefusedHint =>
+      'You can enter another code, or sign in again.';
+
+  @override
+  String get challengeRepeatSignIn => 'Sign in again';
+
+  @override
+  String get challengeBackToSignIn => 'Back to sign in';
 }

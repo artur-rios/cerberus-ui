@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cerberus_api_client/export.dart';
 import 'package:cerberus_ui/core/network/http_client.dart';
 import 'package:cerberus_ui/core/result/result.dart';
@@ -82,7 +84,7 @@ void main() {
         ..on(
           'POST',
           loginPath,
-          loginChallenged(challengeToken: 'ch-1', methods: ['totp', 'email']),
+          loginChallenged(challengeToken: 'ch-1', methods: ['App', 'Email']),
         );
 
       final result = await _repository(adapter)
@@ -90,7 +92,7 @@ void main() {
 
       final challenged = result.valueOrNull! as SignInChallenged;
       expect(challenged.challengeToken, 'ch-1');
-      expect(challenged.methods, ['totp', 'email']);
+      expect(challenged.methods, ['App', 'Email']);
     });
 
     test('Given credentials the API rejects '
@@ -222,6 +224,147 @@ void main() {
       expect(
         result,
         const Failure<SignInOutcome>(
+          message: ApiSessionRepository.unreadableAnswer,
+          kind: FailureKind.serverError,
+        ),
+      );
+    });
+  });
+
+  group('ApiSessionRepository.completeChallenge', () {
+    Future<Result<SignInCompleted>> complete(
+      StubHttpAdapter adapter, {
+      String challengeToken = 'CHALLENGE-MARKER',
+      String code = 'CODE-MARKER',
+    }) =>
+        _repository(adapter)
+            .completeChallenge(challengeToken: challengeToken, code: code);
+
+    test('Given a code the API accepts '
+        'When the challenge is completed '
+        'Then the result is a completed login carrying the token and the '
+        'account (UC-04 main flow, step 5)', () async {
+      final adapter = StubHttpAdapter()
+        ..on(
+          'POST',
+          challengePath,
+          challengeCompleted(token: 'tok', accountId: 'a-1'),
+        );
+
+      final result = await complete(adapter);
+
+      expect(result.valueOrNull!.token, 'tok');
+      expect(result.valueOrNull!.accountId, 'a-1');
+    });
+
+    test('Given a code '
+        'When the challenge is completed '
+        'Then the code and the challenge reference are posted to the '
+        'challenge endpoint as the contract names them, with no recovery code '
+        'and no token (UC-04 step 4)', () async {
+      final adapter = StubHttpAdapter()
+        ..on('POST', challengePath, challengeCompleted());
+
+      await complete(adapter);
+
+      final request = adapter.requests.single;
+      expect(request.method, 'POST');
+      expect(request.uri.scheme, 'https');
+      expect(request.uri.path, challengePath);
+      final body = jsonDecode(request.body) as Map<String, Object?>;
+      expect(body['challengeToken'], 'CHALLENGE-MARKER');
+      expect(body['code'], 'CODE-MARKER');
+      expect(body['recoveryCode'], isNull);
+      expect(request.headers, isNot(contains('Authorization')));
+    });
+
+    test(
+      'Given a code '
+      'When the challenge is completed '
+      'Then the code and the reference reach the request body and nothing '
+      'else — no URL, header, storage or log line (FR-SE-04, FR-PV-02)',
+      () async {
+        final leaks = LeakRecorder();
+        leaks.adapter.on('POST', challengePath, challengeCompleted());
+
+        await complete(leaks.adapter);
+
+        leaks.expectOnlyIn('CODE-MARKER', {LeakChannel.request});
+        leaks.expectOnlyIn('CHALLENGE-MARKER', {LeakChannel.request});
+        final uri = '${leaks.adapter.requests.single.uri}';
+        expect(uri, isNot(contains('CODE-MARKER')));
+        expect(uri, isNot(contains('CHALLENGE-MARKER')));
+      },
+    );
+
+    test('Given a code the API refuses '
+        'When the challenge is completed '
+        'Then the failure carries the API\'s own reason unchanged — the same '
+        'for a wrong code and an expired challenge (UC-04 AF-01, AF-02, '
+        'FR-DA-06)', () async {
+      final adapter = StubHttpAdapter()
+        ..on('POST', challengePath, challengeRefused());
+
+      final result = await complete(adapter);
+
+      expect(
+        result,
+        const Failure<SignInCompleted>(
+          message: 'authentication_required',
+          kind: FailureKind.unauthenticated,
+        ),
+      );
+    });
+
+    test('Given an unreachable instance '
+        'When the challenge is completed '
+        'Then the failure is unreachable and no session is assumed (UC-04 '
+        'AF-04)', () async {
+      final result = await complete(StubHttpAdapter());
+
+      expect((result as Failure).kind, FailureKind.unreachable);
+    });
+
+    for (final (name, response) in [
+      ('a second challenge', loginChallenged()),
+      ('a success with no token', challengeCompleted(token: '')),
+      (
+        'a success with no data',
+        const StubResponse(200, {'messages': <String>[], 'success': true}),
+      ),
+    ]) {
+      test('Given an answer that is $name '
+          'When the challenge is completed '
+          'Then it is a failure, never a half-made session', () async {
+        final adapter = StubHttpAdapter()..on('POST', challengePath, response);
+
+        final result = await complete(adapter);
+
+        expect(
+          result,
+          const Failure<SignInCompleted>(
+            message: ApiSessionRepository.incompleteAnswer,
+            kind: FailureKind.serverError,
+          ),
+        );
+      });
+    }
+
+    test('Given an answer the client cannot decode '
+        'When the challenge is completed '
+        'Then it is a failure value rather than a throw (FR-DA-03)', () async {
+      final adapter = StubHttpAdapter()
+        ..on(
+          'POST',
+          challengePath,
+          const StubResponse(200, {'data': 'not-an-object'}),
+        );
+
+      final result = await complete(adapter);
+
+      expect(
+        result,
+        const Failure<SignInCompleted>(
           message: ApiSessionRepository.unreadableAnswer,
           kind: FailureKind.serverError,
         ),

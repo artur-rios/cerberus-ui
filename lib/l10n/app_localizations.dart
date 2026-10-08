@@ -207,6 +207,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get signInDiscardSession;
+
+  /// Title of the second-factor challenge screen (UC-04).
+  ///
+  /// In en, this message translates to:
+  /// **'Second factor'**
+  String get challengeTitle;
+
+  /// Introduces the list of second-factor methods the API offered (UC-04 step 1).
+  ///
+  /// In en, this message translates to:
+  /// **'Your sign-in needs a second factor. Enter a code from:'**
+  String get challengeIntro;
+
+  /// The second-factor method the API names App (UC-04 step 1).
+  ///
+  /// In en, this message translates to:
+  /// **'Your authenticator app'**
+  String get challengeMethodApp;
+
+  /// The second-factor method the API names Email (UC-04 step 1).
+  ///
+  /// In en, this message translates to:
+  /// **'A code sent to your email'**
+  String get challengeMethodEmail;
+
+  /// Label of the second-factor code field (UC-04 step 3).
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get challengeCodeLabel;
+
+  /// Submits the second-factor code (UC-04 step 4).
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get challengeSubmit;
+
+  /// Shown under the API's refusal of a second-factor code (UC-04 AF-01, AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'You can enter another code, or sign in again.'**
+  String get challengeRefusedHint;
+
+  /// Gives up on the challenge and returns to sign-in (UC-04 AF-01, AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in again'**
+  String get challengeRepeatSignIn;
+
+  /// Tooltip of the back button that leaves the challenge, discarding it (UC-04 AF-03).
+  ///
+  /// In en, this message translates to:
+  /// **'Back to sign in'**
+  String get challengeBackToSignIn;
 }
 
 class _AppLocalizationsDelegate

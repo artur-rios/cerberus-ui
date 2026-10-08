@@ -48,13 +48,21 @@ final class SignInChallenged extends SignInOutcome {
   String toString() => 'SignInChallenged(methods: $methods)';
 }
 
-/// Signs a user in through the Cerberus API (FR-SE-02).
+/// Signs a user in through the Cerberus API (FR-SE-02, FR-SE-03).
 abstract interface class SessionRepository {
   /// Submits [email] and [password]. The credentials are held only for the
   /// request that carries them (FR-SE-07).
   Future<Result<SignInOutcome>> signIn({
     required String email,
     required String password,
+  });
+
+  /// Submits the second-factor [code] for the challenge [challengeToken]
+  /// through the API's challenge endpoint (UC-04 step 4). The code and the
+  /// reference are held only for the request that carries them.
+  Future<Result<SignInCompleted>> completeChallenge({
+    required String challengeToken,
+    required String code,
   });
 }
 

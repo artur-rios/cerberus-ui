@@ -75,5 +75,41 @@
   "signInDiscardSession": "Cancel",
   "@signInDiscardSession": {
     "description": "Declines to continue with a session that cannot be kept (UC-03 AF-05)."
+  },
+  "challengeTitle": "Second factor",
+  "@challengeTitle": {
+    "description": "Title of the second-factor challenge screen (UC-04)."
+  },
+  "challengeIntro": "Your sign-in needs a second factor. Enter a code from:",
+  "@challengeIntro": {
+    "description": "Introduces the list of second-factor methods the API offered (UC-04 step 1)."
+  },
+  "challengeMethodApp": "Your authenticator app",
+  "@challengeMethodApp": {
+    "description": "The second-factor method the API names App (UC-04 step 1)."
+  },
+  "challengeMethodEmail": "A code sent to your email",
+  "@challengeMethodEmail": {
+    "description": "The second-factor method the API names Email (UC-04 step 1)."
+  },
+  "challengeCodeLabel": "Code",
+  "@challengeCodeLabel": {
+    "description": "Label of the second-factor code field (UC-04 step 3)."
+  },
+  "challengeSubmit": "Verify",
+  "@challengeSubmit": {
+    "description": "Submits the second-factor code (UC-04 step 4)."
+  },
+  "challengeRefusedHint": "You can enter another code, or sign in again.",
+  "@challengeRefusedHint": {
+    "description": "Shown under the API's refusal of a second-factor code (UC-04 AF-01, AF-02)."
+  },
+  "challengeRepeatSignIn": "Sign in again",
+  "@challengeRepeatSignIn": {
+    "description": "Gives up on the challenge and returns to sign-in (UC-04 AF-01, AF-02)."
+  },
+  "challengeBackToSignIn": "Back to sign in",
+  "@challengeBackToSignIn": {
+    "description": "Tooltip of the back button that leaves the challenge, discarding it (UC-04 AF-03)."
   }
 }

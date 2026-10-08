@@ -9,7 +9,8 @@ import '../../../core/network/api_failure.dart';
 import '../../../core/result/result.dart';
 import 'session_repository.dart';
 
-/// Signs in through `POST /api/auth/login` (API UC-02).
+/// Signs in through `POST /api/auth/login`, and completes a second-factor
+/// challenge through `POST /api/auth/2fa/verify` (API UC-02, AF-04).
 class ApiSessionRepository implements SessionRepository {
   ApiSessionRepository(this._client);
 
@@ -49,8 +50,56 @@ class ApiSessionRepository implements SessionRepository {
     }
   }
 
+  @override
+  Future<Result<SignInCompleted>> completeChallenge({
+    required String challengeToken,
+    required String code,
+  }) async {
+    try {
+      final output = await _client.postApiAuth2faVerify(
+        body: VerifyChallengeCommand(
+          challengeToken: challengeToken,
+          code: code,
+        ),
+      );
+      // A completed challenge is a completed login and nothing else: a second
+      // challenge is not something the endpoint answers with.
+      return switch (_outcome(output.data, 'challenge.incomplete')) {
+        Success(value: SignInCompleted() && final completed) => Success(
+          completed,
+        ),
+        Success() => _incomplete('challenge.incomplete'),
+        Failure(:final message, :final kind) => Failure(
+          message: message,
+          kind: kind,
+        ),
+      };
+    } on DioException catch (exception) {
+      final failure = failureFromDioException<SignInCompleted>(exception);
+      AppLog.event('challenge.refused', {'kind': failure.kind.name});
+      return failure;
+    } on Object {
+      AppLog.event('challenge.unreadable');
+      return const Failure(
+        message: unreadableAnswer,
+        kind: FailureKind.serverError,
+      );
+    }
+  }
+
+  static Failure<SignInCompleted> _incomplete(String event) {
+    AppLog.event(event);
+    return const Failure(
+      message: incompleteAnswer,
+      kind: FailureKind.serverError,
+    );
+  }
+
   /// Reads a completed login or a pending challenge out of [output].
-  Result<SignInOutcome> _outcome(AuthenticationOutput? output) {
+  Result<SignInOutcome> _outcome(
+    AuthenticationOutput? output, [
+    String incompleteEvent = 'sign-in.incomplete',
+  ]) {
     final identity = output?.identity;
 
     if (identity != null && identity.requiresTwoFactor == true) {
@@ -71,7 +120,7 @@ class ApiSessionRepository implements SessionRepository {
       }
     }
 
-    AppLog.event('sign-in.incomplete');
+    AppLog.event(incompleteEvent);
     return const Failure(
       message: incompleteAnswer,
       kind: FailureKind.serverError,
