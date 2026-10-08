@@ -96,9 +96,23 @@
             "moor_type": "int",
             "nullable": false,
             "customConstraints": null,
-            "default_dart": "const CustomExpression('1')",
+            "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "id",
+                        "tag": "id"
+                      },
+                      ".equals(1)"
+                    ]
+                  }
+                }
+              }
+            ]
           },
           {
             "name": "token",
@@ -163,9 +177,23 @@
             "moor_type": "int",
             "nullable": false,
             "customConstraints": null,
-            "default_dart": "const CustomExpression('1')",
+            "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "id",
+                        "tag": "id"
+                      },
+                      ".equals(1)"
+                    ]
+                  }
+                }
+              }
+            ]
           },
           {
             "name": "cursor",
@@ -273,7 +301,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"offline_leases\" (\"id\" INTEGER NOT NULL DEFAULT 1, \"token\" TEXT NOT NULL, \"scope\" TEXT NOT NULL, \"expires_at\" TEXT NULL, \"latest_observed_time\" TEXT NOT NULL, PRIMARY KEY (\"id\"));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"offline_leases\" (\"id\" INTEGER NOT NULL CHECK(\"id\" = 1), \"token\" TEXT NOT NULL, \"scope\" TEXT NOT NULL, \"expires_at\" TEXT NULL, \"latest_observed_time\" TEXT NOT NULL, PRIMARY KEY (\"id\"));"
         }
       ]
     },
@@ -282,7 +310,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"sync_cursors\" (\"id\" INTEGER NOT NULL DEFAULT 1, \"cursor\" TEXT NOT NULL, PRIMARY KEY (\"id\"));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"sync_cursors\" (\"id\" INTEGER NOT NULL CHECK(\"id\" = 1), \"cursor\" TEXT NOT NULL, PRIMARY KEY (\"id\"));"
         }
       ]
     },

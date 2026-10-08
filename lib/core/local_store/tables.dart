@@ -37,8 +37,12 @@ class StoredEntities extends Table {
 
 /// The offline lease that bounds offline use. At most one row.
 class OfflineLeases extends Table {
-  /// Always 1: there is only ever one lease, replaced on renewal.
-  IntColumn get id => integer().withDefault(const Constant(1))();
+  /// Always 1: there is only ever one lease, replaced on renewal. A lone
+  /// integer primary key is SQLite's rowid, which ignores a default, so the
+  /// check is what refuses a second row.
+  // drift's documented form for a check on its own column.
+  // ignore: recursive_getters
+  IntColumn get id => integer().check(id.equals(1))();
 
   /// The ES256 JWS, verified before use (`FR-CR-09`).
   TextColumn get token => text()();
@@ -58,8 +62,12 @@ class OfflineLeases extends Table {
 
 /// Where synchronization continues from. At most one row.
 class SyncCursors extends Table {
-  /// Always 1: there is only ever one cursor, replaced as it advances.
-  IntColumn get id => integer().withDefault(const Constant(1))();
+  /// Always 1: there is only ever one cursor, replaced as it advances. A lone
+  /// integer primary key is SQLite's rowid, which ignores a default, so the
+  /// check is what refuses a second row.
+  // drift's documented form for a check on its own column.
+  // ignore: recursive_getters
+  IntColumn get id => integer().check(id.equals(1))();
 
   /// The API's opaque change cursor.
   TextColumn get cursor => text()();

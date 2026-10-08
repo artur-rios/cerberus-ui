@@ -396,9 +396,9 @@ class $OfflineLeasesTable extends OfflineLeases
     'id',
     aliasedName,
     false,
+    check: () => id.equals(1),
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultValue: const Constant(1),
   );
   static const VerificationMeta _tokenMeta = const VerificationMeta('token');
   @override
@@ -535,7 +535,9 @@ class $OfflineLeasesTable extends OfflineLeases
 }
 
 class OfflineLease extends DataClass implements Insertable<OfflineLease> {
-  /// Always 1: there is only ever one lease, replaced on renewal.
+  /// Always 1: there is only ever one lease, replaced on renewal. A lone
+  /// integer primary key is SQLite's rowid, which ignores a default, so the
+  /// check is what refuses a second row.
   final int id;
 
   /// The ES256 JWS, verified before use (`FR-CR-09`).
@@ -762,9 +764,9 @@ class $SyncCursorsTable extends SyncCursors
     'id',
     aliasedName,
     false,
+    check: () => id.equals(1),
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultValue: const Constant(1),
   );
   static const VerificationMeta _cursorMeta = const VerificationMeta('cursor');
   @override
@@ -827,7 +829,9 @@ class $SyncCursorsTable extends SyncCursors
 }
 
 class SyncCursor extends DataClass implements Insertable<SyncCursor> {
-  /// Always 1: there is only ever one cursor, replaced as it advances.
+  /// Always 1: there is only ever one cursor, replaced as it advances. A lone
+  /// integer primary key is SQLite's rowid, which ignores a default, so the
+  /// check is what refuses a second row.
   final int id;
 
   /// The API's opaque change cursor.

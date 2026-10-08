@@ -92,8 +92,7 @@ class OfflineLeases extends Table with TableInfo {
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT 1',
-    defaultValue: const CustomExpression('1'),
+    $customConstraints: 'NOT NULL CHECK (id = 1)',
   );
   late final GeneratedColumn<String> token = GeneratedColumn<String>(
     'token',
@@ -170,8 +169,7 @@ class SyncCursors extends Table with TableInfo {
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT 1',
-    defaultValue: const CustomExpression('1'),
+    $customConstraints: 'NOT NULL CHECK (id = 1)',
   );
   late final GeneratedColumn<String> cursor = GeneratedColumn<String>(
     'cursor',

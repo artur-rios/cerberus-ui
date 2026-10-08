@@ -50,10 +50,14 @@ class PlatformSecureStore implements SecureStore {
 
 /// The platform-backed [PreferencesStore].
 class PlatformPreferencesStore implements PreferencesStore {
-  PlatformPreferencesStore([SharedPreferencesAsync? preferences])
-    : _preferences = preferences ?? SharedPreferencesAsync();
+  PlatformPreferencesStore([this._injected]);
 
-  final SharedPreferencesAsync _preferences;
+  final SharedPreferencesAsync? _injected;
+
+  /// Opened at first use rather than at construction, so that building the
+  /// store never touches the platform.
+  late final SharedPreferencesAsync _preferences =
+      _injected ?? SharedPreferencesAsync();
 
   @override
   Future<String?> read(PreferenceKey key) =>

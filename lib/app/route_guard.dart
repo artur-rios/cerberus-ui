@@ -68,9 +68,11 @@ String? resolveRedirect(GuardState state, Uri location) {
 }
 
 String? _signedIn(GuardState state, String path, RouteAccess access) {
-  // A session has no business on sign-in or the challenge.
+  // A session has no business on sign-in or the challenge. Home is resolved
+  // here rather than left to a second pass, so the answer is final: with the
+  // gate closed or the vault locked, home itself redirects.
   if (access == RouteAccess.anonymous || access == RouteAccess.challenge) {
-    return Routes.home;
+    return _signedIn(state, Routes.home, RouteAccess.unlocked) ?? Routes.home;
   }
 
   // The protocol gate before anything vault-related: a closed gate means the
