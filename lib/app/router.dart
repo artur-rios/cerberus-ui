@@ -1,0 +1,80 @@
+/// The router and its single redirect (IR-03, FR-DA-09).
+///
+/// Every route, however reached, passes `resolveRedirect`. The router listens
+/// to everything the guard decides by, so a change of session, lock state,
+/// device settings or instance re-evaluates the current route at once — a
+/// session ending mid-screen sends the user to sign-in without waiting for
+/// them to navigate.
+library;
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
+import 'package:go_router/go_router.dart';
+
+import '../core/config/device_settings.dart';
+import '../core/config/instance_config.dart';
+import '../core/crypto/protocol_gate.dart';
+import '../core/session/session_controller.dart';
+import '../shared/widgets/not_available_screen.dart';
+import '../shared/widgets/not_found_screen.dart';
+import '../shared/widgets/pending_feature_screen.dart';
+import 'route_guard.dart';
+import 'routes.dart';
+
+/// The guard's inputs, read from the providers that hold them.
+GuardState readGuardState(Ref ref) => GuardState(
+  instanceConfigured: ref.read(instanceConfigProvider) != null,
+  session: ref.read(sessionProvider),
+  vault: ref.read(vaultStateProvider),
+  protocolGateOpen: ref.read(protocolGateProvider).isOpen,
+  device: ref.read(deviceSettingsProvider),
+);
+
+/// The application's router.
+final routerProvider = Provider<GoRouter>((ref) {
+  final refresh = ValueNotifier<int>(0);
+  void reevaluateOn<T>(ProviderListenable<T> provider) =>
+      ref.listen<T>(provider, (_, _) => refresh.value++);
+
+  reevaluateOn(instanceConfigProvider);
+  reevaluateOn(sessionProvider);
+  reevaluateOn(vaultStateProvider);
+  reevaluateOn(deviceSettingsProvider);
+  reevaluateOn(protocolGateProvider);
+
+  final router = GoRouter(
+    initialLocation: Routes.home,
+    refreshListenable: refresh,
+    redirect: (context, state) =>
+        resolveRedirect(readGuardState(ref), state.uri),
+    errorBuilder: (context, state) => const NotFoundScreen(),
+    routes: [
+      // Replaced by UC-01.
+      GoRoute(
+        path: Routes.setup,
+        builder: (context, state) => const PendingFeatureScreen(),
+      ),
+      // Replaced by UC-03.
+      GoRoute(
+        path: Routes.signIn,
+        builder: (context, state) => const PendingFeatureScreen(),
+      ),
+      GoRoute(
+        path: Routes.unavailable,
+        builder: (context, state) => NotAvailableScreen(
+          reason: UnavailableReason.fromParameter(
+            state.uri.queryParameters[Routes.reasonParameter],
+          ),
+        ),
+      ),
+    ],
+  );
+
+  ref.onDispose(() {
+    router.dispose();
+    refresh.dispose();
+  });
+
+  return router;
+});
