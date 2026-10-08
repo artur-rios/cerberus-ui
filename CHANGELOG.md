@@ -37,6 +37,12 @@ No release has been tagged yet.
   lost and asks again. Online only and on the web nothing is asked. A token secure storage cannot delete is reported,
   is no longer read for the rest of the run, and is overwritten by the next sign-in; a session the API rejects
   mid-session ends the same way, keeping the store, and sign-in says the session ended.
+- The route guard (#8, UC-07). Every route, however it is reached, passes one guard that decides by the session, the
+  vault's lock state, the device's storage mode and profile, and the protocol gate. A route it refuses is remembered on
+  the way to sign-in, the second-factor challenge, protection setup or unlock, and opened through the guard again once
+  that is done; only locations within the application are followed. Another profile's content is sent to unlock that
+  profile instead of being shown under the open one, and a device restricted to a profile is never offered another.
+  The API's refusals are honored as the API states them, and nothing the guard hides is relied on as protection.
 - The protocol gate, **closed**: every flow that encrypts, decrypts, wraps, proves or recovers stays unavailable, and
   the interface says why, until the Cerberus protocol passes its review.
 - The API client generated from the Cerberus API's OpenAPI document, by one command.

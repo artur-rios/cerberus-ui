@@ -14,7 +14,7 @@ device, and decrypts only what the user is looking at.
 [![Project board](https://img.shields.io/badge/project-Cerberus%20UI-8250df?style=flat-square)](https://github.com/users/artur-rios/projects/16)
 
 > **Status:** the foundation, sign-in with its second-factor challenge, restoring a session at
-> start, and signing out are in place; the other use cases are next. Most of them wait on the Cerberus API, and everything that encrypts waits on its
+> start, signing out and the route guard are in place; the other use cases are next. Most of them wait on the Cerberus API, and everything that encrypts waits on its
 > protocol review: see [Dependencies on the Cerberus API](#dependencies-on-the-cerberus-api). The
 > [project board](https://github.com/users/artur-rios/projects/16) is the live view.
 
@@ -181,7 +181,7 @@ protocol is what produces and checks the interoperability vectors it requires.
 | [#5](https://github.com/artur-rios/cerberus-ui/issues/5) | ✅ | UC-04 — Complete a second-factor challenge | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-04-complete-a-second-factor-challenge) |
 | [#6](https://github.com/artur-rios/cerberus-ui/issues/6) | ✅ | UC-05 — Restore a session at start | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-05-restore-a-session-at-start) |
 | [#7](https://github.com/artur-rios/cerberus-ui/issues/7) | ✅ | UC-06 — Sign out | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-06-sign-out) |
-| [#8](https://github.com/artur-rios/cerberus-ui/issues/8) | ⬜ | UC-07 — Guard a route | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-07-guard-a-route) |
+| [#8](https://github.com/artur-rios/cerberus-ui/issues/8) | ✅ | UC-07 — Guard a route | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-07-guard-a-route) |
 | [#10](https://github.com/artur-rios/cerberus-ui/issues/10) | ⬜ | UC-09 — Update identity details | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-09-update-identity-details) |
 | [#11](https://github.com/artur-rios/cerberus-ui/issues/11) | ⬜ | UC-10 — Choose preferences | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-10-choose-preferences) |
 
