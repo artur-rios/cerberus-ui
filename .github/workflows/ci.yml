@@ -1,0 +1,82 @@
+# IR-19: formatting, analysis, the boundary check and the tests on every pull
+# request into, and every push to, develop and main — failing on any of them.
+# IR-06: the protocol gate cannot be opened without its vectors. IR-18: the web
+# bundle registers no service worker, fetches no third-party font and carries
+# no local store. This is the gate for merging.
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  analyze-and-test:
+    name: Analyze and test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed lib test tool
+
+      # An analyzer failure is a failure (Development Workflow §4, Step 5).
+      - name: Analyze
+        run: flutter analyze
+
+      # IR-12 and the rules beside it; see tool/boundary_rules.dart.
+      - name: Check boundaries
+        run: dart run tool/check_boundaries.dart
+
+      - name: Test
+        run: flutter test --coverage
+
+      # IR-06. After the tests, so any vectors it finds have also passed.
+      - name: Check the protocol gate
+        run: dart run tool/check_protocol_gate.dart
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage
+          path: coverage/lcov.info
+          if-no-files-found: warn
+
+  web-bundle:
+    name: Web bundle
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get --enforce-lockfile
+
+      - name: Build
+        run: flutter build web --release --no-web-resources-cdn
+
+      - name: Check the bundle (IR-08, IR-18, FR-PV-04)
+        run: tool/check_web_bundle.sh build/web

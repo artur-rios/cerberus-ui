@@ -50,3 +50,16 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+
+  # Roboto is bundled rather than left to the web engine, which would otherwise
+  # fetch it from fonts.gstatic.com on every load: the Cerberus API is the only
+  # destination (FR-PV-04). Licensed under Apache 2.0, see the license file
+  # beside the fonts.
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700

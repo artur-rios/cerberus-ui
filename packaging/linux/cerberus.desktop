@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Cerberus
+Comment=End-to-end encrypted vault
+Exec=/opt/cerberus/cerberus_ui
+Icon=cerberus
+Terminal=false
+Categories=Utility;Security;

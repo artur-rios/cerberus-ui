@@ -1,0 +1,143 @@
+# IR-21: build every target — web, Windows, Linux and Android — and publish the
+# artifacts (Operations & Infrastructure §6.1, §6.2).
+#
+# Runs on a v* tag and on demand rather than on every push: four platform
+# builds are slow, and the merge gate is ci.yml. A build whose protocol gate is
+# open without its vectors fails before anything is built (IR-06).
+
+name: Build
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: Protocol gate
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get --enforce-lockfile
+      - name: Run the cryptography tests
+        run: flutter test test/core/crypto
+      - name: Check the protocol gate
+        run: dart run tool/check_protocol_gate.dart
+      - name: Read the version
+        id: version
+        run: echo "version=$(sed -n 's/^version: \([0-9.]*\).*/\1/p' pubspec.yaml)" >> "$GITHUB_OUTPUT"
+
+  web:
+    name: Web
+    needs: gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get --enforce-lockfile
+      - name: Build
+        run: flutter build web --release --no-web-resources-cdn
+      - name: Check the bundle
+        run: tool/check_web_bundle.sh build/web
+      - name: Drop the unused service worker
+        run: rm -f build/web/flutter_service_worker.js
+      - uses: actions/upload-artifact@v6
+        with:
+          name: cerberus-ui-${{ needs.gate.outputs.version }}-web
+          path: build/web
+      # The image the deployment platform runs (IR-22). Built to prove it
+      # builds; publishing it belongs to yggdrasil.
+      - name: Build the web image
+        run: docker build -t cerberus-ui:${{ needs.gate.outputs.version }} .
+
+  android:
+    name: Android
+    needs: gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get --enforce-lockfile
+      - name: Build
+        run: flutter build apk --release
+      - uses: actions/upload-artifact@v6
+        with:
+          name: cerberus-ui-${{ needs.gate.outputs.version }}-android
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  windows:
+    name: Windows
+    needs: gate
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get --enforce-lockfile
+      - name: Build
+        run: flutter build windows --release
+      - name: Package the portable archive
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Compress-Archive -Path build\windows\x64\runner\Release\* `
+            -DestinationPath dist\cerberus-ui-${{ needs.gate.outputs.version }}-windows-portable.zip
+      - name: Package the installer
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" `
+            /DAppVersion=${{ needs.gate.outputs.version }} `
+            /DSourceDir=$PWD\build\windows\x64\runner\Release `
+            /DOutputDir=$PWD\dist `
+            packaging\windows\cerberus.iss
+      - uses: actions/upload-artifact@v6
+        with:
+          name: cerberus-ui-${{ needs.gate.outputs.version }}-windows
+          path: dist
+
+  linux:
+    name: Linux
+    needs: gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Install the Linux desktop toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config \
+            libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev
+      - run: flutter pub get --enforce-lockfile
+      - name: Build
+        run: flutter build linux --release
+      - name: Package the installer
+        run: packaging/linux/build_deb.sh ${{ needs.gate.outputs.version }} build/linux/x64/release/bundle dist
+      - uses: actions/upload-artifact@v6
+        with:
+          name: cerberus-ui-${{ needs.gate.outputs.version }}-linux
+          path: dist
