@@ -1,4 +1,5 @@
 import 'package:cerberus_ui/core/session/session_controller.dart';
+import 'package:cerberus_ui/core/session/session_notice.dart';
 import 'package:cerberus_ui/core/session/session_state.dart';
 import 'package:cerberus_ui/core/session/session_token_store.dart';
 import 'package:cerberus_ui/core/session/vault_state.dart';
@@ -239,6 +240,99 @@ void main() {
       await session.end();
 
       expect(container.read(vaultStateProvider), const VaultLocked());
+    });
+
+    test('Given a session '
+        'When the user signs out '
+        'Then the token is gone from secure storage, nothing about it '
+        'reached preferences or a log, and sign-in has nothing to say '
+        '(UC-06 steps 3-5, FR-SE-11)', () async {
+      final leaks = LeakRecorder();
+      final container = _container(leaks, unlocked: true);
+      final session = container.read(sessionProvider.notifier);
+      await session.establish(token: 'TOKEN-MARKER', accountId: 'acct-1');
+
+      await session.end();
+
+      expect(container.read(sessionProvider), const SignedOut());
+      expect(container.read(vaultStateProvider), const VaultLocked());
+      expect(leaks.secureStore.values, isEmpty);
+      expect(await container.read(sessionTokenStoreProvider).read(), isNull);
+      expect(container.read(sessionNoticeProvider), isEmpty);
+      leaks.expectOnlyIn('TOKEN-MARKER', {LeakChannel.secureStorage});
+    });
+
+    test(
+      'Given a session '
+      'When the API rejects its token '
+      'Then the session ends and sign-in will say it ended (UC-06 AF-04)',
+      () async {
+        final container = _container(LeakRecorder());
+        final session = container.read(sessionProvider.notifier);
+        await session.establish(token: 'token', accountId: 'acct-1');
+
+        await session.end(cause: SessionEndCause.tokenRejected);
+
+        expect(container.read(sessionProvider), const SignedOut());
+        expect(container.read(sessionNoticeProvider), {
+          SessionNotice.sessionEnded,
+        });
+      },
+    );
+
+    test(
+      'Given a token secure storage cannot delete '
+      'When the user signs out '
+      'Then the failure is reported, and the vault still locks, the state '
+      'is still discarded and sign-in is still reached (UC-06 AF-03)',
+      () async {
+        final leaks = LeakRecorder();
+        final container = _container(leaks, unlocked: true);
+        final session = container.read(sessionProvider.notifier);
+        await session.establish(token: 'TOKEN-MARKER', accountId: 'acct-1');
+        leaks.secureStore.deleteFailure = const SecureStoreUnavailableException(
+          'locked',
+        );
+
+        await session.end();
+
+        expect(container.read(sessionProvider), const SignedOut());
+        expect(container.read(vaultStateProvider), const VaultLocked());
+        expect(container.read(sessionNoticeProvider), {
+          SessionNotice.tokenNotDeleted,
+        });
+        expect(await container.read(sessionTokenStoreProvider).read(), isNull);
+        leaks.expectOnlyIn('TOKEN-MARKER', {LeakChannel.secureStorage});
+      },
+    );
+
+    test('Given notices left by an earlier ending '
+        'When the session ends again '
+        'Then they are discarded with the rest of the in-memory state (UC-06 '
+        'step 5)', () async {
+      final container = _container(LeakRecorder());
+      container.read(sessionNoticeProvider.notifier)
+        ..post(SessionNotice.tokenNotDeleted)
+        ..post(SessionNotice.vaultNotRemoved);
+
+      await container.read(sessionProvider.notifier).end();
+
+      expect(container.read(sessionNoticeProvider), isEmpty);
+    });
+
+    test('Given a notice about the last session '
+        'When a new session is established '
+        'Then the notice is discarded', () async {
+      final container = _container(LeakRecorder());
+      container
+          .read(sessionNoticeProvider.notifier)
+          .post(SessionNotice.sessionEnded);
+
+      await container
+          .read(sessionProvider.notifier)
+          .establish(token: 'token', accountId: 'acct-1');
+
+      expect(container.read(sessionNoticeProvider), isEmpty);
     });
 
     test('Given no session '

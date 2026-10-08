@@ -1,6 +1,7 @@
 import 'package:cerberus_ui/core/config/app_config.dart';
 import 'package:cerberus_ui/core/network/http_client.dart';
 import 'package:cerberus_ui/core/session/session_controller.dart';
+import 'package:cerberus_ui/core/session/session_notice.dart';
 import 'package:cerberus_ui/core/session/session_state.dart';
 import 'package:cerberus_ui/core/storage/preferences_store.dart';
 import 'package:cerberus_ui/core/storage/secure_store.dart';
@@ -302,31 +303,35 @@ void main() {
       expect(adapter.requests.single.headers, isNot(contains('Authorization')));
     });
 
-    test('Given a signed-in session '
-        'When the API rejects the token '
-        'Then the session ends', () async {
-      final c = container(address: 'https://vault.example');
-      await c
-          .read(sessionProvider.notifier)
-          .establish(token: 'token', accountId: 'acct-1');
-      final adapter = StubHttpAdapter()
-        ..on(
-          'GET',
-          '/api/accounts/me',
-          const StubResponse(401, {
-            'errors': ['authentication_required'],
-          }),
+    test(
+      'Given a signed-in session '
+      'When the API rejects the token '
+      'Then the session ends and sign-in will say so (UC-06 AF-04)',
+      () async {
+        final c = container(address: 'https://vault.example');
+        await c
+            .read(sessionProvider.notifier)
+            .establish(token: 'token', accountId: 'acct-1');
+        final adapter = StubHttpAdapter()
+          ..on(
+            'GET',
+            '/api/accounts/me',
+            const StubResponse(401, {
+              'errors': ['authentication_required'],
+            }),
+          );
+        final dio = c.read(httpClientProvider)..httpClientAdapter = adapter;
+
+        await expectLater(
+          dio.get<Object?>('/api/accounts/me'),
+          throwsA(isA<DioException>()),
         );
-      final dio = c.read(httpClientProvider)..httpClientAdapter = adapter;
+        await pumpEventQueue();
 
-      await expectLater(
-        dio.get<Object?>('/api/accounts/me'),
-        throwsA(isA<DioException>()),
-      );
-      await pumpEventQueue();
-
-      expect(c.read(sessionProvider), const SignedOut());
-    });
+        expect(c.read(sessionProvider), const SignedOut());
+        expect(c.read(sessionNoticeProvider), {SessionNotice.sessionEnded});
+      },
+    );
 
     test('Given a signed-in session '
         'When the API answers 401 vault_access_required '
