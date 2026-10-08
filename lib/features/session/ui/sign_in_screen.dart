@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/routes.dart';
 import '../../../l10n/app_localizations.dart';
 import '../state/sign_in_controller.dart';
+import 'session_not_kept_notice.dart';
 
 /// Signs the user in with an email and a password.
 class SignInScreen extends ConsumerStatefulWidget {
@@ -160,9 +161,20 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                       onRetry: _canSubmit ? _submit : null,
                     ),
                   ],
+                  // AF-05: secure storage is unavailable; the user decides
+                  // whether to continue with the session held for this run.
                   if (decisionPending) ...[
                     const SizedBox(height: 24),
-                    const _SessionNotKeptNotice(),
+                    SessionNotKeptNotice(
+                      continueKey: SignInScreen.continueButton,
+                      discardKey: SignInScreen.discardButton,
+                      onContinue: ref
+                          .read(signInControllerProvider.notifier)
+                          .continueForThisRun,
+                      onDiscard: ref
+                          .read(signInControllerProvider.notifier)
+                          .discardUnkeptSession,
+                    ),
                   ],
                 ],
               ),
@@ -223,56 +235,6 @@ class _FailureNotice extends StatelessWidget {
                   ),
                 ),
               ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// AF-05: secure storage is unavailable; the user decides whether to continue
-/// with the session held in memory for this run.
-class _SessionNotKeptNotice extends ConsumerWidget {
-  const _SessionNotKeptNotice();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    final controller = ref.read(signInControllerProvider.notifier);
-
-    return Semantics(
-      liveRegion: true,
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.signInSessionNotKeptTitle,
-                style: theme.textTheme.titleSmall,
-              ),
-              const SizedBox(height: 8),
-              Text(l10n.signInSessionNotKeptBody),
-              const SizedBox(height: 12),
-              OverflowBar(
-                alignment: MainAxisAlignment.end,
-                spacing: 8,
-                children: [
-                  TextButton(
-                    key: SignInScreen.discardButton,
-                    onPressed: controller.discardUnkeptSession,
-                    child: Text(l10n.signInDiscardSession),
-                  ),
-                  FilledButton(
-                    key: SignInScreen.continueButton,
-                    onPressed: controller.continueForThisRun,
-                    child: Text(l10n.signInContinueForThisRun),
-                  ),
-                ],
-              ),
             ],
           ),
         ),

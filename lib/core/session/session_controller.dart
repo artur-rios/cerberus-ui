@@ -30,6 +30,22 @@ class SessionController extends Notifier<SessionState> {
     );
   }
 
+  /// Discards the outstanding challenge whose reference is [challengeToken],
+  /// leaving the application signed out (UC-04 AF-01, AF-02, AF-03). Nothing
+  /// was stored for it, so there is nothing to delete. A no-op when that
+  /// challenge is no longer the one outstanding — completed, already
+  /// discarded, or replaced by a later sign-in.
+  void abandonChallenge(String challengeToken) {
+    if (!ref.mounted) return;
+    final current = state;
+    if (current is! ChallengePending ||
+        current.challengeToken != challengeToken) {
+      return;
+    }
+    state = const SignedOut();
+    AppLog.event('challenge.abandoned');
+  }
+
   /// Establishes a session: the token goes to secure storage — memory on the
   /// web — and the vault stays locked, because signing in never unlocks it.
   ///
