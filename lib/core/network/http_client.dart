@@ -12,7 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../config/instance_config.dart';
 import '../session/session_controller.dart';
-import '../storage/secure_store.dart';
+import '../session/session_token_store.dart';
 
 /// How long to wait for a connection, and for each direction of a request.
 const connectTimeout = Duration(seconds: 10);
@@ -90,11 +90,11 @@ final httpClientProvider = Provider<Dio>((ref) {
     throw StateError('No Cerberus API instance has been adopted.');
   }
 
-  final secureStore = ref.watch(secureStoreProvider);
+  final tokens = ref.watch(sessionTokenStoreProvider);
 
   return createHttpClient(
     baseUrl: address.uri,
-    readToken: () => secureStore.read(SecureKey.sessionToken),
+    readToken: tokens.read,
     onUnauthenticated: () => ref.read(sessionProvider.notifier).end(),
   );
 });

@@ -141,6 +141,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This screen is not available in this version yet.'**
   String get pendingFeatureBody;
+
+  /// Title of the sign-in screen (UC-03).
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInTitle;
+
+  /// Label of the sign-in email field.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get signInEmailLabel;
+
+  /// Label of the sign-in password field.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get signInPasswordLabel;
+
+  /// The button that submits the sign-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInSubmit;
+
+  /// States under the sign-in form that a session opens nothing (UC-03: signing in never unlocks the vault).
+  ///
+  /// In en, this message translates to:
+  /// **'Signing in does not unlock your vault.'**
+  String get signInVaultStaysLocked;
+
+  /// Heading of the sign-in failure shown when the instance cannot be reached (UC-03 AF-03).
+  ///
+  /// In en, this message translates to:
+  /// **'Connection lost'**
+  String get signInConnectionLostTitle;
+
+  /// The button that retries a sign-in the instance did not answer (UC-03 AF-03).
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get signInRetry;
+
+  /// Heading shown when secure storage is unavailable after a completed sign-in (UC-03 AF-05).
+  ///
+  /// In en, this message translates to:
+  /// **'This session can\'t be kept'**
+  String get signInSessionNotKeptTitle;
+
+  /// Explains that the session cannot be kept and what continuing means (UC-03 AF-05).
+  ///
+  /// In en, this message translates to:
+  /// **'This device\'s secure storage is unavailable, so Cerberus can\'t keep your session. Nothing will be saved to a file or to preferences instead. You can continue until you close Cerberus, and you\'ll need to sign in again next time.'**
+  String get signInSessionNotKeptBody;
+
+  /// Continues with the session held in memory until the application closes (UC-03 AF-05).
+  ///
+  /// In en, this message translates to:
+  /// **'Continue for now'**
+  String get signInContinueForThisRun;
+
+  /// Declines to continue with a session that cannot be kept (UC-03 AF-05).
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get signInDiscardSession;
 }
 
 class _AppLocalizationsDelegate

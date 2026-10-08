@@ -31,5 +31,49 @@
   "pendingFeatureBody": "This screen is not available in this version yet.",
   "@pendingFeatureBody": {
     "description": "Shown on a route the application reserves but does not implement yet."
+  },
+  "signInTitle": "Sign in",
+  "@signInTitle": {
+    "description": "Title of the sign-in screen (UC-03)."
+  },
+  "signInEmailLabel": "Email",
+  "@signInEmailLabel": {
+    "description": "Label of the sign-in email field."
+  },
+  "signInPasswordLabel": "Password",
+  "@signInPasswordLabel": {
+    "description": "Label of the sign-in password field."
+  },
+  "signInSubmit": "Sign in",
+  "@signInSubmit": {
+    "description": "The button that submits the sign-in."
+  },
+  "signInVaultStaysLocked": "Signing in does not unlock your vault.",
+  "@signInVaultStaysLocked": {
+    "description": "States under the sign-in form that a session opens nothing (UC-03: signing in never unlocks the vault)."
+  },
+  "signInConnectionLostTitle": "Connection lost",
+  "@signInConnectionLostTitle": {
+    "description": "Heading of the sign-in failure shown when the instance cannot be reached (UC-03 AF-03)."
+  },
+  "signInRetry": "Try again",
+  "@signInRetry": {
+    "description": "The button that retries a sign-in the instance did not answer (UC-03 AF-03)."
+  },
+  "signInSessionNotKeptTitle": "This session can't be kept",
+  "@signInSessionNotKeptTitle": {
+    "description": "Heading shown when secure storage is unavailable after a completed sign-in (UC-03 AF-05)."
+  },
+  "signInSessionNotKeptBody": "This device's secure storage is unavailable, so Cerberus can't keep your session. Nothing will be saved to a file or to preferences instead. You can continue until you close Cerberus, and you'll need to sign in again next time.",
+  "@signInSessionNotKeptBody": {
+    "description": "Explains that the session cannot be kept and what continuing means (UC-03 AF-05)."
+  },
+  "signInContinueForThisRun": "Continue for now",
+  "@signInContinueForThisRun": {
+    "description": "Continues with the session held in memory until the application closes (UC-03 AF-05)."
+  },
+  "signInDiscardSession": "Cancel",
+  "@signInDiscardSession": {
+    "description": "Declines to continue with a session that cannot be kept (UC-03 AF-05)."
   }
 }

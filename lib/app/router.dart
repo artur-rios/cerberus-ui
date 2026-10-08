@@ -16,6 +16,7 @@ import '../core/config/device_settings.dart';
 import '../core/config/instance_config.dart';
 import '../core/crypto/protocol_gate.dart';
 import '../core/session/session_controller.dart';
+import '../features/session/ui/sign_in_screen.dart';
 import '../shared/widgets/not_available_screen.dart';
 import '../shared/widgets/not_found_screen.dart';
 import '../shared/widgets/pending_feature_screen.dart';
@@ -55,9 +56,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: Routes.setup,
         builder: (context, state) => const PendingFeatureScreen(),
       ),
-      // Replaced by UC-03.
       GoRoute(
         path: Routes.signIn,
+        builder: (context, state) => const SignInScreen(),
+      ),
+      // Replaced by UC-04. Reachable only while a challenge is outstanding.
+      GoRoute(
+        path: Routes.challenge,
         builder: (context, state) => const PendingFeatureScreen(),
       ),
       GoRoute(
