@@ -1,0 +1,42 @@
+# What Jenkins checks and releases for cerberus-ui, read by the pipeline of the yggdrasil installation that runs it
+# (yggdrasil's docs/catalog.md, "Repository pipeline file", has every field). It is data: images, commands, globs and
+# the names of Jenkins credentials. The commands are scripts under ci/ that run from the repository's root, so they
+# can be run by hand too. On Forgejo only the owner merges a change to this file into develop.
+#
+# cerberus-ui is released by the owner's v* tags (`release: owner-tag` in the catalog). Nothing is deployed from here.
+#
+# Check it in the yggdrasil checkout:
+#   python3 scripts/pipeline_config.py describe cerberus-ui <this repository's checkout>
+#
+# Flutter 3.47.4 is pinned in ci/flutter-env.sh, not by the image: ghcr.io/cirruslabs/flutter has no tag newer than
+# 3.44.0, whose Dart is older than pubspec.yaml's `sdk: ^3.13.2`. The image supplies the Android SDK, the JDK, git,
+# curl and zip, and ci/flutter-env.sh fetches the SDK itself (checksummed).
+
+checks:
+  analyze-and-test:                      # workflow lint, formatting, analysis, boundaries, tests with coverage, protocol gate (ci.yml: analyze-and-test)
+    image: ghcr.io/cirruslabs/flutter:3.44.0@sha256:46691e311715845de03a3ba4753a475476936805b29431b1f00f1816981033f8
+    run: ci/analyze-and-test.sh
+    archive: "coverage/lcov.info"        # read, not gated: there is no coverage threshold
+  generated-drift:                       # generated code matches its sources (check-generated.yml: drift)
+    image: ghcr.io/cirruslabs/flutter:3.44.0@sha256:46691e311715845de03a3ba4753a475476936805b29431b1f00f1816981033f8
+    run: ci/generated-drift.sh
+  web-bundle:                            # the release web bundle builds and passes the bundle check (ci.yml: web-bundle)
+    image: ghcr.io/cirruslabs/flutter:3.44.0@sha256:46691e311715845de03a3ba4753a475476936805b29431b1f00f1816981033f8
+    run: ci/web-bundle.sh
+
+release:
+  # build.yml's Linux jobs (gate, web, android, linux), on the release agent from the release's tag. There is no
+  # release keystore, so no credentials.
+  build:
+    image: ghcr.io/cirruslabs/flutter:3.44.0@sha256:46691e311715845de03a3ba4753a475476936805b29431b1f00f1816981033f8
+    run: ci/release-build.sh
+    files:
+      - "dist/*.zip"
+      - "dist/*.apk"
+      - "dist/*.deb"
+  # build.yml's Windows job, on GitHub Actions: dispatched on the tag, with tag=<tag>.
+  windows:
+    workflow: release-windows.yml
+    files:
+      - "cerberus-ui-windows/*.zip"
+      - "cerberus-ui-windows/*.exe"
