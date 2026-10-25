@@ -81,7 +81,9 @@ flutter test integration_test -d linux
 ```
 
 CI also lints every workflow file with [actionlint](https://github.com/rhysd/actionlint), including
-the Release Windows workflow that only a manual run starts. After editing one, run the same check:
+the Release Windows workflow that only a manual run starts. The check runs the actionlint binary,
+without shellcheck. After editing one, run actionlint on it; this image also bundles shellcheck, so
+it is stricter than the check:
 
 ```bash
 docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12
