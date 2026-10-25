@@ -281,7 +281,7 @@ Jenkins runs the checks of [`yggdrasil.yml`](../../yggdrasil.yml), mirroring the
 | Check | Runs | Does |
 | --- | --- | --- |
 | `analyze-and-test` | Every pull request into, and push to, `develop` and `main` | Lints the workflow files, verifies formatting, `flutter analyze`, the boundary check, `flutter test` and the protocol gate, and fails on any of them. |
-| `web-bundle` | Every pull request into, and push to, `develop` and `main` | Builds the web bundle and checks it. |
+| `web-bundle` | Every pull request into, and push to, `develop` and `main` | Builds the web image from the `Dockerfile`, which builds the web bundle and checks it, and fails if either fails. |
 | `generated-drift` | Every pull request into, and push to, `develop` and `main` | Regenerates the API client, drift's code and schema test helpers and the localizations, and fails on any difference. |
 | `branch-policy` | Every pull request into `develop` and `main` | Enforces the branching model described in [CONTRIBUTING.md](../../CONTRIBUTING.md). |
 | the release build | On a `v*` tag | Runs the protocol gate, then builds the web bundle, the Android APK and the Linux installer (`ci/release-build.sh`); the Windows files come from the `Release Windows` GitHub Actions workflow, which Jenkins dispatches on the tag. |

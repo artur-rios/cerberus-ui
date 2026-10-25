@@ -10,7 +10,8 @@
 #
 # Flutter 3.47.4 is pinned in ci/flutter-env.sh, not by the image: ghcr.io/cirruslabs/flutter has no tag newer than
 # 3.44.0, whose Dart is older than pubspec.yaml's `sdk: ^3.13.2`. The image supplies the Android SDK, the JDK, git,
-# curl and zip, and ci/flutter-env.sh fetches the SDK itself (checksummed).
+# curl and zip, and ci/flutter-env.sh fetches the SDK itself (checksummed). The web-bundle check is the exception: it
+# builds the Dockerfile, which carries its own pinned Flutter, with the CI engine's socket.
 
 checks:
   analyze-and-test:                      # workflow lint, formatting, analysis, boundaries, tests with coverage, protocol gate (ci.yml: analyze-and-test)
@@ -20,9 +21,10 @@ checks:
   generated-drift:                       # generated code matches its sources (check-generated.yml: drift)
     image: ghcr.io/cirruslabs/flutter:3.44.0@sha256:46691e311715845de03a3ba4753a475476936805b29431b1f00f1816981033f8
     run: ci/generated-drift.sh
-  web-bundle:                            # the release web bundle builds and passes the bundle check (ci.yml: web-bundle)
-    image: ghcr.io/cirruslabs/flutter:3.44.0@sha256:46691e311715845de03a3ba4753a475476936805b29431b1f00f1816981033f8
+  web-bundle:                            # the web image builds (Dockerfile), and its bundle passes the bundle check (ci.yml: web-bundle)
+    image: docker:29.7.2-cli@sha256:3f4743208d2338c934d7b8bcfbe1bb54c0b2355c510ad5e0f31c0c4a54bd704e
     run: ci/web-bundle.sh
+    docker: true                         # the CI engine's socket: the image is built by it
 
 release:
   # build.yml's Linux jobs (gate, web, android, linux), on the release agent from the release's tag. There is no
