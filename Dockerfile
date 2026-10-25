@@ -17,12 +17,15 @@
 # x64-only, and the output is platform-independent static files, so this stage
 # always runs as amd64.
 # ---------------------------------------------------------------------------
-FROM --platform=linux/amd64 debian:trixie-slim AS build
+FROM --platform=linux/amd64 debian:13.7-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad AS build
 
 # pubspec.yaml requires Dart ^3.13.2, which first ships in Flutter 3.47.2.
+# Keep FLUTTER_VERSION and FLUTTER_SHA256 in step with ci/flutter-env.sh (and
+# FLUTTER_VERSION in .github/workflows/release-windows.yml).
 # FLUTTER_SHA256 is the archive's checksum from
 # https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json;
 # override it together with FLUTTER_VERSION, or pass it empty to skip the check.
+# renovate: datasource=github-tags depName=flutter/flutter versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)$
 ARG FLUTTER_VERSION=3.47.4
 ARG FLUTTER_SHA256=5b45f0ceda99b9bebdc873e7e69f6450aeb4c30f454b505e2e62fc9255a907d3
 
@@ -38,7 +41,7 @@ ENV CI=true \
     PUB_CACHE=/home/flutter/.pub-cache \
     PATH=/opt/flutter/bin:/opt/flutter/bin/cache/dart-sdk/bin:$PATH
 
-RUN curl -fsSL -o /tmp/flutter.tar.xz \
+RUN curl --fail --silent --show-error --location --retry 3 -o /tmp/flutter.tar.xz \
       "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz" \
  && if [ -n "$FLUTTER_SHA256" ]; then echo "$FLUTTER_SHA256  /tmp/flutter.tar.xz" | sha256sum -c -; fi \
  && tar -xJf /tmp/flutter.tar.xz -C /opt \
@@ -74,7 +77,7 @@ RUN flutter build web --release --no-web-resources-cdn \
 # Runtime stage: static files behind unprivileged nginx on port 8080. No
 # application secret exists to carry (IR-22).
 # ---------------------------------------------------------------------------
-FROM nginxinc/nginx-unprivileged:alpine
+FROM nginxinc/nginx-unprivileged:1.31.7-alpine3.24@sha256:b5047b9b76845eac124358373c6852377c52e4b05834a47647e955dd91cb8f1e
 
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /home/flutter/app/build/web /usr/share/nginx/html
