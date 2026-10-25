@@ -1,5 +1,7 @@
 # Contributing
 
+This repository lives at <https://git.techcraftsmen.net/artur-rios/cerberus-ui>. The GitHub repository is a read-only mirror of it.
+
 One use case = one branch = one issue = one pull request. The full process — branch naming, the
 issue status lifecycle, the four approval gates, the testing gate, and the Definition of Done — is
 in the
@@ -13,7 +15,7 @@ platform you are building. The version policy, and why no number is pinned here,
 [Technology Stack Document](docs/requirements/Technology%20Stack%20Document.md) §1.1.
 
 ```bash
-git clone https://github.com/artur-rios/cerberus-ui.git
+git clone https://git.techcraftsmen.net/artur-rios/cerberus-ui.git
 cd cerberus-ui
 git switch develop
 flutter pub get
@@ -30,8 +32,8 @@ cryptographic package, and no primitive is implemented by hand.
 ## Generated code
 
 All generated code is committed, so a clean clone needs no generation step. Never hand-edit it; the
-Check generated workflow regenerates everything below and fails on any difference from what is
-committed.
+`generated-drift` check ([`ci/generated-drift.sh`](ci/generated-drift.sh)) regenerates everything below
+and fails on any difference from what is committed.
 
 **The API client**, only after taking a new API contract — copy `docs/contracts/openapi.json` from
 `cerberus-api` to `api/cerberus.json` — and then:
@@ -79,7 +81,7 @@ flutter test integration_test -d linux
 ```
 
 CI also lints every workflow file with [actionlint](https://github.com/rhysd/actionlint), including
-the Build workflow that only a tag or a manual run starts. After editing one, run the same check:
+the Release Windows workflow that only a manual run starts. After editing one, run the same check:
 
 ```bash
 docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12
@@ -121,7 +123,7 @@ fix/<name> ─────┴─▶ develop ──▶ release/x.y.z ──▶ ma
 Use case branches are named `feature/uc-##-use-case-name`. Names are lowercase: letters, digits,
 `.`, `_` and `-`. A `release/` branch is a snapshot of `develop` and carries no commits of its own:
 a fix for a release lands on `develop` through a `fix/` branch and a new release branch is cut. The
-Branch Policy workflow checks this on every pull request.
+`branch-policy` check checks this on every pull request.
 
 ## Commits and the changelog
 
@@ -159,6 +161,8 @@ number. The release branch `release/x.y.z` names the same version.
 2. Cut `release/x.y.z` from an up-to-date `develop` and push it.
 3. Open a pull request `release/x.y.z → main` and merge it with a merge commit once every check
    passes.
-4. Tag the merge `vx.y.z`. The tag starts the Build workflow, which builds every target and
-   publishes the artifacts; the web image is deployed through
+4. Tag the merge `vx.y.z`. Jenkins builds the release from the tag: the protocol gate, then the web
+   bundle, the Android APK and the Linux installer (`ci/release-build.sh`), and the Windows installer and
+   portable archive (the `Release Windows` workflow on GitHub), and publishes them as the release's files;
+   the web image is deployed through
    [yggdrasil](https://github.com/artur-rios/yggdrasil), like the sibling UIs.

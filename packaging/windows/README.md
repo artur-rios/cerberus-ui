@@ -1,7 +1,7 @@
 # Windows packaging
 
 Two artifacts come from one release bundle (`build\windows\x64\runner\Release`),
-both built by `.github/workflows/build.yml`:
+both built by `.github/workflows/release-windows.yml`:
 
 | Artifact | How |
 |---|---|

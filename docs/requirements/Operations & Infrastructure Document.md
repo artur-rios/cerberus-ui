@@ -88,10 +88,9 @@ graph TD
 ```
 cerberus-ui/
 ├── .github/workflows/
-│   ├── ci.yml                       format, analyze, boundaries, test, gate + web bundle check
-│   ├── check-generated.yml          regenerate the client, local store code and l10n; fail on drift
-│   ├── branch-policy.yml            enforce the branching model on pull requests
-│   └── build.yml                    per-target artifacts
+│   └── release-windows.yml          the release's Windows files, built on GitHub Actions
+├── ci/                              the checks and the release build, run by Jenkins
+├── yggdrasil.yml                    which checks and release files Jenkins builds
 ├── api/
 │   └── cerberus.json                the API's OpenAPI document, copied from cerberus-api
 ├── assets/fonts/                    Roboto, bundled so the web fetches no font (FR-PV-04)
@@ -277,14 +276,15 @@ the sibling UIs.
 
 ### 6.1 Continuous integration
 
-Four workflows, mirroring the sibling repositories:
+Jenkins runs the checks of [`yggdrasil.yml`](../../yggdrasil.yml), mirroring the sibling repositories:
 
-| Workflow | Runs | Does |
+| Check | Runs | Does |
 | --- | --- | --- |
-| `ci.yml` | Every pull request into, and push to, `develop` and `main` | Verifies formatting, `flutter analyze`, the boundary check, `flutter test` and the protocol gate, builds the web bundle and checks it, and fails on any of them. |
-| `check-generated.yml` | Every pull request into, and push to, `develop` and `main` | Regenerates the API client, drift's code and schema test helpers and the localizations, and fails on any difference. |
-| `branch-policy.yml` | Every pull request into `develop` and `main` | Enforces the branching model described in [CONTRIBUTING.md](../../CONTRIBUTING.md). |
-| `build.yml` | On a `v*` tag, and on demand | Builds all four targets and publishes the artifacts. |
+| `analyze-and-test` | Every pull request into, and push to, `develop` and `main` | Lints the workflow files, verifies formatting, `flutter analyze`, the boundary check, `flutter test` and the protocol gate, and fails on any of them. |
+| `web-bundle` | Every pull request into, and push to, `develop` and `main` | Builds the web bundle and checks it. |
+| `generated-drift` | Every pull request into, and push to, `develop` and `main` | Regenerates the API client, drift's code and schema test helpers and the localizations, and fails on any difference. |
+| `branch-policy` | Every pull request into `develop` and `main` | Enforces the branching model described in [CONTRIBUTING.md](../../CONTRIBUTING.md). |
+| the release build | On a `v*` tag | Runs the protocol gate, then builds the web bundle, the Android APK and the Linux installer (`ci/release-build.sh`); the Windows files come from the `Release Windows` GitHub Actions workflow, which Jenkins dispatches on the tag. |
 
 ### 6.2 Packaging per target
 
@@ -309,8 +309,8 @@ as part of the foundation.
 ### 6.4 Release
 
 A release is cut from `develop` as a `release/x.y.z` branch and merged into `main`, which is tagged
-`vx.y.z`; the steps are in [CONTRIBUTING.md](../../CONTRIBUTING.md). The tag starts `build.yml`,
-which produces the four artifacts. The application's version comes from `pubspec.yaml`, and the
+`vx.y.z`; the steps are in [CONTRIBUTING.md](../../CONTRIBUTING.md). The tag starts the release
+build (`ci/release-build.sh` and the `Release Windows` workflow), which produces the four targets' files. The application's version comes from `pubspec.yaml`, and the
 Cerberus API contract it was generated from is recorded with it, so a build and the API it needs
 are identifiable as a pair.
 
