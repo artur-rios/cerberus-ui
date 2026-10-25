@@ -9,15 +9,16 @@
 #   dist/cerberus-ui_<version>_amd64.deb
 #
 # RELEASE_VERSION is the tag without its v (set by the pipeline); run by hand, the version in pubspec.yaml is used.
-# The old build named its files with the pubspec.yaml version, which CONTRIBUTING.md says is the release's; a tag that
-# disagrees with it is reported, since the application embeds the pubspec.yaml one.
+# The application embeds the pubspec.yaml version, which CONTRIBUTING.md says is the release's, so a tag that
+# disagrees with it fails the build before anything is built: the files would be named for a version the application
+# does not report.
 #
 # The Android APK is signed with the debug key, as android/app/build.gradle.kts does for a release build until a
 # signing config exists (there is no release keystore, so no release credential), and is named for that. Do not
 # distribute it.
 #
-# The web image the old job built to prove the Dockerfile builds (IR-22) is not built here: this runs in a container
-# without the Docker engine.
+# The web image (IR-22) is not built here: this runs in a container without the Docker engine. The `web-bundle` check
+# builds it for every change.
 #
 # The Linux build needs desktop packages the Flutter image may not carry; they are installed with apt when this runs
 # as root, as it does on the release agent.
@@ -25,14 +26,15 @@ set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 root=$PWD
 
-# shellcheck source=ci/flutter-env.sh
-source ci/flutter-env.sh
-
 pubspec_version=$(sed -n 's/^version: \([0-9.]*\).*/\1/p' pubspec.yaml)
 version=${RELEASE_VERSION:-$pubspec_version}
 if [ "$version" != "$pubspec_version" ]; then
-  echo "ci/release-build.sh: WARNING: this releases $version, but pubspec.yaml says $pubspec_version, which the application embeds" >&2
+  echo "ci/release-build.sh: this releases $version, but pubspec.yaml says $pubspec_version, which the application embeds: set the version there (and in CHANGELOG.md) before tagging" >&2
+  exit 1
 fi
+
+# shellcheck source=ci/flutter-env.sh
+source ci/flutter-env.sh
 
 rm -rf dist
 mkdir dist
