@@ -1,5 +1,11 @@
 # Cerberus UI
 
+> [!NOTE]
+> This is the real, open-source code of cerberus-ui. Its home is Forgejo, at
+> https://git.techcraftsmen.net/artur-rios/cerberus-ui; the copy on GitHub is a read-only mirror, for viewing only, and
+> its issues and pull requests are not followed. If you want to contribute, email me at
+> arturdev@duck.com.
+
 Cerberus is an end-to-end encrypted vault for passwords, login credentials, notes and any other
 sensitive information. **This repository is the client:** a single Flutter application that runs on
 the web, Windows, Linux and Android from one code base, and reads and writes everything through the
