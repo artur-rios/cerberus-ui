@@ -1,6 +1,6 @@
 ; The Windows installer (Operations & Infrastructure §6.2).
 ;
-; Built by .github/workflows/build.yml from the release bundle:
+; Built by .github/workflows/release-windows.yml from the release bundle:
 ;
 ;   iscc /DAppVersion=0.1.0 /DSourceDir=build\windows\x64\runner\Release ^
 ;        /DOutputDir=dist packaging\windows\cerberus.iss

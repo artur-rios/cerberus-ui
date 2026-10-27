@@ -14,6 +14,8 @@ ownership, sharing and lifecycle without ever being able to read the vault; this
 where the vault is actually opened — it derives the keys, encrypts before anything leaves the
 device, and decrypts only what the user is looking at.
 
+This repository lives at <https://git.techcraftsmen.net/artur-rios/cerberus-ui>. The GitHub repository is a read-only mirror of it.
+
 [![Open issues](https://img.shields.io/github/issues/artur-rios/cerberus-ui?style=flat-square&label=open)](https://github.com/artur-rios/cerberus-ui/issues)
 [![Closed issues](https://img.shields.io/github/issues-closed-raw/artur-rios/cerberus-ui?style=flat-square&label=closed)](https://github.com/artur-rios/cerberus-ui/issues?q=is%3Aissue+is%3Aclosed)
 [![Milestones](https://img.shields.io/github/milestones/all/artur-rios/cerberus-ui?style=flat-square&label=milestones)](https://github.com/artur-rios/cerberus-ui/milestones)
@@ -91,7 +93,7 @@ whichever platform you build. The version policy is in the
 [Technology Stack Document](docs/requirements/Technology%20Stack%20Document.md) §1.1.
 
 ```bash
-git clone https://github.com/artur-rios/cerberus-ui.git
+git clone https://git.techcraftsmen.net/artur-rios/cerberus-ui.git
 cd cerberus-ui
 git switch develop
 flutter pub get
@@ -106,7 +108,7 @@ flutter run -d linux --dart-define=CERBERUS_API_BASE_URL=http://localhost:5000
 Replace `-d linux` with `windows`, `chrome` or your Android device. A run with no
 `CERBERUS_API_BASE_URL` starts at the setup screen. Plain HTTP is accepted in debug builds only.
 Building for Linux needs the GTK and libsecret development packages, as in
-[`build.yml`](.github/workflows/build.yml).
+[`ci/release-build.sh`](ci/release-build.sh).
 
 The web build is served as a container image — static files behind an unprivileged nginx on port
 8080, with a `/healthz` probe:

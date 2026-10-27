@@ -9,3 +9,9 @@ windows
 packaging
 docs
 **/.dart_tool
+
+# The pipeline: checks, release build, their data
+ci
+dist
+yggdrasil.yml
+renovate.json
