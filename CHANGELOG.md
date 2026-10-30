@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-30
+
 No release has been tagged yet.
 
 ### Added
@@ -64,4 +66,5 @@ No release has been tagged yet.
 - The backlog: one foundation issue and one issue per use case, UC-01 through UC-48, in seven milestones, tracked on
   the public Cerberus UI project board.
 
-[Unreleased]: https://github.com/artur-rios/cerberus-ui/commits/develop
+[Unreleased]: https://github.com/artur-rios/cerberus-ui/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/artur-rios/cerberus-ui/releases/tag/v0.1.0
