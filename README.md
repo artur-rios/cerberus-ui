@@ -1,11 +1,5 @@
 # Cerberus UI
 
-> [!NOTE]
-> This is the real, open-source code of cerberus-ui. Its home is Forgejo, at
-> https://git.techcraftsmen.net/artur-rios/cerberus-ui; the copy on GitHub is a read-only mirror, for viewing only, and
-> its issues and pull requests are not followed. If you want to contribute, email me at
-> arturdev@duck.com.
-
 Cerberus is an end-to-end encrypted vault for passwords, login credentials, notes and any other
 sensitive information. **This repository is the client:** a single Flutter application that runs on
 the web, Windows, Linux and Android from one code base, and reads and writes everything through the
@@ -13,8 +7,6 @@ the web, Windows, Linux and Android from one code base, and reads and writes eve
 ownership, sharing and lifecycle without ever being able to read the vault; this application is
 where the vault is actually opened — it derives the keys, encrypts before anything leaves the
 device, and decrypts only what the user is looking at.
-
-This repository lives at <https://git.techcraftsmen.net/artur-rios/cerberus-ui>. The GitHub repository is a read-only mirror of it.
 
 [![Open issues](https://img.shields.io/github/issues/artur-rios/cerberus-ui?style=flat-square&label=open)](https://github.com/artur-rios/cerberus-ui/issues)
 [![Closed issues](https://img.shields.io/github/issues-closed-raw/artur-rios/cerberus-ui?style=flat-square&label=closed)](https://github.com/artur-rios/cerberus-ui/issues?q=is%3Aissue+is%3Aclosed)
@@ -267,3 +259,6 @@ Notable changes in each release are recorded in [CHANGELOG.md](./CHANGELOG.md).
 Building from source, regenerating the API client, running the tests, the delivery workflow and its
 review gates, the branching model and the release process are described in
 [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+The GitHub repository is a read-only mirror for the real, open-source code of cerberus-ui. Its home is Forgejo, at
+https://git.techcraftsmen.net/artur-rios/cerberus-ui. If you want to contribute, e-mail me at arturdev@duck.com.
