@@ -71,7 +71,7 @@ All at the latest stable release at implementation time, per §1.1.
 | **flutter_secure_storage** | latest stable at implementation time | `core/storage` | The session token on Android (Keystore), Windows (DPAPI) and Linux (libsecret). **Not used on the web**, where the token is held in memory only. |
 | **shared_preferences** | latest stable at implementation time | `core/storage` | Preferences and device settings on desktop and Android. Never a token, a credential or vault content. **Not used on the web.** |
 | **drift** | latest stable at implementation time | `core/local_store` | The local store of the default mode: typed SQLite access, schema migrations, transactions for atomic synchronization. Desktop and Android only; the web build does not include it. |
-| **sqlite3_flutter_libs** | latest stable at implementation time | `core/local_store` | Bundles SQLite for drift on Android, Windows and Linux. |
+| **sqlite3** | the version drift requires, 3.x | `core/local_store` | drift's SQLite binding. Version 3 bundles SQLite for Android, Windows and Linux through its build hooks, which is why `sqlite3_flutter_libs` — end of life from 0.6.0 — is not used. Not a direct dependency. |
 | **path_provider** | latest stable at implementation time | `core/local_store` | Locates the application support directory where the local store lives. |
 | **uuid** | latest stable at implementation time | `features/sync` | Client-generated public identifiers (random, version 4) for entities created offline. |
 | **file_saver** | latest stable at implementation time | `features/account` | Saving a data export through the platform's own save mechanism, including a browser download on the web. |
@@ -180,6 +180,7 @@ the package name and a pinned version constraint, per §1.1.
 | Routing and guarding | **go_router** | latest stable at implementation time | One central redirect guards every route. |
 | Localization | **flutter_localizations** + **intl** | ships with Flutter / latest stable at implementation time | ARB files, `en-US` at the first release. No hard-coded user-facing string. |
 | Clipboard | Flutter `services` `Clipboard` | ships with Flutter | Copying a field; clearing it after the configured interval. |
+| Typeface | **Roboto**, bundled in `assets/fonts/` | ships with Flutter's material fonts, Apache 2.0 | Declared as an application font, so the web engine does not fetch it from `fonts.gstatic.com`; glyph fallback is pointed at the application's own origin (`FR-PV-04`). |
 | Lifecycle | Flutter `AppLifecycleListener` | ships with Flutter | Inactivity and backgrounding for auto-lock. |
 | Screen capture protection | A platform channel in the Android runner setting `FLAG_SECURE` | — | Excludes the application from screenshots and the recent-apps preview on Android. No package. |
 | Configuration | `--dart-define` at build time | — | See [Operations & Infrastructure §3](Operations%20%26%20Infrastructure%20Document.md). |
@@ -225,7 +226,7 @@ Every technology named above appears here exactly once. This is the table to che
 | Secure storage | flutter_secure_storage | latest stable at implementation time |
 | Preferences | shared_preferences | latest stable at implementation time |
 | Local store | drift | latest stable at implementation time |
-| Local store | sqlite3_flutter_libs | latest stable at implementation time |
+| Local store | sqlite3 (through drift) | the 3.x version drift requires |
 | Local store | path_provider | latest stable at implementation time |
 | Identifiers | uuid | latest stable at implementation time |
 | File saving | file_saver | latest stable at implementation time |

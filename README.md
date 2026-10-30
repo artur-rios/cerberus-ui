@@ -13,9 +13,10 @@ device, and decrypts only what the user is looking at.
 [![Milestones](https://img.shields.io/github/milestones/all/artur-rios/cerberus-ui?style=flat-square&label=milestones)](https://github.com/artur-rios/cerberus-ui/milestones)
 [![Project board](https://img.shields.io/badge/project-Cerberus%20UI-8250df?style=flat-square)](https://github.com/users/artur-rios/projects/16)
 
-> **Status:** specification complete; implementation not started. All 49 issues — the foundation
-> and 48 use cases — are open. Most use cases also wait on the Cerberus API: see
-> [Dependencies on the Cerberus API](#dependencies-on-the-cerberus-api). The
+> **Status:** the foundation, sign-in with its second-factor challenge, restoring a session at
+> start, signing out, the route guard and preferences are in place; the other use cases are next.
+> Most of them wait on the Cerberus API, and everything that encrypts waits on its protocol review:
+> see [Dependencies on the Cerberus API](#dependencies-on-the-cerberus-api). The
 > [project board](https://github.com/users/artur-rios/projects/16) is the live view.
 
 ## What it does
@@ -78,13 +79,13 @@ the `requirements/` documents for the normative detail.
 
 ## Installation
 
-There is no application code yet: the foundation issue creates it. Once it lands, the
-prerequisite is the **Flutter SDK**, stable channel, at the latest stable release — with the
-toolchain for whichever platform you build. The version policy is in the
+The prerequisite is the **Flutter SDK**, stable channel, at the latest stable release (the lock
+file currently needs Dart 3.13.2, which ships with Flutter 3.47.2) — with the toolchain for
+whichever platform you build. The version policy is in the
 [Technology Stack Document](docs/requirements/Technology%20Stack%20Document.md) §1.1.
 
 ```bash
-git clone https://github.com/artur-rios/cerberus-ui.git
+git clone https://git.techcraftsmen.net/artur-rios/cerberus-ui.git
 cd cerberus-ui
 git switch develop
 flutter pub get
@@ -98,10 +99,20 @@ flutter run -d linux --dart-define=CERBERUS_API_BASE_URL=http://localhost:5000
 
 Replace `-d linux` with `windows`, `chrome` or your Android device. A run with no
 `CERBERUS_API_BASE_URL` starts at the setup screen. Plain HTTP is accepted in debug builds only.
+Building for Linux needs the GTK and libsecret development packages, as in
+[`ci/release-build.sh`](ci/release-build.sh).
+
+The web build is served as a container image — static files behind an unprivileged nginx on port
+8080, with a `/healthz` probe:
+
+```bash
+docker build -t cerberus-ui --build-arg CERBERUS_API_BASE_URL=https://cerberus-api.example.com .
+docker run --rm -p 8080:8080 cerberus-ui
+```
 The configuration surface is in the
 [Operations & Infrastructure Document](docs/requirements/Operations%20%26%20Infrastructure%20Document.md) §3.
 
-`main` holds only released code — today, the specifications. Development happens on `develop`.
+`main` holds only released code. Development happens on `develop`.
 
 ## Roadmap
 
@@ -149,6 +160,8 @@ cases here and are recorded in the
 | Listing a collection's grants | UC-30, UC-33 |
 | Listing the account's software grants | UC-36 |
 | Publication of the offline lease verification keys | UC-39 |
+| A distinct report that an account is pending closure, at sign-in and on session restore | UC-46 (and its offer from UC-03 and UC-05) |
+| A distinct report that a second-factor challenge has expired, apart from a refused code | UC-04 (its AF-02 return to sign-in) |
 
 The protocol review needs this repository too: an independent client implementation of the
 protocol is what produces and checks the interoperability vectors it requires.
@@ -157,7 +170,7 @@ protocol is what produces and checks the interoperability vectors it requires.
 
 | Issue | Status | Work | Spec |
 |---|---|---|---|
-| [#1](https://github.com/artur-rios/cerberus-ui/issues/1) | ⬜ | Project scaffold and initial infrastructure | [Operations & Infrastructure](docs/requirements/Operations%20%26%20Infrastructure%20Document.md) |
+| [#1](https://github.com/artur-rios/cerberus-ui/issues/1) | ✅ | Project scaffold and initial infrastructure | [Operations & Infrastructure](docs/requirements/Operations%20%26%20Infrastructure%20Document.md) |
 
 ### M-02 — Access and session
 
@@ -165,13 +178,13 @@ protocol is what produces and checks the interoperability vectors it requires.
 |---|---|---|---|
 | [#2](https://github.com/artur-rios/cerberus-ui/issues/2) | ⬜ | UC-01 — Configure the instance | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-01-configure-the-instance) |
 | [#3](https://github.com/artur-rios/cerberus-ui/issues/3) | ⬜ | UC-02 — Register an account | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-02-register-an-account) |
-| [#4](https://github.com/artur-rios/cerberus-ui/issues/4) | ⬜ | UC-03 — Sign in | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-03-sign-in) |
-| [#5](https://github.com/artur-rios/cerberus-ui/issues/5) | ⬜ | UC-04 — Complete a second-factor challenge | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-04-complete-a-second-factor-challenge) |
-| [#6](https://github.com/artur-rios/cerberus-ui/issues/6) | ⬜ | UC-05 — Restore a session at start | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-05-restore-a-session-at-start) |
-| [#7](https://github.com/artur-rios/cerberus-ui/issues/7) | ⬜ | UC-06 — Sign out | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-06-sign-out) |
-| [#8](https://github.com/artur-rios/cerberus-ui/issues/8) | ⬜ | UC-07 — Guard a route | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-07-guard-a-route) |
+| [#4](https://github.com/artur-rios/cerberus-ui/issues/4) | ✅ | UC-03 — Sign in | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-03-sign-in) |
+| [#5](https://github.com/artur-rios/cerberus-ui/issues/5) | ✅ | UC-04 — Complete a second-factor challenge | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-04-complete-a-second-factor-challenge) |
+| [#6](https://github.com/artur-rios/cerberus-ui/issues/6) | ✅ | UC-05 — Restore a session at start | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-05-restore-a-session-at-start) |
+| [#7](https://github.com/artur-rios/cerberus-ui/issues/7) | ✅ | UC-06 — Sign out | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-06-sign-out) |
+| [#8](https://github.com/artur-rios/cerberus-ui/issues/8) | ✅ | UC-07 — Guard a route | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-07-guard-a-route) |
 | [#10](https://github.com/artur-rios/cerberus-ui/issues/10) | ⬜ | UC-09 — Update identity details | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-09-update-identity-details) |
-| [#11](https://github.com/artur-rios/cerberus-ui/issues/11) | ⬜ | UC-10 — Choose preferences | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-10-choose-preferences) |
+| [#11](https://github.com/artur-rios/cerberus-ui/issues/11) | ✅ | UC-10 — Choose preferences | [Use Case Specification](docs/requirements/Use%20Case%20Specification%20Document.md#uc-10-choose-preferences) |
 
 ### M-03 — Vault protection
 
@@ -246,3 +259,6 @@ Notable changes in each release are recorded in [CHANGELOG.md](./CHANGELOG.md).
 Building from source, regenerating the API client, running the tests, the delivery workflow and its
 review gates, the branching model and the release process are described in
 [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+The GitHub repository is a read-only mirror for the real, open-source code of cerberus-ui. Its home is Forgejo, at
+https://git.techcraftsmen.net/artur-rios/cerberus-ui. If you want to contribute, e-mail me at arturdev@duck.com.

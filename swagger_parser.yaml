@@ -1,0 +1,36 @@
+# IR-10: the API client is generated from the contract the API publishes, and
+# committed unmodified. `api/cerberus.json` is copied from cerberus-api
+# (`docs/contracts/openapi.json`), where that project's own build produces it.
+# It is never authored here, and replacing it is the deliberate act of taking a
+# new API contract, done in the change that needs it.
+#
+# Regenerate with:
+#   dart run tool/generate_api_client.dart
+#
+# Everything under packages/cerberus_api_client/lib is generated and is never
+# hand-edited (FR-DA-02). The package's own pubspec.yaml is maintained by hand.
+# Ergonomic wrappers belong in the consuming feature's data/ layer.
+
+swagger_parser:
+  schema_path: api/cerberus.json
+  output_directory: packages/cerberus_api_client/lib
+  name: cerberus_api_client
+
+  language: dart
+  json_serializer: json_serializable
+
+  # One client per tag, in its own folder, named after the area it serves.
+  put_clients_in_folder: true
+  squash_clients: false
+  root_client: false
+
+  # Unknown enum values decode to a sentinel rather than failing the whole
+  # response (UC-03 AF-06: a field or value the client does not know is
+  # ignored, never accommodated by hand-editing).
+  enums_to_json: false
+  enums_prefix: false
+  unknown_enum_value: true
+  original_http_response: false
+
+  # A single entry point, so consumers import one file.
+  export_file: true

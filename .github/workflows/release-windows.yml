@@ -1,0 +1,73 @@
+name: Release Windows
+
+# The Windows files of a release (IR-21): the portable archive and the installer. Jenkins builds the rest
+# (ci/release-build.sh) and dispatches this workflow on the release's tag once the mirror has pushed it
+# (release.windows in yggdrasil.yml), waits for it, and attaches the files below to the release. It is not a pull
+# request check.
+#
+# The old Build workflow's protocol gate ran before this build; ci/release-build.sh runs it for the same tag.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to build, e.g. v1.4.0'
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-windows-${{ inputs.tag }}
+  cancel-in-progress: false
+
+env:
+  # Renovate does not track this one. Keep it equal to FLUTTER_VERSION in ci/flutter-env.sh and to the
+  # ARG FLUTTER_VERSION of the Dockerfile, and bump the three together.
+  FLUTTER_VERSION: 3.47.4
+
+jobs:
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get --enforce-lockfile
+      - name: Build
+        run: flutter build windows --release
+      # The release's files are uploaded by name, and the Release folder holds dozens: one archive and one
+      # installer, named with the version.
+      - name: Package the portable archive
+        shell: pwsh
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          $version = $env:TAG.TrimStart('v')
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Compress-Archive -Path build\windows\x64\runner\Release\* `
+            -DestinationPath "dist\cerberus-ui-$version-windows-portable.zip"
+      - name: Package the installer
+        shell: pwsh
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          $version = $env:TAG.TrimStart('v')
+          choco install innosetup --no-progress -y
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" `
+            /DAppVersion=$version `
+            /DSourceDir=$PWD\build\windows\x64\runner\Release `
+            /DOutputDir=$PWD\dist `
+            packaging\windows\cerberus.iss
+      - uses: actions/upload-artifact@v7
+        with:
+          name: cerberus-ui-windows
+          path: dist
+          if-no-files-found: error

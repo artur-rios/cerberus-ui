@@ -1,0 +1,8 @@
+# Localization (NFR-14). Every user-facing string comes from lib/l10n; en-US is
+# the first release's only locale, served by the `en` template.
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-dir: lib/l10n
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false

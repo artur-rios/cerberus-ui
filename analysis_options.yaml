@@ -1,0 +1,49 @@
+# Analysis configuration (Technology Stack §2).
+#
+# flutter_lints with strict-casts and strict-raw-types. Generated code — the API
+# client, drift's output, the localizations and drift's schema test helpers —
+# is excluded, because it is regenerated and drift-checked in CI (IR-11), which
+# is a stronger guarantee than linting a generator's output. The platform
+# directories hold `flutter create` boilerplate.
+#
+# NO HAND-WRITTEN DART IS EXCLUDED.
+
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-raw-types: true
+  errors:
+    # An unused import or dead code is a defect in review, not a suggestion.
+    unused_import: error
+    unused_local_variable: error
+    dead_code: error
+  exclude:
+    - "packages/cerberus_api_client/lib/**"
+    - "**/*.g.dart"
+    - "lib/l10n/app_localizations*.dart"
+    - "test/core/local_store/generated/**"
+    - "**/generated_plugin_registrant.dart"
+    - build/**
+    - android/**
+    - web/**
+    - windows/**
+    - linux/**
+
+linter:
+  rules:
+    - always_declare_return_types
+    - avoid_dynamic_calls
+    - avoid_print
+    - avoid_slow_async_io
+    - cancel_subscriptions
+    - close_sinks
+    - directives_ordering
+    - prefer_final_locals
+    - prefer_single_quotes
+    - require_trailing_commas
+    - sort_constructors_first
+    - unawaited_futures
+    - unnecessary_parenthesis
+    - use_super_parameters

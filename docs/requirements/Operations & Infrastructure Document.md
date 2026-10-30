@@ -88,12 +88,13 @@ graph TD
 ```
 cerberus-ui/
 ├── .github/workflows/
-│   ├── ci.yml                       format, analyze, boundaries + test on every pull request
-│   ├── check-generated.yml          regenerate the client and local store code; fail on drift
-│   ├── branch-policy.yml            enforce the branching model on pull requests
-│   └── build.yml                    per-target artifacts
+│   └── release-windows.yml          the release's Windows files, built on GitHub Actions
+├── ci/                              the checks and the release build, run by Jenkins
+├── yggdrasil.yml                    which checks and release files Jenkins builds
 ├── api/
 │   └── cerberus.json                the API's OpenAPI document, copied from cerberus-api
+├── assets/fonts/                    Roboto, bundled so the web fetches no font (FR-PV-04)
+├── drift_schemas/                   the local store's schema snapshot per version
 ├── packages/
 │   └── cerberus_api_client/         generated: DTOs and retrofit clients
 ├── lib/
@@ -102,6 +103,7 @@ cerberus-ui/
 │   │   ├── config/                  build-time configuration and device settings
 │   │   ├── crypto/                  the Cerberus protocol, the protocol gate
 │   │   ├── local_store/             drift schema, migrations, outbox, cursor, lease
+│   │   ├── logging/                 the debug-only, redacting log
 │   │   ├── network/                 the configured dio instance and its interceptors
 │   │   ├── result/                  the sealed result type every repository returns
 │   │   ├── session/                 session state, vault lock state, auto-lock
@@ -114,11 +116,13 @@ cerberus-ui/
 │   ├── l10n/                        ARB files, en-US
 │   ├── shared/                      layout and reusable widgets
 │   └── main.dart
-├── test/                            mirrors lib/ exactly; test/support, test/vectors
+├── test/                            mirrors lib/ exactly; test/support, test/vectors, test/tool
 ├── integration_test/                complete journeys
 ├── tool/
 │   ├── generate_api_client.dart     the client generation pipeline
-│   └── check_boundaries.dart        the import boundary rules
+│   ├── check_boundaries.dart        the import boundary rules (boundary_rules.dart)
+│   ├── check_protocol_gate.dart     the gate's CI rule (protocol_gate_rules.dart)
+│   └── check_web_bundle.sh          no service worker, third-party font or local store on the web
 ├── packaging/
 │   ├── windows/                     installer definition and portable archive layout
 │   └── linux/                       installer definition
@@ -127,6 +131,8 @@ cerberus-ui/
 ├── android/ · linux/ · windows/ · web/
 ├── Dockerfile
 ├── analysis_options.yaml
+├── build.yaml                       drift's generation options
+├── l10n.yaml
 ├── swagger_parser.yaml
 ├── pubspec.yaml · pubspec.lock
 └── docs/
@@ -157,7 +163,10 @@ replacing it is a deliberate act of taking a new API contract, done in the chang
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-Emits drift's typed tables and queries. Schema changes come with a migration and a migration test.
+Emits drift's typed tables and queries. Schema changes come with a migration and a migration test,
+a schema snapshot in `drift_schemas/` (`dart run drift_dev make-migrations`), and regenerated
+migration test helpers (`dart run drift_dev schema generate drift_schemas/local_store/
+test/core/local_store/generated/`).
 
 Both pipelines are deterministic, which is what makes the drift check meaningful.
 
@@ -267,14 +276,15 @@ the sibling UIs.
 
 ### 6.1 Continuous integration
 
-Four workflows, mirroring the sibling repositories:
+Jenkins runs the checks of [`yggdrasil.yml`](../../yggdrasil.yml), mirroring the sibling repositories:
 
-| Workflow | Runs | Does |
+| Check | Runs | Does |
 | --- | --- | --- |
-| `ci.yml` | Every pull request into, and push to, `develop` and `main` | Verifies formatting, `flutter analyze`, the boundary check and `flutter test`, and fails on any of them. |
-| `check-generated.yml` | Every pull request into, and push to, `develop` and `main` | Regenerates the API client and drift's code and fails on any difference. |
-| `branch-policy.yml` | Every pull request into `develop` and `main` | Enforces the branching model described in [CONTRIBUTING.md](../../CONTRIBUTING.md). |
-| `build.yml` | On a `v*` tag, and on demand | Builds all four targets and publishes the artifacts. |
+| `analyze-and-test` | Every pull request into, and push to, `develop` and `main` | Lints the workflow files, verifies formatting, `flutter analyze`, the boundary check, `flutter test` and the protocol gate, and fails on any of them. |
+| `web-bundle` | Every pull request into, and push to, `develop` and `main` | Builds the web image from the `Dockerfile`, which builds the web bundle and checks it, and fails if either fails. |
+| `generated-drift` | Every pull request into, and push to, `develop` and `main` | Regenerates the API client, drift's code and schema test helpers and the localizations, and fails on any difference. |
+| `branch-policy` | Every pull request into `develop` and `main` | Enforces the branching model described in [CONTRIBUTING.md](../../CONTRIBUTING.md). |
+| the release build | On a `v*` tag | Runs the protocol gate, then builds the web bundle, the Android APK and the Linux installer (`ci/release-build.sh`); the Windows files come from the `Release Windows` GitHub Actions workflow, which Jenkins dispatches on the tag. |
 
 ### 6.2 Packaging per target
 
@@ -299,8 +309,8 @@ as part of the foundation.
 ### 6.4 Release
 
 A release is cut from `develop` as a `release/x.y.z` branch and merged into `main`, which is tagged
-`vx.y.z`; the steps are in [CONTRIBUTING.md](../../CONTRIBUTING.md). The tag starts `build.yml`,
-which produces the four artifacts. The application's version comes from `pubspec.yaml`, and the
+`vx.y.z`; the steps are in [CONTRIBUTING.md](../../CONTRIBUTING.md). The tag starts the release
+build (`ci/release-build.sh` and the `Release Windows` workflow), which produces the four targets' files. The application's version comes from `pubspec.yaml`, and the
 Cerberus API contract it was generated from is recorded with it, so a build and the API it needs
 are identifiable as a pair.
 

@@ -1,0 +1,542 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations_en.dart';
+
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of AppLocalizations
+/// returned by `AppLocalizations.of(context)`.
+///
+/// Applications need to include `AppLocalizations.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'l10n/app_localizations.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: AppLocalizations.localizationsDelegates,
+///   supportedLocales: AppLocalizations.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the AppLocalizations.supportedLocales
+/// property.
+abstract class AppLocalizations {
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
+
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+  }
+
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
+
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
+
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+
+  /// The application's name, in the window title and task switcher.
+  ///
+  /// In en, this message translates to:
+  /// **'Cerberus'**
+  String get appTitle;
+
+  /// Title of the screen shown when the route guard refuses a route.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available'**
+  String get notAvailableTitle;
+
+  /// Why a protocol-dependent route is refused while the protocol gate is closed (UC-07 AF-06).
+  ///
+  /// In en, this message translates to:
+  /// **'This part of the vault waits for the Cerberus protocol to pass its security review. Nothing that encrypts, decrypts or unlocks is offered until then.'**
+  String get notAvailableProtocol;
+
+  /// Why a default-mode-only route is refused on an online-only device.
+  ///
+  /// In en, this message translates to:
+  /// **'This is only available when the device keeps an encrypted copy of the vault. This device runs online only.'**
+  String get notAvailableStorageMode;
+
+  /// Why content outside the device profile is refused (UC-07 AF-03).
+  ///
+  /// In en, this message translates to:
+  /// **'This device is restricted to one profile, and this content is outside it.'**
+  String get notAvailableDeviceProfile;
+
+  /// Title of the screen shown for a route that does not exist (UC-07 AF-05).
+  ///
+  /// In en, this message translates to:
+  /// **'Page not found'**
+  String get notFoundTitle;
+
+  /// Body of the not-found screen.
+  ///
+  /// In en, this message translates to:
+  /// **'There is nothing at this address.'**
+  String get notFoundBody;
+
+  /// Shown on a route the application reserves but does not implement yet.
+  ///
+  /// In en, this message translates to:
+  /// **'This screen is not available in this version yet.'**
+  String get pendingFeatureBody;
+
+  /// Title of the sign-in screen (UC-03).
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInTitle;
+
+  /// Label of the sign-in email field.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get signInEmailLabel;
+
+  /// Label of the sign-in password field.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get signInPasswordLabel;
+
+  /// The button that submits the sign-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInSubmit;
+
+  /// States under the sign-in form that a session opens nothing (UC-03: signing in never unlocks the vault).
+  ///
+  /// In en, this message translates to:
+  /// **'Signing in does not unlock your vault.'**
+  String get signInVaultStaysLocked;
+
+  /// Heading of the sign-in failure shown when the instance cannot be reached (UC-03 AF-03).
+  ///
+  /// In en, this message translates to:
+  /// **'Connection lost'**
+  String get signInConnectionLostTitle;
+
+  /// The button that retries a sign-in the instance did not answer (UC-03 AF-03).
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get signInRetry;
+
+  /// Heading shown when secure storage is unavailable after a completed sign-in (UC-03 AF-05).
+  ///
+  /// In en, this message translates to:
+  /// **'This session can\'t be kept'**
+  String get signInSessionNotKeptTitle;
+
+  /// Explains that the session cannot be kept and what continuing means (UC-03 AF-05).
+  ///
+  /// In en, this message translates to:
+  /// **'This device\'s secure storage is unavailable, so Cerberus can\'t keep your session. Nothing will be saved to a file or to preferences instead. You can continue until you close Cerberus, and you\'ll need to sign in again next time.'**
+  String get signInSessionNotKeptBody;
+
+  /// Continues with the session held in memory until the application closes (UC-03 AF-05).
+  ///
+  /// In en, this message translates to:
+  /// **'Continue for now'**
+  String get signInContinueForThisRun;
+
+  /// Declines to continue with a session that cannot be kept (UC-03 AF-05).
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get signInDiscardSession;
+
+  /// Title of the second-factor challenge screen (UC-04).
+  ///
+  /// In en, this message translates to:
+  /// **'Second factor'**
+  String get challengeTitle;
+
+  /// Introduces the list of second-factor methods the API offered (UC-04 step 1).
+  ///
+  /// In en, this message translates to:
+  /// **'Your sign-in needs a second factor. Enter a code from:'**
+  String get challengeIntro;
+
+  /// The second-factor method the API names App (UC-04 step 1).
+  ///
+  /// In en, this message translates to:
+  /// **'Your authenticator app'**
+  String get challengeMethodApp;
+
+  /// The second-factor method the API names Email (UC-04 step 1).
+  ///
+  /// In en, this message translates to:
+  /// **'A code sent to your email'**
+  String get challengeMethodEmail;
+
+  /// Label of the second-factor code field (UC-04 step 3).
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get challengeCodeLabel;
+
+  /// Submits the second-factor code (UC-04 step 4).
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get challengeSubmit;
+
+  /// Shown under the API's refusal of a second-factor code (UC-04 AF-01, AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'You can enter another code, or sign in again.'**
+  String get challengeRefusedHint;
+
+  /// Gives up on the challenge and returns to sign-in (UC-04 AF-01, AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in again'**
+  String get challengeRepeatSignIn;
+
+  /// Tooltip of the back button that leaves the challenge, discarding it (UC-04 AF-03).
+  ///
+  /// In en, this message translates to:
+  /// **'Back to sign in'**
+  String get challengeBackToSignIn;
+
+  /// Title of the neutral screen shown while a stored session is verified at start (UC-05 step 2).
+  ///
+  /// In en, this message translates to:
+  /// **'Cerberus'**
+  String get startingTitle;
+
+  /// Shown while a stored session is verified with the instance at start (UC-05 step 2). Names no account and no vault.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking your session…'**
+  String get startingVerifying;
+
+  /// Heading shown when the instance cannot be reached to verify a stored session (UC-05 AF-04).
+  ///
+  /// In en, this message translates to:
+  /// **'Connection lost'**
+  String get startingConnectionLostTitle;
+
+  /// Heading shown above the API's own reason when it did not verify a stored session but did not reject it (UC-05 AF-04).
+  ///
+  /// In en, this message translates to:
+  /// **'Your session couldn\'t be checked'**
+  String get startingNotVerifiedTitle;
+
+  /// Retries verifying a stored session (UC-05 AF-04).
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get startingRetry;
+
+  /// Notice on the sign-in screen when the instance rejected the session's token, at start or mid-session (UC-05 AF-02, UC-06 AF-04).
+  ///
+  /// In en, this message translates to:
+  /// **'Your session ended. Sign in again to continue.'**
+  String get signInSessionEnded;
+
+  /// Dismisses a notice on the sign-in screen about how the last session ended.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get signInDismissNotice;
+
+  /// Notice on the sign-in screen when secure storage could not delete the token at sign-out (UC-06 AF-03).
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re signed out, but this device\'s secure storage couldn\'t delete the session token. It will be replaced the next time you sign in.'**
+  String get signInTokenNotDeleted;
+
+  /// Notice on the sign-in screen when the user chose to remove the local store at sign-out and it could not be removed or read (UC-06 step 6).
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re signed out, but the vault copy on this device couldn\'t be removed. It is still encrypted.'**
+  String get signInVaultNotRemoved;
+
+  /// The action that signs the user out (UC-06 step 1).
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get signOutAction;
+
+  /// Title of the question asked at sign-out in the default storage mode (UC-06 step 2).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the vault on this device?'**
+  String get signOutStorageTitle;
+
+  /// Explains the keep-or-remove choice at sign-out, stating the kept copy is ciphertext only (UC-06 step 2).
+  ///
+  /// In en, this message translates to:
+  /// **'This device can keep its copy of your vault for offline use. The copy is ciphertext only: it can\'t be read without unlocking the vault. Removing it deletes it from this device.'**
+  String get signOutStorageBody;
+
+  /// Keeps the local store at sign-out (UC-06 step 2, AF-01).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep on this device'**
+  String get signOutKeepVault;
+
+  /// Removes the local store at sign-out (UC-06 step 2).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from this device'**
+  String get signOutRemoveVault;
+
+  /// Cancels signing out (UC-06 step 2).
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get signOutCancel;
+
+  /// Title of the second question when removing the local store would lose pending edits (UC-06 AF-01).
+  ///
+  /// In en, this message translates to:
+  /// **'Lose offline edits?'**
+  String get signOutLossTitle;
+
+  /// States how many pending edits removing the local store would lose (UC-06 AF-01).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 edit made offline hasn\'t been uploaded yet. Removing the vault from this device loses it.} other{{count} edits made offline haven\'t been uploaded yet. Removing the vault from this device loses them.}}'**
+  String signOutLossBody(int count);
+
+  /// Confirms removing the local store although pending edits are lost (UC-06 AF-01).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove and lose them'**
+  String get signOutRemoveAnyway;
+
+  /// Opens the preferences (UC-10 step 1).
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsAction;
+
+  /// Title of the preferences screen (UC-10).
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// Label of the theme choice (UC-10 step 3, FR-PS-01).
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get settingsThemeLabel;
+
+  /// The light theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsThemeLight;
+
+  /// The dark theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsThemeDark;
+
+  /// Follow the operating system's theme.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settingsThemeSystem;
+
+  /// Label of the auto-lock timeout choice (UC-10 step 4, FR-PS-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-lock'**
+  String get settingsAutoLockLabel;
+
+  /// Explains the auto-lock timeout (BR-13).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock the vault after this long without interaction.'**
+  String get settingsAutoLockHelp;
+
+  /// Label of the clipboard clearing interval choice (UC-10 step 5, FR-PS-03).
+  ///
+  /// In en, this message translates to:
+  /// **'Clear the clipboard'**
+  String get settingsClipboardLabel;
+
+  /// Explains the clipboard clearing interval (BR-14).
+  ///
+  /// In en, this message translates to:
+  /// **'Clear a copied value from the clipboard after this long, unless something else replaced it.'**
+  String get settingsClipboardHelp;
+
+  /// States that a preference governs a protocol-dependent flow while the protocol gate is closed (FR-CR-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Takes effect once the vault can be unlocked, which waits for the Cerberus protocol to pass its security review.'**
+  String get settingsWaitsForProtocol;
+
+  /// The interval choice that turns the timer off (UC-10 AF-01, AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get settingsIntervalNever;
+
+  /// An interval in seconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 second} other{{count} seconds}}'**
+  String settingsIntervalSeconds(int count);
+
+  /// An interval in minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 minute} other{{count} minutes}}'**
+  String settingsIntervalMinutes(int count);
+
+  /// An interval in hours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 hour} other{{count} hours}}'**
+  String settingsIntervalHours(int count);
+
+  /// Title of the warning for never auto-locking (UC-10 AF-01).
+  ///
+  /// In en, this message translates to:
+  /// **'Never lock automatically?'**
+  String get settingsNeverAutoLockTitle;
+
+  /// Warning for never auto-locking (UC-10 AF-01).
+  ///
+  /// In en, this message translates to:
+  /// **'An unattended device would stay unlocked: anyone who picks it up could read your vault until you lock it or sign out.'**
+  String get settingsNeverAutoLockBody;
+
+  /// Title of the warning for never clearing the clipboard (UC-10 AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Never clear the clipboard?'**
+  String get settingsNeverClipboardTitle;
+
+  /// Warning for never clearing the clipboard (UC-10 AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Copied secrets would stay on the clipboard, readable by every other application on this device.'**
+  String get settingsNeverClipboardBody;
+
+  /// Confirms choosing never (UC-10 AF-01, AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get settingsNeverConfirm;
+
+  /// Keeps the previous interval (UC-10 AF-01, AF-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get settingsNeverCancel;
+
+  /// Notice on the web, where preferences are held in memory only (UC-10 AF-03, FR-PS-04).
+  ///
+  /// In en, this message translates to:
+  /// **'These preferences last only for this visit. The next visit starts from the defaults.'**
+  String get settingsWebNotice;
+
+  /// Reported when preference storage cannot be written (UC-10 AF-04).
+  ///
+  /// In en, this message translates to:
+  /// **'This choice applies until the app closes, but it couldn\'t be saved on this device.'**
+  String get settingsNotKept;
+}
+
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
+
+  @override
+  Future<AppLocalizations> load(Locale locale) {
+    return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
+  }
+
+  @override
+  bool isSupported(Locale locale) =>
+      <String>['en'].contains(locale.languageCode);
+
+  @override
+  bool shouldReload(_AppLocalizationsDelegate old) => false;
+}
+
+AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'en':
+      return AppLocalizationsEn();
+  }
+
+  throw FlutterError(
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
+}
