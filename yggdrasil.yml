@@ -22,7 +22,7 @@ checks:
     image: ghcr.io/cirruslabs/flutter:3.44.0@sha256:46691e311715845de03a3ba4753a475476936805b29431b1f00f1816981033f8
     run: ci/generated-drift.sh
   web-bundle:                            # the web image builds (Dockerfile), and its bundle passes the bundle check (ci.yml: web-bundle)
-    image: docker:29.7.2-cli@sha256:3f4743208d2338c934d7b8bcfbe1bb54c0b2355c510ad5e0f31c0c4a54bd704e
+    image: docker:29.9.3-cli@sha256:2357639ad1ea7d0194134bf3292622fd4e562483966ed674e5d7c945b5f3b28d
     run: ci/web-bundle.sh
     docker: true                         # the CI engine's socket: the image is built by it
 
