@@ -1,8 +1,8 @@
 /// The way into the preferences (UC-10 step 1).
 library;
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../app/routes.dart';
 import '../../../l10n/app_localizations.dart';

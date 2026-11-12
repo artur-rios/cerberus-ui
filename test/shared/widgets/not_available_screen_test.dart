@@ -1,8 +1,8 @@
 import 'package:cerberus_ui/app/routes.dart';
 import 'package:cerberus_ui/l10n/app_localizations.dart';
 import 'package:cerberus_ui/shared/widgets/not_available_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 Future<void> _pump(
   WidgetTester tester,

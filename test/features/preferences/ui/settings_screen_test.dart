@@ -6,10 +6,10 @@ import 'package:cerberus_ui/core/session/session_controller.dart';
 import 'package:cerberus_ui/core/storage/preferences_store.dart';
 import 'package:cerberus_ui/features/preferences/ui/settings_screen.dart';
 import 'package:cerberus_ui/l10n/app_localizations_en.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../support/pump_app.dart';
 import '../../../support/recording_stores.dart';

@@ -12,9 +12,9 @@ import 'package:cerberus_ui/features/session/data/session_repository.dart';
 import 'package:cerberus_ui/features/session/ui/challenge_screen.dart';
 import 'package:cerberus_ui/features/session/ui/sign_in_screen.dart';
 import 'package:cerberus_ui/shared/widgets/not_available_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../support/auth_payloads.dart';
 import '../../../support/fake_session_repository.dart';
