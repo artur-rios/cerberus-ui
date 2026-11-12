@@ -4,8 +4,8 @@ import 'package:cerberus_ui/core/session/session_controller.dart';
 import 'package:cerberus_ui/features/preferences/ui/settings_button.dart';
 import 'package:cerberus_ui/features/preferences/ui/settings_screen.dart';
 import 'package:cerberus_ui/shared/widgets/not_available_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../support/pump_app.dart';
 

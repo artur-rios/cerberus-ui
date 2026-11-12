@@ -5,8 +5,8 @@
 /// the API has accepted the token there is no session to show anything of.
 library;
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../state/session_restore_controller.dart';

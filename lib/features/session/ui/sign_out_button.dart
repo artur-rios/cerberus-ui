@@ -6,8 +6,8 @@
 /// (AF-01). Online only and on the web it asks nothing (AF-02).
 library;
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../state/sign_out_controller.dart';

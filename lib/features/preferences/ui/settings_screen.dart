@@ -12,8 +12,8 @@
 /// them, rather than offering a choice that appears to do something now.
 library;
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../core/config/device_settings.dart';
 import '../../../core/config/preferences.dart';

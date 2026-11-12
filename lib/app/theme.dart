@@ -1,7 +1,7 @@
 /// Material 3, light and dark, from one seed color (Technology Stack §2).
 library;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The seed both schemes derive from.
 const seedColor = Color(0xFF5B3E96);
