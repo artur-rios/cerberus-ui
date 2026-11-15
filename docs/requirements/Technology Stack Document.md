@@ -49,7 +49,7 @@ interoperability evidence and requires the vectors to be run again.
 | --- | --- | --- |
 | Framework | **Flutter**, stable channel | Latest stable at implementation time. One code base for every target. |
 | Language | **Dart** | Whichever SDK ships with the Flutter version above. Sealed classes and exhaustive `switch` expressions back the session, lock and result models. |
-| Design system | **Material 3** | Light and dark schemes derived from one seed color. |
+| Design system | **Material 3**, from `material_ui` | Light and dark schemes derived from one seed color. Imported from `package:material_ui/material_ui.dart`, which replaces the SDK's deprecated `package:flutter/material.dart` (Flutter 3.50). |
 | Targets | **Web, Windows, Linux, Android** | No iOS and no macOS platform folder exists. |
 | Analysis | `flutter_lints`, with `strict-casts` and `strict-raw-types` enabled | Generated code — the API client and drift's output — is excluded from analysis. Nothing else is. |
 
@@ -216,7 +216,7 @@ Every technology named above appears here exactly once. This is the table to che
 | --- | --- | --- |
 | Platform | Flutter (stable channel) | latest stable at implementation time |
 | Language | Dart | ships with Flutter |
-| Design system | Material 3 | ships with Flutter |
+| Design system | Material 3 (material_ui) | latest stable at implementation time |
 | Analysis | flutter_lints | latest stable at implementation time |
 | State | flutter_riverpod | latest stable at implementation time |
 | Routing | go_router | latest stable at implementation time |

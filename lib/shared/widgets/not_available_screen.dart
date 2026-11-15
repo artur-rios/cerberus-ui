@@ -1,7 +1,7 @@
 /// Where the guard sends a route it refuses, saying why (UC-07 AF-03, AF-06).
 library;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../app/routes.dart';
 import '../../l10n/app_localizations.dart';

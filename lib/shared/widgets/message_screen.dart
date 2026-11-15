@@ -1,7 +1,7 @@
 /// A screen that states one thing: a refusal, an absence, a missing feature.
 library;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A centered icon, title and body, readable at every width (NFR-12).
 class MessageScreen extends StatelessWidget {

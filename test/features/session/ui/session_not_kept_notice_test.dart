@@ -1,7 +1,7 @@
 import 'package:cerberus_ui/features/session/ui/session_not_kept_notice.dart';
 import 'package:cerberus_ui/l10n/app_localizations.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 const _continue = Key('continue');
 const _discard = Key('discard');

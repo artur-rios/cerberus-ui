@@ -1,7 +1,7 @@
 /// A route that does not exist (UC-07 AF-05).
 library;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../l10n/app_localizations.dart';
 import 'message_screen.dart';

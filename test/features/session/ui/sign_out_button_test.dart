@@ -8,9 +8,9 @@ import 'package:cerberus_ui/core/storage/secure_store.dart';
 import 'package:cerberus_ui/features/session/data/device_vault_repository.dart';
 import 'package:cerberus_ui/features/session/ui/sign_in_screen.dart';
 import 'package:cerberus_ui/features/session/ui/sign_out_button.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../support/fake_device_vault_repository.dart';
 import '../../../support/pump_app.dart';

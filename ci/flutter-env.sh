@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 # Puts the pinned Flutter SDK on PATH. Sourced by the other scripts under ci/, not run.
 #
-# The workflows used `channel: stable` (subosito/flutter-action), which was 3.47.4 when this was written, and
+# The workflows used `channel: stable` (subosito/flutter-action); this pins a stable release instead (3.50.0), and
 # the Dockerfile pins the same release. The newest ghcr.io/cirruslabs/flutter image is 3.44.0, whose Dart
 # (3.12) is older than pubspec.yaml's `sdk: ^3.13.2`, so the image only supplies the Android SDK, the JDK,
 # git and the desktop tools, and the SDK itself is fetched here from Flutter's release archive and checked
@@ -16,8 +16,8 @@
 # FLUTTER_SDK_DIR reuses an unpacked SDK between runs (default: a directory under $TMPDIR).
 
 # renovate: datasource=github-tags depName=flutter/flutter versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)$
-FLUTTER_VERSION=3.47.4
-FLUTTER_SHA256=5b45f0ceda99b9bebdc873e7e69f6450aeb4c30f454b505e2e62fc9255a907d3
+FLUTTER_VERSION=3.50.0
+FLUTTER_SHA256=6ea2d806fd57269ae783e6788e2a81fc26eaad782f1e0d0ff38623bb765ff9f5
 
 FLUTTER_SDK_DIR=${FLUTTER_SDK_DIR:-${TMPDIR:-/tmp}/flutter-$FLUTTER_VERSION}
 
