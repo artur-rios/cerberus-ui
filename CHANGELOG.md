@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-14
+
+### Changed
+
+- Cerberus UI is built with Flutter 3.50.0 (Dart 3.14.0), from 3.47.4. Its Material Design widgets now come from the
+  `material_ui` package, which replaces `package:flutter/material.dart` in Flutter 3.50; the screens are unchanged.
+- Dependencies: `flutter_riverpod` 3.5.0, `go_router` 18.1.4 and `drift` 2.35.4. The generated API client and the
+  local store's generated code are unchanged.
+- The Android build uses Gradle 9.9.1, the Android Gradle Plugin 9.5.1 and Kotlin 2.4.21, and the web image is built
+  on the current `debian:13.7-slim`.
+
 ## [0.1.0] - 2026-10-30
 
 No release has been tagged yet.
@@ -66,5 +77,6 @@ No release has been tagged yet.
 - The backlog: one foundation issue and one issue per use case, UC-01 through UC-48, in seven milestones, tracked on
   the public Cerberus UI project board.
 
-[Unreleased]: https://github.com/artur-rios/cerberus-ui/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/artur-rios/cerberus-ui/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/artur-rios/cerberus-ui/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/artur-rios/cerberus-ui/releases/tag/v0.1.0

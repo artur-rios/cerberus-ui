@@ -4,7 +4,7 @@ publish_to: 'none'
 
 # The application version (CONTRIBUTING.md § Versioning). The build number only
 # ever increases, because Android refuses to install over a higher one.
-version: 0.1.0+1
+version: 0.1.1+2
 
 environment:
   sdk: ^3.13.2
