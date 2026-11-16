@@ -48,7 +48,15 @@ Future<void> _choose(
 ) async {
   await tester.tap(find.byKey(selector));
   await tester.pumpAndSettle();
-  await tester.tap(find.byKey(SettingsScreen.intervalItem(selector, interval)));
+  // The item's label, not the item: the middle of a menu item is empty space
+  // that only the menu's ink well answers, so a tap there never hit-tests
+  // the item itself and flutter_test warns that it missed.
+  await tester.tap(
+    find.descendant(
+      of: find.byKey(SettingsScreen.intervalItem(selector, interval)),
+      matching: find.byType(Text),
+    ),
+  );
   await tester.pumpAndSettle();
 }
 
