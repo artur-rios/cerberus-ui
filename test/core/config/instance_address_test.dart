@@ -76,4 +76,39 @@ void main() {
       });
     }
   });
+
+  group('InstanceAddress', () {
+    test('Given the same address typed with and without a trailing slash '
+        'When both are parsed and compared '
+        'Then they are equal, hash codes included', () {
+      final a = InstanceAddress.parse(
+        'https://vault.example/api',
+        allowPlainHttp: false,
+      ).address!;
+      final b = InstanceAddress.parse(
+        'https://vault.example/api/',
+        allowPlainHttp: false,
+      ).address!;
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('Given two different addresses '
+        'When they are compared '
+        'Then they differ', () {
+      expect(
+        InstanceAddress.parse(
+          'https://vault.example',
+          allowPlainHttp: false,
+        ).address,
+        isNot(
+          InstanceAddress.parse(
+            'https://other.example',
+            allowPlainHttp: false,
+          ).address,
+        ),
+      );
+    });
+  });
 }

@@ -47,7 +47,11 @@ flutter analyze
 # IR-12 and the rules beside it; see tool/boundary_rules.dart.
 dart run tool/check_boundaries.dart
 
-flutter test --coverage
+# The suite runs as four bundles side by side (tool/test_bundle_rules.dart says why): `flutter test` compiles one
+# entry point at a time whatever --concurrency says, so one entry point per test file spent most of the run compiling
+# and loading the files in a row. Each test still runs once, with coverage.
+dart run tool/write_test_bundles.dart build/test-bundles 4
+flutter test --coverage --concurrency 4 build/test-bundles
 
 # IR-06. After the tests, so any vectors it finds have also passed.
 dart run tool/check_protocol_gate.dart

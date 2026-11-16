@@ -117,6 +117,43 @@ void main() {
       await tester.pumpAndSettle();
     });
 
+    testWidgets('Given filled-in credentials '
+        'When the password is submitted from the keyboard '
+        'Then they are sent exactly as the submit button sends them', (
+      tester,
+    ) async {
+      final repository = FakeSessionRepository()..pending = Completer();
+      await _pump(tester, repository: repository);
+
+      await tester.enterText(find.byKey(SignInScreen.emailField), _email);
+      await tester.enterText(find.byKey(SignInScreen.passwordField), _password);
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
+
+      expect(repository.emails, [_email]);
+      expect(find.byKey(SignInScreen.progress), findsOneWidget);
+
+      repository.pending!.complete(
+        const Failure(message: 'm', kind: FailureKind.serverError),
+      );
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('Given an email and no password '
+        'When the password is submitted from the keyboard '
+        'Then nothing is sent', (tester) async {
+      final repository = FakeSessionRepository();
+      await _pump(tester, repository: repository);
+
+      await tester.enterText(find.byKey(SignInScreen.emailField), _email);
+      await tester.enterText(find.byKey(SignInScreen.passwordField), '');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle();
+
+      expect(repository.emails, isEmpty);
+      expect(find.byKey(SignInScreen.progress), findsNothing);
+    });
+
     testWidgets('Given credentials the API accepts '
         'When they are submitted '
         'Then the fields are cleared and the guard routes onward — with the '

@@ -310,4 +310,38 @@ void main() {
       );
     });
   });
+
+  group('SignOutState', () {
+    test('Given two of each state '
+        'When they are compared '
+        'Then each pair is equal, hash codes included', () {
+      for (final (a, b) in const <(SignOutState, SignOutState)>[
+        (SignOutIdle(), SignOutIdle()),
+        (SignOutChoosingStorage(), SignOutChoosingStorage()),
+        (SignOutConfirmingLoss(2), SignOutConfirmingLoss(2)),
+        (SignOutInProgress(), SignOutInProgress()),
+      ]) {
+        expect(a, b);
+        expect(a.hashCode, b.hashCode, reason: '$a');
+      }
+    });
+
+    test('Given a state of each kind, and two losses of different sizes '
+        'When they are compared '
+        'Then none is equal to another', () {
+      const states = <SignOutState>[
+        SignOutIdle(),
+        SignOutChoosingStorage(),
+        SignOutConfirmingLoss(1),
+        SignOutConfirmingLoss(2),
+        SignOutInProgress(),
+      ];
+
+      for (final (i, a) in states.indexed) {
+        for (final (j, b) in states.indexed) {
+          if (i != j) expect(a, isNot(b), reason: '$a against $b');
+        }
+      }
+    });
+  });
 }

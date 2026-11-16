@@ -250,4 +250,66 @@ void main() {
       expect(themeModeFromStoredValue(null), isNull);
     });
   });
+
+  group('PreferenceInterval equality', () {
+    test('Given two intervals of the same length, and two nevers '
+        'When they are compared '
+        'Then each pair is equal, hash codes included', () {
+      const a = PreferenceInterval(Duration(seconds: 60));
+      const b = PreferenceInterval(Duration(minutes: 1));
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(
+        const PreferenceInterval.never().hashCode,
+        const PreferenceInterval.never().hashCode,
+      );
+      expect(a, isNot(const PreferenceInterval.never()));
+    });
+
+    test('Given an interval and never '
+        'When they are turned into strings '
+        'Then each names its stored value', () {
+      expect(
+        const PreferenceInterval(Duration(minutes: 2)).toString(),
+        'PreferenceInterval(120)',
+      );
+      expect(
+        const PreferenceInterval.never().toString(),
+        'PreferenceInterval(never)',
+      );
+    });
+  });
+
+  group('Preferences', () {
+    test('Given the defaults and an equal copy '
+        'When they are compared '
+        'Then they are equal, hash codes included', () {
+      final copy = Preferences.defaults.copyWith();
+
+      expect(copy, Preferences.defaults);
+      expect(copy.hashCode, Preferences.defaults.hashCode);
+    });
+
+    test('Given the defaults and a copy changing one preference '
+        'When they are compared '
+        'Then they differ', () {
+      expect(
+        Preferences.defaults.copyWith(themeMode: ThemeMode.dark),
+        isNot(Preferences.defaults),
+      );
+      expect(
+        Preferences.defaults.copyWith(
+          autoLockTimeout: const PreferenceInterval.never(),
+        ),
+        isNot(Preferences.defaults),
+      );
+      expect(
+        Preferences.defaults.copyWith(
+          clipboardClearInterval: const PreferenceInterval.never(),
+        ),
+        isNot(Preferences.defaults),
+      );
+    });
+  });
 }

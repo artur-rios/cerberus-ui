@@ -73,6 +73,15 @@ flutter analyze
 flutter test
 ```
 
+CI runs the same suite as four bundle files side by side, because `flutter test` compiles one test
+file at a time; each bundle runs its share of the files in one process, so no test may depend on
+running alone. To run it the way CI does:
+
+```bash
+dart run tool/write_test_bundles.dart build/test-bundles 4
+flutter test --coverage --concurrency 4 build/test-bundles
+```
+
 An analyzer failure is a failure. Integration tests live in `integration_test/` and are invoked
 deliberately:
 

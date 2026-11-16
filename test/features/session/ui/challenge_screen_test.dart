@@ -142,6 +142,42 @@ void main() {
       await tester.pumpAndSettle();
     });
 
+    testWidgets('Given a code typed in '
+        'When it is submitted from the keyboard '
+        'Then it is sent exactly as the submit button sends it', (
+      tester,
+    ) async {
+      final repository = FakeSessionRepository()
+        ..pendingChallenge = Completer();
+      await _pump(tester, repository: repository);
+
+      await tester.enterText(find.byKey(ChallengeScreen.codeField), _code);
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
+
+      expect(repository.challenges, [(_challengeToken, _code)]);
+      expect(find.byKey(ChallengeScreen.progress), findsOneWidget);
+
+      repository.pendingChallenge!.complete(
+        const Failure(message: 'm', kind: FailureKind.serverError),
+      );
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('Given no code typed in '
+        'When the field is submitted from the keyboard '
+        'Then nothing is sent', (tester) async {
+      final repository = FakeSessionRepository();
+      await _pump(tester, repository: repository);
+
+      await tester.enterText(find.byKey(ChallengeScreen.codeField), '');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle();
+
+      expect(repository.challenges, isEmpty);
+      expect(find.byKey(ChallengeScreen.progress), findsNothing);
+    });
+
     testWidgets('Given a code the API accepts '
         'When it is submitted '
         'Then the code is cleared, a session exists and the guard routes '

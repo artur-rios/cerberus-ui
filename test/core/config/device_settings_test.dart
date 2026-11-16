@@ -99,4 +99,42 @@ void main() {
       );
     });
   });
+
+  group('DeviceSettings', () {
+    test('Given two settings with the same mode and restriction '
+        'When they are compared '
+        'Then they are equal, hash codes included', () {
+      const a = DeviceSettings(
+        storageMode: StorageMode.defaultMode,
+        deviceProfileId: 'profile-1',
+      );
+      const b = DeviceSettings(
+        storageMode: StorageMode.defaultMode,
+        deviceProfileId: 'profile-1',
+      );
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('Given two settings differing only in mode or only in restriction '
+        'When they are compared '
+        'Then they differ', () {
+      const base = DeviceSettings(storageMode: StorageMode.defaultMode);
+
+      expect(
+        base,
+        isNot(const DeviceSettings(storageMode: StorageMode.onlineOnly)),
+      );
+      expect(
+        base,
+        isNot(
+          const DeviceSettings(
+            storageMode: StorageMode.defaultMode,
+            deviceProfileId: 'profile-1',
+          ),
+        ),
+      );
+    });
+  });
 }
