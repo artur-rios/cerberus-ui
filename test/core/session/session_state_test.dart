@@ -46,4 +46,32 @@ void main() {
       expect(const SignedIn(accountId: null).toString(), 'SignedIn(null)');
     });
   });
+
+  group('SessionState hash codes', () {
+    test('Given equal pending challenges, and two signed-out states '
+        'When their hash codes are read '
+        'Then each pair has the same hash code', () {
+      expect(const SignedOut().hashCode, const SignedOut().hashCode);
+      expect(
+        const ChallengePending(challengeToken: 't', methods: ['totp']).hashCode,
+        const ChallengePending(challengeToken: 't', methods: ['totp']).hashCode,
+      );
+    });
+
+    test('Given a state of each kind '
+        'When each is compared with the others '
+        'Then no two are equal', () {
+      const states = <SessionState>[
+        SignedOut(),
+        ChallengePending(challengeToken: 't', methods: ['totp']),
+        SignedIn(accountId: 'a'),
+      ];
+
+      for (final (i, a) in states.indexed) {
+        for (final (j, b) in states.indexed) {
+          if (i != j) expect(a, isNot(b), reason: '$a against $b');
+        }
+      }
+    });
+  });
 }

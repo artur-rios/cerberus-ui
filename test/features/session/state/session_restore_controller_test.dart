@@ -298,4 +298,68 @@ void main() {
       );
     });
   });
+
+  group('SessionRestoreState', () {
+    test('Given two settled and two verifying states '
+        'When they are compared '
+        'Then each pair is equal, hash codes included, and only verifying '
+        'holds the start', () {
+      expect(const SessionRestoreSettled(), const SessionRestoreSettled());
+      expect(
+        const SessionRestoreSettled().hashCode,
+        const SessionRestoreSettled().hashCode,
+      );
+      expect(const SessionRestoreVerifying(), const SessionRestoreVerifying());
+      expect(
+        const SessionRestoreVerifying().hashCode,
+        const SessionRestoreVerifying().hashCode,
+      );
+      expect(
+        const SessionRestoreSettled(),
+        isNot(const SessionRestoreVerifying()),
+      );
+      expect(const SessionRestoreSettled().holdsStart, isFalse);
+      expect(const SessionRestoreVerifying().holdsStart, isTrue);
+    });
+
+    test('Given two failed restores with the same reason and kind '
+        'When they are compared '
+        'Then they are equal, hash codes included', () {
+      const a = SessionRestoreFailed(
+        Failure(message: 'Unreachable.', kind: FailureKind.unreachable),
+      );
+      const b = SessionRestoreFailed(
+        Failure(message: 'Unreachable.', kind: FailureKind.unreachable),
+      );
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('Given failed restores differing in reason or in kind '
+        'When they are compared '
+        'Then they differ', () {
+      const base = SessionRestoreFailed(
+        Failure(message: 'Unreachable.', kind: FailureKind.unreachable),
+      );
+
+      expect(
+        base,
+        isNot(
+          const SessionRestoreFailed(
+            Failure(message: 'Down.', kind: FailureKind.unreachable),
+          ),
+        ),
+      );
+      expect(
+        base,
+        isNot(
+          const SessionRestoreFailed(
+            Failure(message: 'Unreachable.', kind: FailureKind.serverError),
+          ),
+        ),
+      );
+      expect(base, isNot(const SessionRestoreVerifying()));
+    });
+  });
 }
