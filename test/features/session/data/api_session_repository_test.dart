@@ -144,28 +144,58 @@ void main() {
       expect((result as Failure).kind, FailureKind.unreachable);
     });
 
+    test('Given an answer carrying fields the generated client does not know '
+        'When signing in '
+        'Then it is refused as an answer Cerberus could not read, and no '
+        'session is assumed (UC-03 AF-06)', () async {
+      final adapter = StubHttpAdapter()
+        ..on(
+          'POST',
+          loginPath,
+          loginCompleted(
+            token: 'tok',
+            extraIdentityFields: {
+              'futureField': 'x',
+              'nested': {'a': 1},
+            },
+          ),
+        );
+
+      final result = await _repository(adapter)
+          .signIn(email: _email, password: _password);
+
+      expect(
+        result,
+        const Failure<SignInOutcome>(
+          message: ApiSessionRepository.unreadableAnswer,
+          kind: FailureKind.serverError,
+        ),
+      );
+    });
+
     test(
-      'Given an answer carrying fields the generated client does not know '
+      'Given an answer with an explicit null in a field the contract does '
+      'not declare nullable '
       'When signing in '
-      'Then they are ignored and the login completes (UC-03 AF-06)',
+      'Then it is refused as an answer Cerberus could not read (FR-DA-03)',
       () async {
         final adapter = StubHttpAdapter()
           ..on(
             'POST',
             loginPath,
-            loginCompleted(
-              token: 'tok',
-              extraIdentityFields: {
-                'futureField': 'x',
-                'nested': {'a': 1},
-              },
-            ),
+            loginCompleted(extraIdentityFields: {'requiresTwoFactor': null}),
           );
 
         final result = await _repository(adapter)
             .signIn(email: _email, password: _password);
 
-        expect((result.valueOrNull! as SignInCompleted).token, 'tok');
+        expect(
+          result,
+          const Failure<SignInOutcome>(
+            message: ApiSessionRepository.unreadableAnswer,
+            kind: FailureKind.serverError,
+          ),
+        );
       },
     );
 
@@ -276,6 +306,20 @@ void main() {
       expect(request.headers, isNot(contains('Authorization')));
     });
 
+    test('Given a code and no recovery code '
+        'When the challenge is completed '
+        'Then the recovery code is left out of the body rather than sent as '
+        'null, which the API reads the same way', () async {
+      final adapter = StubHttpAdapter()
+        ..on('POST', challengePath, challengeCompleted());
+
+      await complete(adapter);
+
+      final body =
+          jsonDecode(adapter.requests.single.body) as Map<String, Object?>;
+      expect(body.keys, unorderedEquals(['challengeToken', 'code']));
+    });
+
     test(
       'Given a code '
       'When the challenge is completed '
@@ -356,6 +400,28 @@ void main() {
           'POST',
           challengePath,
           const StubResponse(200, {'data': 'not-an-object'}),
+        );
+
+      final result = await complete(adapter);
+
+      expect(
+        result,
+        const Failure<SignInCompleted>(
+          message: ApiSessionRepository.unreadableAnswer,
+          kind: FailureKind.serverError,
+        ),
+      );
+    });
+
+    test('Given an answer carrying a field the generated client does not know '
+        'When the challenge is completed '
+        'Then it is refused as an answer Cerberus could not read, and no '
+        'session is assumed (UC-03 AF-06)', () async {
+      final adapter = StubHttpAdapter()
+        ..on(
+          'POST',
+          challengePath,
+          loginCompleted(extraIdentityFields: {'futureField': 'x'}),
         );
 
       final result = await complete(adapter);
@@ -516,6 +582,28 @@ void main() {
           protectionPath,
           const StubResponse(200, {'data': 'not-an-object'}),
         );
+
+      final result = await repository(adapter).verifySession();
+
+      expect(
+        result,
+        const Failure<SessionVerification>(
+          message: ApiSessionRepository.unreadableAnswer,
+          kind: FailureKind.serverError,
+        ),
+      );
+    });
+
+    test('Given a found answer carrying a field the generated client does not '
+        'know '
+        'When the session is verified '
+        'Then it is a failure the session is not ended for, rather than a '
+        'verified session (FR-DA-03)', () async {
+      final found = protectionFound();
+      final json = Map<String, Object?>.of(found.json! as Map<String, Object?>)
+        ..['futureField'] = 'x';
+      final adapter = StubHttpAdapter()
+        ..on('GET', protectionPath, StubResponse(200, json));
 
       final result = await repository(adapter).verifySession();
 

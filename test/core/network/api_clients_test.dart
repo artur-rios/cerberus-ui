@@ -1,4 +1,4 @@
-import 'package:cerberus_api_client/export.dart';
+import 'package:cerberus_api_client/exports.dart';
 import 'package:cerberus_ui/core/network/api_clients.dart';
 import 'package:cerberus_ui/core/network/http_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,6 +87,54 @@ void main() {
         adapter.requests.single.uri.toString(),
         'https://vault.example/api/vault/protection',
       );
+    });
+
+    test('Given an operation the contract answers with 201 '
+        'When the client calls it and the API answers 201 '
+        'Then the answer is decoded as the success it is', () async {
+      adapter.on(
+        'POST',
+        '/api/accounts',
+        const StubResponse(201, {
+          'messages': ['account_registered'],
+          'errors': <String>[],
+          'timestamp': '2026-10-08T12:00:00Z',
+          'success': true,
+          'data': {'id': 'a-1', 'revision': 1, 'replayed': false},
+        }),
+      );
+
+      final output = await container
+          .read(accountClientProvider)
+          .postApiAccounts(body: const RegisterAccountCommand());
+
+      expect(output.data?.id, 'a-1');
+    });
+  });
+
+  group('The generated DTOs', () {
+    test(
+      'Given an enum value the client does not know '
+      'When it is decoded '
+      'Then it is kept as an unknown value rather than failing the answer',
+      () {
+        final status = HealthComponentStatus.fromJson('degraded');
+
+        expect(status, isA<HealthComponentStatusUnknown>());
+        expect(status.toJson(), 'degraded');
+      },
+    );
+
+    test('Given a date-time the API sends with an offset '
+        'When it is decoded '
+        'Then it is the same instant, in UTC', () {
+      final login = HeimdallLogin.fromJson({
+        'requiresTwoFactor': false,
+        'expiresAt': '2026-10-08T10:00:00-03:00',
+      });
+
+      expect(login.expiresAt, DateTime.utc(2026, 10, 8, 13));
+      expect(login.expiresAt!.isUtc, isTrue);
     });
   });
 }

@@ -4,7 +4,7 @@
 /// `dio` or a generated client (`FR-DA-01`).
 library;
 
-import 'package:cerberus_api_client/export.dart';
+import 'package:cerberus_api_client/exports.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'http_client.dart';
