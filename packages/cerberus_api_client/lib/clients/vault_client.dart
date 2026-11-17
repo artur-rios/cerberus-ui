@@ -25,15 +25,15 @@ abstract class VaultClient {
 
   @POST('/api/vault/protection')
   Future<VaultInitializationOutputDataOutput> postApiVaultProtection({
-    @Body() InitializeVaultCommand? body,
+    @Body() required InitializeVaultCommand body,
   });
 
   @PUT('/api/vault/protection')
   Future<ChangeVaultProtectionOutputDataOutput> putApiVaultProtection({
+    @Body() required ChangeVaultProtectionCommand body,
     @Header('X-Cerberus-Vault-Access') String? xCerberusVaultAccess,
     @Header('X-Cerberus-Challenge-Id') String? xCerberusChallengeId,
     @Header('X-Cerberus-Proof') String? xCerberusProof,
-    @Body() ChangeVaultProtectionCommand? body,
   });
 
   @GET('/api/vault/protection')
@@ -41,17 +41,17 @@ abstract class VaultClient {
 
   @POST('/api/vault/recovery')
   Future<RecoverVaultOutputDataOutput> postApiVaultRecovery({
+    @Body() required RecoverVaultCommand body,
     @Header('X-Cerberus-Challenge-Id') String? xCerberusChallengeId,
     @Header('X-Cerberus-Proof') String? xCerberusProof,
-    @Body() RecoverVaultCommand? body,
   });
 
   @PUT('/api/vault/recovery')
   Future<RecoverVaultOutputDataOutput> putApiVaultRecovery({
+    @Body() required RecoverVaultCommand body,
     @Header('X-Cerberus-Vault-Access') String? xCerberusVaultAccess,
     @Header('X-Cerberus-Challenge-Id') String? xCerberusChallengeId,
     @Header('X-Cerberus-Proof') String? xCerberusProof,
-    @Body() RecoverVaultCommand? body,
   });
 
   @GET('/api/vault/recovery-material')
@@ -59,13 +59,13 @@ abstract class VaultClient {
 
   @POST('/api/vault/challenges')
   Future<VaultChallengeOutputDataOutput> postApiVaultChallenges({
-    @Body() IssueVaultChallengeCommand? body,
+    @Body() required IssueVaultChallengeCommand body,
   });
 
   @POST('/api/vault/unlock')
   Future<VaultUnlockOutputDataOutput> postApiVaultUnlock({
+    @Body() required UnlockVaultCommand body,
     @Header('X-Cerberus-Challenge-Id') String? xCerberusChallengeId,
     @Header('X-Cerberus-Proof') String? xCerberusProof,
-    @Body() UnlockVaultCommand? body,
   });
 }

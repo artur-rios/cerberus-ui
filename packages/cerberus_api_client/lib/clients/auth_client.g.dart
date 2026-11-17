@@ -21,15 +21,84 @@ class _AuthClient implements AuthClient {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<AuthenticationOutputDataOutput> postApiAuthLogin({
-    LoginCommand? body,
+  Future<ClosureRecoveryAuthenticationOutputDataOutput>
+  postApiAuthClosureLogin({required ClosureRecoveryLoginCommand body}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options =
+        _setStreamType<ClosureRecoveryAuthenticationOutputDataOutput>(
+          Options(method: 'POST', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/api/auth/closure/login',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late ClosureRecoveryAuthenticationOutputDataOutput _value;
+    try {
+      _value = ClosureRecoveryAuthenticationOutputDataOutput.fromJson(
+        _result.data!,
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<ClosureRecoveryAuthenticationOutputDataOutput>
+  postApiAuthClosure2faVerify({
+    required ClosureRecoveryVerifyChallengeCommand body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body?.toJson() ?? <String, dynamic>{});
+    _data.addAll(body.toJson());
+    final _options =
+        _setStreamType<ClosureRecoveryAuthenticationOutputDataOutput>(
+          Options(method: 'POST', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/api/auth/closure/2fa/verify',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late ClosureRecoveryAuthenticationOutputDataOutput _value;
+    try {
+      _value = ClosureRecoveryAuthenticationOutputDataOutput.fromJson(
+        _result.data!,
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AuthenticationOutputDataOutput> postApiAuthLogin({
+    required LoginCommand body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<AuthenticationOutputDataOutput>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -53,14 +122,13 @@ class _AuthClient implements AuthClient {
 
   @override
   Future<AuthenticationOutputDataOutput> postApiAuth2faVerify({
-    VerifyChallengeCommand? body,
+    required VerifyChallengeCommand body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body?.toJson() ?? <String, dynamic>{});
+    _data.addAll(body.toJson());
     final _options = _setStreamType<AuthenticationOutputDataOutput>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(

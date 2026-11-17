@@ -16,6 +16,11 @@ ContentReplacement _$ContentReplacementFromJson(Map<String, dynamic> json) =>
           : EncryptedEnvelope.fromJson(
               json['envelope'] as Map<String, dynamic>,
             ),
+      keyWrappers: json['keyWrappers'] == null
+          ? null
+          : ProfileKeyWrappers.fromJson(
+              json['keyWrappers'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$ContentReplacementToJson(ContentReplacement instance) =>
@@ -24,4 +29,5 @@ Map<String, dynamic> _$ContentReplacementToJson(ContentReplacement instance) =>
       'resourceId': instance.resourceId,
       'expectedRevision': instance.expectedRevision,
       'envelope': instance.envelope,
+      'keyWrappers': instance.keyWrappers,
     };

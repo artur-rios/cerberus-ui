@@ -16,7 +16,7 @@ abstract class IdentityClient {
 
   @PUT('/api/identity/me')
   Future<UpdateIdentityOutputDataOutput> putApiIdentityMe({
+    @Body() required UpdateIdentityCommand body,
     @Header('X-Cerberus-Vault-Access') String? xCerberusVaultAccess,
-    @Body() UpdateIdentityCommand? body,
   });
 }

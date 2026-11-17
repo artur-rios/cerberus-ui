@@ -20,6 +20,11 @@ ChangeVaultProtectionCommand _$ChangeVaultProtectionCommandFromJson(
   contentReplacements: (json['contentReplacements'] as List<dynamic>?)
       ?.map((e) => ContentReplacement.fromJson(e as Map<String, dynamic>))
       .toList(),
+  grantReplacements: (json['grantReplacements'] as List<dynamic>?)
+      ?.map(
+        (e) => CollectionGrantReplacement.fromJson(e as Map<String, dynamic>),
+      )
+      .toList(),
 );
 
 Map<String, dynamic> _$ChangeVaultProtectionCommandToJson(
@@ -31,4 +36,5 @@ Map<String, dynamic> _$ChangeVaultProtectionCommandToJson(
   'mode': instance.mode,
   'material': instance.material,
   'contentReplacements': instance.contentReplacements,
+  'grantReplacements': instance.grantReplacements,
 };

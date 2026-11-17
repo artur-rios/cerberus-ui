@@ -22,8 +22,8 @@ class _IdentityClient implements IdentityClient {
 
   @override
   Future<UpdateIdentityOutputDataOutput> putApiIdentityMe({
+    required UpdateIdentityCommand body,
     String? xCerberusVaultAccess,
-    UpdateIdentityCommand? body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -33,7 +33,7 @@ class _IdentityClient implements IdentityClient {
     };
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    _data.addAll(body?.toJson() ?? <String, dynamic>{});
+    _data.addAll(body.toJson());
     final _options = _setStreamType<UpdateIdentityOutputDataOutput>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(

@@ -6,6 +6,9 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../models/authentication_output_data_output.dart';
+import '../models/closure_recovery_authentication_output_data_output.dart';
+import '../models/closure_recovery_login_command.dart';
+import '../models/closure_recovery_verify_challenge_command.dart';
 import '../models/login_command.dart';
 import '../models/verify_challenge_command.dart';
 
@@ -15,13 +18,23 @@ part 'auth_client.g.dart';
 abstract class AuthClient {
   factory AuthClient(Dio dio, {String? baseUrl}) = _AuthClient;
 
+  @POST('/api/auth/closure/login')
+  Future<ClosureRecoveryAuthenticationOutputDataOutput>
+  postApiAuthClosureLogin({@Body() required ClosureRecoveryLoginCommand body});
+
+  @POST('/api/auth/closure/2fa/verify')
+  Future<ClosureRecoveryAuthenticationOutputDataOutput>
+  postApiAuthClosure2faVerify({
+    @Body() required ClosureRecoveryVerifyChallengeCommand body,
+  });
+
   @POST('/api/auth/login')
   Future<AuthenticationOutputDataOutput> postApiAuthLogin({
-    @Body() LoginCommand? body,
+    @Body() required LoginCommand body,
   });
 
   @POST('/api/auth/2fa/verify')
   Future<AuthenticationOutputDataOutput> postApiAuth2faVerify({
-    @Body() VerifyChallengeCommand? body,
+    @Body() required VerifyChallengeCommand body,
   });
 }

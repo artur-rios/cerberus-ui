@@ -4,6 +4,7 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
+import 'collection_grant_replacement.dart';
 import 'content_replacement.dart';
 import 'protection_material.dart';
 
@@ -18,6 +19,7 @@ class ChangeVaultProtectionCommand {
     this.mode,
     this.material,
     this.contentReplacements,
+    this.grantReplacements,
   });
 
   factory ChangeVaultProtectionCommand.fromJson(Map<String, Object?> json) =>
@@ -29,6 +31,7 @@ class ChangeVaultProtectionCommand {
   final String? mode;
   final ProtectionMaterial? material;
   final List<ContentReplacement>? contentReplacements;
+  final List<CollectionGrantReplacement>? grantReplacements;
 
   Map<String, Object?> toJson() => _$ChangeVaultProtectionCommandToJson(this);
 }

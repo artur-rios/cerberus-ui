@@ -5,6 +5,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'encrypted_envelope.dart';
+import 'profile_key_wrappers.dart';
 
 part 'content_replacement.g.dart';
 
@@ -15,6 +16,7 @@ class ContentReplacement {
     this.resourceId,
     this.expectedRevision,
     this.envelope,
+    this.keyWrappers,
   });
 
   factory ContentReplacement.fromJson(Map<String, Object?> json) =>
@@ -24,6 +26,7 @@ class ContentReplacement {
   final String? resourceId;
   final int? expectedRevision;
   final EncryptedEnvelope? envelope;
+  final ProfileKeyWrappers? keyWrappers;
 
   Map<String, Object?> toJson() => _$ContentReplacementToJson(this);
 }

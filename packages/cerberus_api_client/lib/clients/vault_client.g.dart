@@ -22,14 +22,13 @@ class _VaultClient implements VaultClient {
 
   @override
   Future<VaultInitializationOutputDataOutput> postApiVaultProtection({
-    InitializeVaultCommand? body,
+    required InitializeVaultCommand body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body?.toJson() ?? <String, dynamic>{});
+    _data.addAll(body.toJson());
     final _options = _setStreamType<VaultInitializationOutputDataOutput>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -53,10 +52,10 @@ class _VaultClient implements VaultClient {
 
   @override
   Future<ChangeVaultProtectionOutputDataOutput> putApiVaultProtection({
+    required ChangeVaultProtectionCommand body,
     String? xCerberusVaultAccess,
     String? xCerberusChallengeId,
     String? xCerberusProof,
-    ChangeVaultProtectionCommand? body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -68,7 +67,7 @@ class _VaultClient implements VaultClient {
     };
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    _data.addAll(body?.toJson() ?? <String, dynamic>{});
+    _data.addAll(body.toJson());
     final _options = _setStreamType<ChangeVaultProtectionOutputDataOutput>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
@@ -119,9 +118,9 @@ class _VaultClient implements VaultClient {
 
   @override
   Future<RecoverVaultOutputDataOutput> postApiVaultRecovery({
+    required RecoverVaultCommand body,
     String? xCerberusChallengeId,
     String? xCerberusProof,
-    RecoverVaultCommand? body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -132,7 +131,7 @@ class _VaultClient implements VaultClient {
     };
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    _data.addAll(body?.toJson() ?? <String, dynamic>{});
+    _data.addAll(body.toJson());
     final _options = _setStreamType<RecoverVaultOutputDataOutput>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -156,10 +155,10 @@ class _VaultClient implements VaultClient {
 
   @override
   Future<RecoverVaultOutputDataOutput> putApiVaultRecovery({
+    required RecoverVaultCommand body,
     String? xCerberusVaultAccess,
     String? xCerberusChallengeId,
     String? xCerberusProof,
-    RecoverVaultCommand? body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -171,7 +170,7 @@ class _VaultClient implements VaultClient {
     };
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    _data.addAll(body?.toJson() ?? <String, dynamic>{});
+    _data.addAll(body.toJson());
     final _options = _setStreamType<RecoverVaultOutputDataOutput>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
@@ -222,14 +221,13 @@ class _VaultClient implements VaultClient {
 
   @override
   Future<VaultChallengeOutputDataOutput> postApiVaultChallenges({
-    IssueVaultChallengeCommand? body,
+    required IssueVaultChallengeCommand body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body?.toJson() ?? <String, dynamic>{});
+    _data.addAll(body.toJson());
     final _options = _setStreamType<VaultChallengeOutputDataOutput>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -253,9 +251,9 @@ class _VaultClient implements VaultClient {
 
   @override
   Future<VaultUnlockOutputDataOutput> postApiVaultUnlock({
+    required UnlockVaultCommand body,
     String? xCerberusChallengeId,
     String? xCerberusProof,
-    UnlockVaultCommand? body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -266,7 +264,7 @@ class _VaultClient implements VaultClient {
     };
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    _data.addAll(body?.toJson() ?? <String, dynamic>{});
+    _data.addAll(body.toJson());
     final _options = _setStreamType<VaultUnlockOutputDataOutput>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(

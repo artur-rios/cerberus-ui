@@ -21,9 +21,165 @@ class _AccountClient implements AccountClient {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<UpdateAccountOutputDataOutput> putApiAccountsMe({
+  Future<AccountDeletionOutputDataOutput> deleteApiAccountsMePermanent({
+    required DeleteAccountCommand body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options = _setStreamType<AccountDeletionOutputDataOutput>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/accounts/me/permanent',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late AccountDeletionOutputDataOutput _value;
+    try {
+      _value = AccountDeletionOutputDataOutput.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AccountClosureCancellationOutputDataOutput>
+  postApiAccountsMeClosureCancel({
+    required CancelAccountClosureCommand body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options = _setStreamType<AccountClosureCancellationOutputDataOutput>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/accounts/me/closure/cancel',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late AccountClosureCancellationOutputDataOutput _value;
+    try {
+      _value = AccountClosureCancellationOutputDataOutput.fromJson(
+        _result.data!,
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AccountClosureOutputDataOutput> postApiAccountsMeClosure({
+    required RequestAccountClosureCommand body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options = _setStreamType<AccountClosureOutputDataOutput>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/accounts/me/closure',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late AccountClosureOutputDataOutput _value;
+    try {
+      _value = AccountClosureOutputDataOutput.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<SetOfflinePolicyOutputDataOutput> putApiAccountsMeOfflinePolicy({
+    required SetOfflinePolicyCommand body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options = _setStreamType<SetOfflinePolicyOutputDataOutput>(
+      Options(method: 'PUT', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/accounts/me/offline-policy',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late SetOfflinePolicyOutputDataOutput _value;
+    try {
+      _value = SetOfflinePolicyOutputDataOutput.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<OfflinePolicyOutputDataOutput> getApiAccountsMeOfflinePolicy({
     String? xCerberusVaultAccess,
-    UpdateAccountCommand? body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{
+      r'X-Cerberus-Vault-Access': xCerberusVaultAccess,
+    };
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<OfflinePolicyOutputDataOutput>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/accounts/me/offline-policy',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late OfflinePolicyOutputDataOutput _value;
+    try {
+      _value = OfflinePolicyOutputDataOutput.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<UpdateAccountOutputDataOutput> putApiAccountsMe({
+    required UpdateAccountCommand body,
+    String? xCerberusVaultAccess,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -33,7 +189,7 @@ class _AccountClient implements AccountClient {
     };
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    _data.addAll(body?.toJson() ?? <String, dynamic>{});
+    _data.addAll(body.toJson());
     final _options = _setStreamType<UpdateAccountOutputDataOutput>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
@@ -90,14 +246,13 @@ class _AccountClient implements AccountClient {
 
   @override
   Future<RegisterAccountOutputDataOutput> postApiAccounts({
-    RegisterAccountCommand? body,
+    required RegisterAccountCommand body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body?.toJson() ?? <String, dynamic>{});
+    _data.addAll(body.toJson());
     final _options = _setStreamType<RegisterAccountOutputDataOutput>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
