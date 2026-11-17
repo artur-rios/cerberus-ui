@@ -10,27 +10,26 @@
 # Everything under packages/cerberus_api_client/lib is generated and is never
 # hand-edited (FR-DA-02). The package's own pubspec.yaml is maintained by hand.
 # Ergonomic wrappers belong in the consuming feature's data/ layer.
+#
+# swagger_parser 2 always emits one folder per tag with its client, an `Api`
+# entry class and a single `exports.dart`, which consumers import.
 
 swagger_parser:
   schema_path: api/cerberus.json
   output_directory: packages/cerberus_api_client/lib
-  name: cerberus_api_client
 
-  language: dart
-  json_serializer: json_serializable
+  generation:
+    # Retrofit clients over the configured `dio`, with json_serializable DTOs.
+    http_client: retrofit
+    serializer: json_serializable
 
-  # One client per tag, in its own folder, named after the area it serves.
-  put_clients_in_folder: true
-  squash_clients: false
-  root_client: false
+    # The decoded payload, not the transport response.
+    original_http_response: false
 
-  # Unknown enum values decode to a sentinel rather than failing the whole
-  # response (UC-03 AF-06: a field or value the client does not know is
-  # ignored, never accommodated by hand-editing).
-  enums_to_json: false
-  enums_prefix: false
-  unknown_enum_value: true
-  original_http_response: false
-
-  # A single entry point, so consumers import one file.
-  export_file: true
+    # The contract is strict both ways (UC-03 AF-06): every schema the API
+    # publishes forbids additional properties, so a response carrying a field
+    # the client does not know fails to decode and is reported as an answer
+    # Cerberus could not read; the client is never hand-edited to accommodate
+    # it. An enum value the client does not know still decodes, to the
+    # enum's Unknown case, rather than failing the whole response.
+    unknown_enum_values: preserve

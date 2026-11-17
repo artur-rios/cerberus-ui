@@ -3,7 +3,11 @@
 /// One command, three steps, in this order:
 ///
 ///   1. `swagger_parser` reads the OpenAPI document and emits the DTOs and the
-///      retrofit clients.
+///      retrofit clients, into an emptied `lib/`: everything there is
+///      generated, so a DTO or client the document no longer declares, or a
+///      `.g.dart` part left from it, cannot survive a regeneration. The lock
+///      file swagger_parser keeps beside its output while writing is removed
+///      afterwards; it is not part of the client.
 ///   2. `build_runner` runs inside the generated package to emit the
 ///      `.g.dart` bodies.
 ///   3. `dart format` runs over the package — because the generators' own line
@@ -18,9 +22,14 @@ library;
 import 'dart:io';
 
 const _packageDirectory = 'packages/cerberus_api_client';
+const _outputDirectory = '$_packageDirectory/lib';
 
 Future<void> main() async {
+  final output = Directory(_outputDirectory);
+  if (output.existsSync()) output.deleteSync(recursive: true);
   await _run('dart', ['run', 'swagger_parser']);
+  final lock = File('$_outputDirectory/.swagger_parser.lock');
+  if (lock.existsSync()) lock.deleteSync();
   await _run('dart', ['pub', 'get'], workingDirectory: _packageDirectory);
   await _run('dart', [
     'run',
