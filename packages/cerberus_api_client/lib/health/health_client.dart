@@ -5,7 +5,7 @@ import 'package:dio/dio.dart'
 import 'package:retrofit/retrofit.dart'
     show RestApi, Extras, CancelRequest, GET, ParseErrorLogger;
 
-import '../account/models/get_health_details_response503_response.dart'
+import '../account_export/models/get_health_details_response503_response.dart'
     show HealthDetails;
 import 'models/health_status.dart' show HealthStatus;
 

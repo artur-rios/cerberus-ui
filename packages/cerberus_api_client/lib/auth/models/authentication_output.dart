@@ -2,7 +2,7 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-import 'authentication_output_account.dart';
+import 'authentication_account.dart';
 import 'heimdall_login.dart';
 
 part 'authentication_output.g.dart';
@@ -22,7 +22,7 @@ class AuthenticationOutput {
   final HeimdallLogin identity;
 
   @JsonKey(includeIfNull: false)
-  final AuthenticationOutputAccount? account;
+  final AuthenticationAccount? account;
 
   Map<String, Object?> toJson() => _$AuthenticationOutputToJson(this);
 }

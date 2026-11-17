@@ -2,7 +2,7 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../profiles/models/content_replacement_key_wrappers_password_wrapper.dart';
+import '../../profiles/models/password_wrapper.dart';
 import '../../profiles/models/public_jwk.dart';
 import 'recovery_wrapper.dart';
 

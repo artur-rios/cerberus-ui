@@ -29,7 +29,7 @@ ContentReplacement _$ContentReplacementFromJson(Map<String, dynamic> json) {
         : EncryptedEnvelope.fromJson(json['envelope'] as Map<String, dynamic>),
     keyWrappers: json['keyWrappers'] == null
         ? null
-        : ContentReplacementKeyWrappers.fromJson(
+        : ProfileKeyWrappers.fromJson(
             json['keyWrappers'] as Map<String, dynamic>,
           ),
   );

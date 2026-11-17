@@ -16,9 +16,11 @@ _$ClosureRecoveryAuthenticationOutputFromJson(Map<String, dynamic> json) {
   );
   return ClosureRecoveryAuthenticationOutput(
     identity: HeimdallLogin.fromJson(json['identity'] as Map<String, dynamic>),
-    account: !json.containsKey('account')
+    account: json['account'] == null
         ? null
-        : ClosureRecoveryAuthenticationOutput._read_account(json['account']),
+        : AccountClosureRecoveryDetails.fromJson(
+            json['account'] as Map<String, dynamic>,
+          ),
   );
 }
 
@@ -26,6 +28,5 @@ Map<String, dynamic> _$ClosureRecoveryAuthenticationOutputToJson(
   ClosureRecoveryAuthenticationOutput instance,
 ) => <String, dynamic>{
   'identity': instance.identity.toJson(),
-  if (instance.account case final $value?)
-    'account': ClosureRecoveryAuthenticationOutput._write_account($value),
+  'account': ?instance.account?.toJson(),
 };

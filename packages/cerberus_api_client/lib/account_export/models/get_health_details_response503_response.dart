@@ -82,8 +82,8 @@ class ProcessOutput$Response implements GetHealthDetailsResponse503$Response {
 sealed class GetHealthDetailsResponse503$Response {
   factory GetHealthDetailsResponse503$Response.fromJson(Object? json) {
     final matches = <String>[
-      if (_matches333(json)) "HealthDetails",
-      if (_matches342(json)) "ProcessOutput",
+      if (_matches323(json)) "HealthDetails",
+      if (_matches332(json)) "ProcessOutput",
     ];
     if (matches.length != 1) {
       throw FormatException(
@@ -100,84 +100,84 @@ sealed class GetHealthDetailsResponse503$Response {
   Object? toJson();
 }
 
-bool _matches333(Object? value) => (_matches334(value));
-bool _matches334(Object? value) =>
+bool _matches323(Object? value) => (_matches324(value));
+bool _matches324(Object? value) =>
     (value is! Map<String, Object?> || value.containsKey("status")) &&
     (value is! Map<String, Object?> || value.containsKey("components")) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("status") ||
-        _matches335(value["status"])) &&
+        _matches325(value["status"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("components") ||
-        _matches336(value["components"])) &&
+        _matches326(value["components"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(const <String>{"status", "components"}.contains)) &&
     ((value is Map<String, Object?>));
-bool _matches335(Object? value) =>
+bool _matches325(Object? value) =>
     (const <Object?>["healthy", "unhealthy"].contains(value)) &&
     ((value is String));
-bool _matches336(Object? value) =>
+bool _matches326(Object? value) =>
     (value is! List<Object?> || (value.length >= 3)) &&
     (value is! List<Object?> || (value.length <= 3)) &&
-    (value is! List<Object?> || value.skip(0).every(_matches337)) &&
-    ((value is List<Object?>) || (value == null));
-bool _matches337(Object? value) => (_matches338(value));
-bool _matches338(Object? value) =>
+    (value is! List<Object?> || value.skip(0).every(_matches327)) &&
+    ((value == null) || (value is List<Object?>));
+bool _matches327(Object? value) => (_matches328(value));
+bool _matches328(Object? value) =>
     (value is! Map<String, Object?> || value.containsKey("name")) &&
     (value is! Map<String, Object?> || value.containsKey("status")) &&
     (value is! Map<String, Object?> ||
         value.containsKey("elapsedMilliseconds")) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("name") ||
-        _matches339(value["name"])) &&
+        _matches329(value["name"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("status") ||
-        _matches340(value["status"])) &&
+        _matches330(value["status"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("elapsedMilliseconds") ||
-        _matches341(value["elapsedMilliseconds"])) &&
+        _matches331(value["elapsedMilliseconds"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(
           const <String>{"name", "status", "elapsedMilliseconds"}.contains,
         )) &&
     ((value is Map<String, Object?>));
-bool _matches339(Object? value) =>
+bool _matches329(Object? value) =>
     (const <Object?>["database", "identity", "restore"].contains(value)) &&
     ((value is String));
-bool _matches340(Object? value) =>
+bool _matches330(Object? value) =>
     (const <Object?>["healthy", "unhealthy"].contains(value)) &&
     ((value is String));
-bool _matches341(Object? value) =>
+bool _matches331(Object? value) =>
     (value is! num || (value >= 0)) &&
     ((value is num &&
         (value is int ||
             (value.isFinite && value == value.truncateToDouble()))));
-bool _matches342(Object? value) => (_matches343(value));
-bool _matches343(Object? value) =>
+bool _matches332(Object? value) => (_matches333(value));
+bool _matches333(Object? value) =>
     (value is! Map<String, Object?> ||
         !value.containsKey("messages") ||
-        _matches344(value["messages"])) &&
+        _matches334(value["messages"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("errors") ||
-        _matches345(value["errors"])) &&
+        _matches335(value["errors"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("timestamp") ||
-        _matches346(value["timestamp"])) &&
+        _matches336(value["timestamp"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("success") ||
-        _matches347(value["success"])) &&
+        _matches337(value["success"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(
           const <String>{"messages", "errors", "timestamp", "success"}.contains,
         )) &&
     ((value is Map<String, Object?>));
-bool _matches344(Object? value) =>
-    (value is! List<Object?> || value.skip(0).every(_matches348)) &&
-    ((value is List<Object?>) || (value == null));
-bool _matches348(Object? value) => ((value is String));
-bool _matches345(Object? value) =>
-    (value is! List<Object?> || value.skip(0).every(_matches349)) &&
-    ((value is List<Object?>) || (value == null));
-bool _matches349(Object? value) => ((value is String));
-bool _matches346(Object? value) => ((value is String));
-bool _matches347(Object? value) => ((value is bool));
+bool _matches334(Object? value) =>
+    (value is! List<Object?> || value.skip(0).every(_matches338)) &&
+    ((value == null) || (value is List<Object?>));
+bool _matches338(Object? value) => ((value is String));
+bool _matches335(Object? value) =>
+    (value is! List<Object?> || value.skip(0).every(_matches339)) &&
+    ((value == null) || (value is List<Object?>));
+bool _matches339(Object? value) => ((value is String));
+bool _matches336(Object? value) => ((value is String));
+bool _matches337(Object? value) => ((value is bool));

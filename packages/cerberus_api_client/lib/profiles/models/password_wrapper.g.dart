@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'content_replacement_key_wrappers_password_wrapper.dart';
+part of 'password_wrapper.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

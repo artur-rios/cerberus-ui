@@ -3,7 +3,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../collections/models/recipient_envelope.dart';
-import 'content_replacement_key_wrappers_password_wrapper.dart';
+import 'password_wrapper.dart';
 import 'public_jwk.dart';
 
 part 'profile_key_wrappers.g.dart';
@@ -33,22 +33,8 @@ class ProfileKeyWrappers {
   @JsonKey(disallowNullValue: true, includeIfNull: false)
   final RecipientEnvelope? masterKeyWrapper;
 
-  @JsonKey(
-    explicitJsonNullWhenNonNullField: true,
-    fromJson: ProfileKeyWrappers._read_passwordWrapper,
-    toJson: ProfileKeyWrappers._write_passwordWrapper,
-  )
-  final ContentReplacementKeyWrappersPasswordWrapper? passwordWrapper;
-
-  static ContentReplacementKeyWrappersPasswordWrapper? _read_passwordWrapper(
-    Object? value,
-  ) => value == null
-      ? null
-      : ContentReplacementKeyWrappersPasswordWrapper.fromJson(value);
-
-  static Object? _write_passwordWrapper(
-    ContentReplacementKeyWrappersPasswordWrapper? value,
-  ) => value?.toJson();
+  @JsonKey(includeIfNull: false)
+  final PasswordWrapper? passwordWrapper;
 
   Map<String, Object?> toJson() => _$ProfileKeyWrappersToJson(this);
 }

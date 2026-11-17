@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'closure_recovery_authentication_output_account.dart';
+part of 'account_closure_recovery_details.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
