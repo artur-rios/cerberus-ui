@@ -2,7 +2,7 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-import 'closure_recovery_authentication_output_account.dart';
+import 'account_closure_recovery_details.dart';
 import 'heimdall_login.dart';
 
 part 'closure_recovery_authentication_output.g.dart';
@@ -25,22 +25,8 @@ class ClosureRecoveryAuthenticationOutput {
   @JsonKey(required: true, disallowNullValue: true)
   final HeimdallLogin identity;
 
-  @JsonKey(
-    explicitJsonNullWhenNonNullField: true,
-    fromJson: ClosureRecoveryAuthenticationOutput._read_account,
-    toJson: ClosureRecoveryAuthenticationOutput._write_account,
-  )
-  final ClosureRecoveryAuthenticationOutputAccount? account;
-
-  static ClosureRecoveryAuthenticationOutputAccount? _read_account(
-    Object? value,
-  ) => value == null
-      ? null
-      : ClosureRecoveryAuthenticationOutputAccount.fromJson(value);
-
-  static Object? _write_account(
-    ClosureRecoveryAuthenticationOutputAccount? value,
-  ) => value?.toJson();
+  @JsonKey(includeIfNull: false)
+  final AccountClosureRecoveryDetails? account;
 
   Map<String, Object?> toJson() =>
       _$ClosureRecoveryAuthenticationOutputToJson(this);

@@ -1123,7 +1123,7 @@ bool _matches2(Object? value) =>
     (value is! Map<String, Object?> ||
         value.keys.every(const <String>{"details", "entryType"}.contains)) &&
     ((value is Map<String, Object?>));
-bool _matches3(Object? value) => ((value is String) || (value == null));
+bool _matches3(Object? value) => ((value == null) || (value is String));
 bool _matches4(Object? value) =>
     (const <Object?>["account"].contains(value)) && ((value is String));
 bool _matches5(Object? value) => (_matches6(value));
@@ -1178,7 +1178,7 @@ bool _matches9(Object? value) =>
     ((value is num &&
         (value is int ||
             (value.isFinite && value == value.truncateToDouble()))));
-bool _matches10(Object? value) => ((value is String) || (value == null));
+bool _matches10(Object? value) => ((value == null) || (value is String));
 bool _matches11(Object? value) =>
     (const <Object?>["protection"].contains(value)) && ((value is String));
 bool _matches12(Object? value) => (_matches13(value));
@@ -1248,10 +1248,10 @@ bool _matches16(Object? value) =>
         (value is int ||
             (value.isFinite && value == value.truncateToDouble()))));
 bool _matches17(Object? value) => ((value is String));
-bool _matches18(Object? value) => ((value is String) || (value == null));
-bool _matches19(Object? value) => ((value is String) || (value == null));
-bool _matches20(Object? value) => ((value is String) || (value == null));
-bool _matches21(Object? value) => ((value is String) || (value == null));
+bool _matches18(Object? value) => ((value == null) || (value is String));
+bool _matches19(Object? value) => ((value == null) || (value is String));
+bool _matches20(Object? value) => ((value == null) || (value is String));
+bool _matches21(Object? value) => ((value == null) || (value is String));
 bool _matches22(Object? value) =>
     (const <Object?>["profile"].contains(value)) && ((value is String));
 bool _matches23(Object? value) => (_matches24(value));
@@ -1321,10 +1321,10 @@ bool _matches27(Object? value) =>
         (value is int ||
             (value.isFinite && value == value.truncateToDouble()))));
 bool _matches28(Object? value) => ((value is String));
-bool _matches29(Object? value) => ((value is String) || (value == null));
-bool _matches30(Object? value) => ((value is String) || (value == null));
-bool _matches31(Object? value) => ((value is String) || (value == null));
-bool _matches32(Object? value) => ((value is String) || (value == null));
+bool _matches29(Object? value) => ((value == null) || (value is String));
+bool _matches30(Object? value) => ((value == null) || (value is String));
+bool _matches31(Object? value) => ((value == null) || (value is String));
+bool _matches32(Object? value) => ((value == null) || (value is String));
 bool _matches33(Object? value) =>
     (const <Object?>["record"].contains(value)) && ((value is String));
 bool _matches34(Object? value) => (_matches35(value));
@@ -1394,10 +1394,10 @@ bool _matches38(Object? value) =>
         (value is int ||
             (value.isFinite && value == value.truncateToDouble()))));
 bool _matches39(Object? value) => ((value is String));
-bool _matches40(Object? value) => ((value is String) || (value == null));
-bool _matches41(Object? value) => ((value is String) || (value == null));
-bool _matches42(Object? value) => ((value is String) || (value == null));
-bool _matches43(Object? value) => ((value is String) || (value == null));
+bool _matches40(Object? value) => ((value == null) || (value is String));
+bool _matches41(Object? value) => ((value == null) || (value is String));
+bool _matches42(Object? value) => ((value == null) || (value is String));
+bool _matches43(Object? value) => ((value == null) || (value is String));
 bool _matches44(Object? value) =>
     (const <Object?>["folder"].contains(value)) && ((value is String));
 bool _matches45(Object? value) => (_matches46(value));
@@ -1467,9 +1467,9 @@ bool _matches49(Object? value) =>
         (value is int ||
             (value.isFinite && value == value.truncateToDouble()))));
 bool _matches50(Object? value) => ((value is String));
-bool _matches51(Object? value) => ((value is String) || (value == null));
-bool _matches52(Object? value) => ((value is String) || (value == null));
-bool _matches53(Object? value) => ((value is String) || (value == null));
+bool _matches51(Object? value) => ((value == null) || (value is String));
+bool _matches52(Object? value) => ((value == null) || (value is String));
+bool _matches53(Object? value) => ((value == null) || (value is String));
 bool _matches54(Object? value) =>
     (value is! num || (value >= 1)) &&
     (value is! num || (value <= 9007199254740991)) &&
@@ -1537,7 +1537,7 @@ bool _matches61(Object? value) =>
     (const <Object?>["record", "folder", "collection"].contains(value)) &&
     ((value is String));
 bool _matches62(Object? value) => ((value is String));
-bool _matches63(Object? value) => ((value is String) || (value == null));
+bool _matches63(Object? value) => ((value == null) || (value is String));
 bool _matches64(Object? value) =>
     (const <Object?>["relationship"].contains(value)) && ((value is String));
 bool _matches65(Object? value) => (_matches66(value));
@@ -1605,7 +1605,7 @@ bool _matches72(Object? value) =>
     ((value is num &&
         (value is int ||
             (value.isFinite && value == value.truncateToDouble()))));
-bool _matches73(Object? value) => ((value is String) || (value == null));
+bool _matches73(Object? value) => ((value == null) || (value is String));
 bool _matches74(Object? value) =>
     (const <Object?>["collection-grant"].contains(value)) &&
     ((value is String));
@@ -1711,7 +1711,7 @@ bool _matches88(Object? value) =>
     ((value is num &&
         (value is int ||
             (value.isFinite && value == value.truncateToDouble()))));
-bool _matches89(Object? value) => ((value is String) || (value == null));
+bool _matches89(Object? value) => ((value == null) || (value is String));
 bool _matches90(Object? value) =>
     (const <Object?>["software-grant"].contains(value)) && ((value is String));
 bool _matches91(Object? value) => (_matches92(value));
@@ -1753,7 +1753,7 @@ bool _matches94(Object? value) =>
     (const <Object?>["record", "collection"].contains(value)) &&
     ((value is String));
 bool _matches95(Object? value) => ((value is String));
-bool _matches96(Object? value) => ((value is String) || (value == null));
+bool _matches96(Object? value) => ((value == null) || (value is String));
 bool _matches97(Object? value) =>
     (const <Object?>["software-target"].contains(value)) && ((value is String));
 bool _matches98(Object? value) => (_matches99(value));

@@ -17,7 +17,7 @@ AuthenticationOutput _$AuthenticationOutputFromJson(Map<String, dynamic> json) {
     identity: HeimdallLogin.fromJson(json['identity'] as Map<String, dynamic>),
     account: json['account'] == null
         ? null
-        : AuthenticationOutputAccount.fromJson(
+        : AuthenticationAccount.fromJson(
             json['account'] as Map<String, dynamic>,
           ),
   );

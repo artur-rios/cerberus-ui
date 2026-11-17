@@ -3,7 +3,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../account/models/encrypted_envelope.dart';
-import 'content_replacement_key_wrappers.dart';
+import '../../profiles/models/profile_key_wrappers.dart';
 
 part 'content_replacement.g.dart';
 
@@ -42,7 +42,7 @@ class ContentReplacement {
   final EncryptedEnvelope? envelope;
 
   @JsonKey(includeIfNull: false)
-  final ContentReplacementKeyWrappers? keyWrappers;
+  final ProfileKeyWrappers? keyWrappers;
 
   static int? _read_expectedRevision(Object? value) =>
       value == null ? null : _readJsonInteger(value);

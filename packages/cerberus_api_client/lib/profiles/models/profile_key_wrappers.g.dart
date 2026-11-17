@@ -27,9 +27,11 @@ ProfileKeyWrappers _$ProfileKeyWrappersFromJson(Map<String, dynamic> json) {
         : RecipientEnvelope.fromJson(
             json['masterKeyWrapper'] as Map<String, dynamic>,
           ),
-    passwordWrapper: !json.containsKey('passwordWrapper')
+    passwordWrapper: json['passwordWrapper'] == null
         ? null
-        : ProfileKeyWrappers._read_passwordWrapper(json['passwordWrapper']),
+        : PasswordWrapper.fromJson(
+            json['passwordWrapper'] as Map<String, dynamic>,
+          ),
   );
 }
 
@@ -38,6 +40,5 @@ Map<String, dynamic> _$ProfileKeyWrappersToJson(ProfileKeyWrappers instance) =>
       'unlockMode': ?instance.unlockMode,
       'unlockVerifier': ?instance.unlockVerifier?.toJson(),
       'masterKeyWrapper': ?instance.masterKeyWrapper?.toJson(),
-      if (instance.passwordWrapper case final $value?)
-        'passwordWrapper': ProfileKeyWrappers._write_passwordWrapper($value),
+      'passwordWrapper': ?instance.passwordWrapper?.toJson(),
     };

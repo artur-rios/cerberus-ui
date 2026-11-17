@@ -415,16 +415,13 @@ class SyncGrantData implements SyncChangeItemData {
 
 sealed class SyncChangeItemData {
   factory SyncChangeItemData.fromJson(Object? json) {
-    if (!_matches131(json)) {
-      throw const FormatException("Invalid SyncChangeItemData value.");
-    }
     final matches = <String>[
-      if (_matches132(json)) "SyncProfileData",
-      if (_matches175(json)) "SyncRecordData",
-      if (_matches183(json)) "SyncFolderData",
-      if (_matches191(json)) "SyncCollectionData",
-      if (_matches200(json)) "SyncGrantData",
-      if (_matches207(json)) "Object",
+      if (_matches106(json)) "SyncProfileData",
+      if (_matches165(json)) "SyncRecordData",
+      if (_matches173(json)) "SyncFolderData",
+      if (_matches181(json)) "SyncCollectionData",
+      if (_matches190(json)) "SyncGrantData",
+      if (_matches197(json)) "Null",
     ];
     if (matches.length != 1) {
       throw FormatException(
@@ -447,24 +444,22 @@ sealed class SyncChangeItemData {
     if (matches.single == "SyncGrantData") {
       return SyncGrantData.fromJson(json as Map<String, Object?>);
     }
-    return SyncChangeItemDataObject(json as Null);
+    return SyncChangeItemDataNull(json as Null);
   }
 
   Object? toJson();
 }
 
-class SyncChangeItemDataObject implements SyncChangeItemData {
-  const SyncChangeItemDataObject(this.value);
+class SyncChangeItemDataNull implements SyncChangeItemData {
+  const SyncChangeItemDataNull(this.value);
 
   final Null value;
 
   Object? toJson() => value;
 }
 
-bool _matches131(Object? value) =>
-    ((value is Map<String, Object?>) || (value == null));
-bool _matches132(Object? value) => (_matches133(value));
-bool _matches133(Object? value) =>
+bool _matches106(Object? value) => (_matches107(value));
+bool _matches107(Object? value) =>
     (value is! Map<String, Object?> || value.containsKey("serverSequence")) &&
     (value is! Map<String, Object?> || value.containsKey("editedAt")) &&
     (value is! Map<String, Object?> || value.containsKey("envelope")) &&
@@ -477,34 +472,34 @@ bool _matches133(Object? value) =>
     (value is! Map<String, Object?> || value.containsKey("resourceType")) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("serverSequence") ||
-        _matches134(value["serverSequence"])) &&
+        _matches108(value["serverSequence"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("editedAt") ||
-        _matches135(value["editedAt"])) &&
+        _matches109(value["editedAt"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("envelope") ||
-        _matches136(value["envelope"])) &&
+        _matches110(value["envelope"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("keyWrappers") ||
-        _matches137(value["keyWrappers"])) &&
+        _matches111(value["keyWrappers"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("recordIds") ||
-        _matches138(value["recordIds"])) &&
+        _matches112(value["recordIds"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("folderIds") ||
-        _matches139(value["folderIds"])) &&
+        _matches113(value["folderIds"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("collectionIds") ||
-        _matches140(value["collectionIds"])) &&
+        _matches114(value["collectionIds"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("resourceId") ||
-        _matches141(value["resourceId"])) &&
+        _matches115(value["resourceId"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("revision") ||
-        _matches142(value["revision"])) &&
+        _matches116(value["revision"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("resourceType") ||
-        _matches143(value["resourceType"])) &&
+        _matches117(value["resourceType"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(
           const <String>{
@@ -521,30 +516,30 @@ bool _matches133(Object? value) =>
           }.contains,
         )) &&
     ((value is Map<String, Object?>));
-bool _matches134(Object? value) =>
+bool _matches108(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches135(Object? value) => ((value is String));
-bool _matches136(Object? value) => (_matches144(value));
-bool _matches144(Object? value) =>
+bool _matches109(Object? value) => ((value is String));
+bool _matches110(Object? value) => (_matches118(value));
+bool _matches118(Object? value) =>
     (value is! Map<String, Object?> ||
         !value.containsKey("format") ||
-        _matches149(value["format"])) &&
+        _matches123(value["format"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("keyEpoch") ||
-        _matches150(value["keyEpoch"])) &&
+        _matches124(value["keyEpoch"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("keySalt") ||
-        _matches151(value["keySalt"])) &&
+        _matches125(value["keySalt"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("nonce") ||
-        _matches152(value["nonce"])) &&
+        _matches126(value["nonce"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("ciphertext") ||
-        _matches153(value["ciphertext"])) &&
+        _matches127(value["ciphertext"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("tag") ||
-        _matches154(value["tag"])) &&
+        _matches128(value["tag"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(
           const <String>{
@@ -557,28 +552,28 @@ bool _matches144(Object? value) =>
           }.contains,
         )) &&
     ((value is Map<String, Object?>));
-bool _matches149(Object? value) => ((value is String) || (value == null));
-bool _matches150(Object? value) =>
+bool _matches123(Object? value) => ((value == null) || (value is String));
+bool _matches124(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches151(Object? value) => ((value is String) || (value == null));
-bool _matches152(Object? value) => ((value is String) || (value == null));
-bool _matches153(Object? value) => ((value is String) || (value == null));
-bool _matches154(Object? value) => ((value is String) || (value == null));
-bool _matches137(Object? value) => (_matches145(value));
-bool _matches145(Object? value) =>
+bool _matches125(Object? value) => ((value == null) || (value is String));
+bool _matches126(Object? value) => ((value == null) || (value is String));
+bool _matches127(Object? value) => ((value == null) || (value is String));
+bool _matches128(Object? value) => ((value == null) || (value is String));
+bool _matches111(Object? value) => (_matches119(value));
+bool _matches119(Object? value) =>
     (value is! Map<String, Object?> ||
         !value.containsKey("unlockMode") ||
-        _matches155(value["unlockMode"])) &&
+        _matches129(value["unlockMode"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("unlockVerifier") ||
-        _matches156(value["unlockVerifier"])) &&
+        _matches130(value["unlockVerifier"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("masterKeyWrapper") ||
-        _matches157(value["masterKeyWrapper"])) &&
+        _matches131(value["masterKeyWrapper"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("passwordWrapper") ||
-        _matches158(value["passwordWrapper"])) &&
+        _matches132(value["passwordWrapper"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(
           const <String>{
@@ -589,60 +584,60 @@ bool _matches145(Object? value) =>
           }.contains,
         )) &&
     ((value is Map<String, Object?>));
-bool _matches155(Object? value) => ((value is String) || (value == null));
-bool _matches156(Object? value) => (_matches159(value));
-bool _matches159(Object? value) =>
+bool _matches129(Object? value) => ((value == null) || (value is String));
+bool _matches130(Object? value) => (_matches133(value));
+bool _matches133(Object? value) =>
     (value is! Map<String, Object?> ||
         !value.containsKey("crv") ||
-        _matches161(value["crv"])) &&
+        _matches137(value["crv"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("kty") ||
-        _matches162(value["kty"])) &&
+        _matches138(value["kty"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("x") ||
-        _matches163(value["x"])) &&
+        _matches139(value["x"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("y") ||
-        _matches164(value["y"])) &&
+        _matches140(value["y"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(const <String>{"crv", "kty", "x", "y"}.contains)) &&
     ((value is Map<String, Object?>));
-bool _matches161(Object? value) => ((value is String) || (value == null));
-bool _matches162(Object? value) => ((value is String) || (value == null));
-bool _matches163(Object? value) => ((value is String) || (value == null));
-bool _matches164(Object? value) => ((value is String) || (value == null));
-bool _matches157(Object? value) => (_matches160(value));
-bool _matches160(Object? value) =>
+bool _matches137(Object? value) => ((value == null) || (value is String));
+bool _matches138(Object? value) => ((value == null) || (value is String));
+bool _matches139(Object? value) => ((value == null) || (value is String));
+bool _matches140(Object? value) => ((value == null) || (value is String));
+bool _matches131(Object? value) => (_matches134(value));
+bool _matches134(Object? value) =>
     (value is! Map<String, Object?> ||
         !value.containsKey("format") ||
-        _matches165(value["format"])) &&
+        _matches141(value["format"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("keyEpoch") ||
-        _matches166(value["keyEpoch"])) &&
+        _matches142(value["keyEpoch"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("grantId") ||
-        _matches167(value["grantId"])) &&
+        _matches143(value["grantId"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("grantRevision") ||
-        _matches168(value["grantRevision"])) &&
+        _matches144(value["grantRevision"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("recipientIdentityId") ||
-        _matches169(value["recipientIdentityId"])) &&
+        _matches145(value["recipientIdentityId"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("recipientKeyFingerprint") ||
-        _matches170(value["recipientKeyFingerprint"])) &&
+        _matches146(value["recipientKeyFingerprint"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("authorKeyFingerprint") ||
-        _matches171(value["authorKeyFingerprint"])) &&
+        _matches147(value["authorKeyFingerprint"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("enc") ||
-        _matches172(value["enc"])) &&
+        _matches148(value["enc"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("ciphertext") ||
-        _matches173(value["ciphertext"])) &&
+        _matches149(value["ciphertext"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("signature") ||
-        _matches174(value["signature"])) &&
+        _matches150(value["signature"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(
           const <String>{
@@ -659,46 +654,44 @@ bool _matches160(Object? value) =>
           }.contains,
         )) &&
     ((value is Map<String, Object?>));
-bool _matches165(Object? value) => ((value is String) || (value == null));
-bool _matches166(Object? value) =>
+bool _matches141(Object? value) => ((value == null) || (value is String));
+bool _matches142(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches167(Object? value) => ((value is String));
-bool _matches168(Object? value) =>
+bool _matches143(Object? value) => ((value is String));
+bool _matches144(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches169(Object? value) => ((value is String));
-bool _matches170(Object? value) => ((value is String) || (value == null));
-bool _matches171(Object? value) => ((value is String) || (value == null));
-bool _matches172(Object? value) => ((value is String) || (value == null));
-bool _matches173(Object? value) => ((value is String) || (value == null));
-bool _matches174(Object? value) => ((value is String) || (value == null));
-bool _matches158(Object? value) =>
-    ([if (_matches107(value)) 1, if (_matches122(value)) 1].length == 1) &&
-    ((value is Map<String, Object?>) || (value == null));
-bool _matches107(Object? value) => (_matches108(value));
-bool _matches108(Object? value) =>
+bool _matches145(Object? value) => ((value is String));
+bool _matches146(Object? value) => ((value == null) || (value is String));
+bool _matches147(Object? value) => ((value == null) || (value is String));
+bool _matches148(Object? value) => ((value == null) || (value is String));
+bool _matches149(Object? value) => ((value == null) || (value is String));
+bool _matches150(Object? value) => ((value == null) || (value is String));
+bool _matches132(Object? value) => ((_matches135(value) || _matches136(value)));
+bool _matches135(Object? value) => (_matches151(value));
+bool _matches151(Object? value) =>
     (value is! Map<String, Object?> ||
         !value.containsKey("format") ||
-        _matches109(value["format"])) &&
+        _matches152(value["format"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("keyEpoch") ||
-        _matches110(value["keyEpoch"])) &&
+        _matches153(value["keyEpoch"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("keySalt") ||
-        _matches111(value["keySalt"])) &&
+        _matches154(value["keySalt"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("nonce") ||
-        _matches112(value["nonce"])) &&
+        _matches155(value["nonce"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("ciphertext") ||
-        _matches113(value["ciphertext"])) &&
+        _matches156(value["ciphertext"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("tag") ||
-        _matches114(value["tag"])) &&
+        _matches157(value["tag"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("kdf") ||
-        _matches115(value["kdf"])) &&
+        _matches158(value["kdf"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(
           const <String>{
@@ -712,31 +705,31 @@ bool _matches108(Object? value) =>
           }.contains,
         )) &&
     ((value is Map<String, Object?>));
-bool _matches109(Object? value) => ((value is String) || (value == null));
-bool _matches110(Object? value) =>
+bool _matches152(Object? value) => ((value == null) || (value is String));
+bool _matches153(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches111(Object? value) => ((value is String) || (value == null));
-bool _matches112(Object? value) => ((value is String) || (value == null));
-bool _matches113(Object? value) => ((value is String) || (value == null));
-bool _matches114(Object? value) => ((value is String) || (value == null));
-bool _matches115(Object? value) => (_matches116(value));
-bool _matches116(Object? value) =>
+bool _matches154(Object? value) => ((value == null) || (value is String));
+bool _matches155(Object? value) => ((value == null) || (value is String));
+bool _matches156(Object? value) => ((value == null) || (value is String));
+bool _matches157(Object? value) => ((value == null) || (value is String));
+bool _matches158(Object? value) => (_matches159(value));
+bool _matches159(Object? value) =>
     (value is! Map<String, Object?> ||
         !value.containsKey("algorithm") ||
-        _matches117(value["algorithm"])) &&
+        _matches160(value["algorithm"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("memoryKiB") ||
-        _matches118(value["memoryKiB"])) &&
+        _matches161(value["memoryKiB"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("iterations") ||
-        _matches119(value["iterations"])) &&
+        _matches162(value["iterations"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("parallelism") ||
-        _matches120(value["parallelism"])) &&
+        _matches163(value["parallelism"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("salt") ||
-        _matches121(value["salt"])) &&
+        _matches164(value["salt"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(
           const <String>{
@@ -748,40 +741,38 @@ bool _matches116(Object? value) =>
           }.contains,
         )) &&
     ((value is Map<String, Object?>));
-bool _matches117(Object? value) => ((value is String) || (value == null));
-bool _matches118(Object? value) =>
+bool _matches160(Object? value) => ((value == null) || (value is String));
+bool _matches161(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches119(Object? value) =>
+bool _matches162(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches120(Object? value) =>
+bool _matches163(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches121(Object? value) => ((value is String) || (value == null));
-bool _matches122(Object? value) =>
-    (const <Object?>[null].contains(value)) &&
-    ((value is Map<String, Object?>) || (value == null));
-bool _matches138(Object? value) =>
-    (value is! List<Object?> || value.skip(0).every(_matches146)) &&
-    ((value is List<Object?>) || (value == null));
-bool _matches146(Object? value) => ((value is String));
-bool _matches139(Object? value) =>
-    (value is! List<Object?> || value.skip(0).every(_matches147)) &&
-    ((value is List<Object?>) || (value == null));
-bool _matches147(Object? value) => ((value is String));
-bool _matches140(Object? value) =>
-    (value is! List<Object?> || value.skip(0).every(_matches148)) &&
-    ((value is List<Object?>) || (value == null));
-bool _matches148(Object? value) => ((value is String));
-bool _matches141(Object? value) => ((value is String));
-bool _matches142(Object? value) =>
+bool _matches164(Object? value) => ((value == null) || (value is String));
+bool _matches136(Object? value) => ((value == null));
+bool _matches112(Object? value) =>
+    (value is! List<Object?> || value.skip(0).every(_matches120)) &&
+    ((value == null) || (value is List<Object?>));
+bool _matches120(Object? value) => ((value is String));
+bool _matches113(Object? value) =>
+    (value is! List<Object?> || value.skip(0).every(_matches121)) &&
+    ((value == null) || (value is List<Object?>));
+bool _matches121(Object? value) => ((value is String));
+bool _matches114(Object? value) =>
+    (value is! List<Object?> || value.skip(0).every(_matches122)) &&
+    ((value == null) || (value is List<Object?>));
+bool _matches122(Object? value) => ((value is String));
+bool _matches115(Object? value) => ((value is String));
+bool _matches116(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches143(Object? value) =>
+bool _matches117(Object? value) =>
     (const <Object?>["profile"].contains(value)) && ((value is String));
-bool _matches175(Object? value) => (_matches176(value));
-bool _matches176(Object? value) =>
+bool _matches165(Object? value) => (_matches166(value));
+bool _matches166(Object? value) =>
     (value is! Map<String, Object?> || value.containsKey("serverSequence")) &&
     (value is! Map<String, Object?> || value.containsKey("editedAt")) &&
     (value is! Map<String, Object?> || value.containsKey("envelope")) &&
@@ -790,22 +781,22 @@ bool _matches176(Object? value) =>
     (value is! Map<String, Object?> || value.containsKey("resourceType")) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("serverSequence") ||
-        _matches177(value["serverSequence"])) &&
+        _matches167(value["serverSequence"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("editedAt") ||
-        _matches178(value["editedAt"])) &&
+        _matches168(value["editedAt"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("envelope") ||
-        _matches179(value["envelope"])) &&
+        _matches169(value["envelope"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("resourceId") ||
-        _matches180(value["resourceId"])) &&
+        _matches170(value["resourceId"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("revision") ||
-        _matches181(value["revision"])) &&
+        _matches171(value["revision"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("resourceType") ||
-        _matches182(value["resourceType"])) &&
+        _matches172(value["resourceType"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(
           const <String>{
@@ -818,19 +809,19 @@ bool _matches176(Object? value) =>
           }.contains,
         )) &&
     ((value is Map<String, Object?>));
-bool _matches177(Object? value) =>
+bool _matches167(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches178(Object? value) => ((value is String));
-bool _matches179(Object? value) => (_matches144(value));
-bool _matches180(Object? value) => ((value is String));
-bool _matches181(Object? value) =>
+bool _matches168(Object? value) => ((value is String));
+bool _matches169(Object? value) => (_matches118(value));
+bool _matches170(Object? value) => ((value is String));
+bool _matches171(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches182(Object? value) =>
+bool _matches172(Object? value) =>
     (const <Object?>["record"].contains(value)) && ((value is String));
-bool _matches183(Object? value) => (_matches184(value));
-bool _matches184(Object? value) =>
+bool _matches173(Object? value) => (_matches174(value));
+bool _matches174(Object? value) =>
     (value is! Map<String, Object?> || value.containsKey("serverSequence")) &&
     (value is! Map<String, Object?> || value.containsKey("editedAt")) &&
     (value is! Map<String, Object?> || value.containsKey("envelope")) &&
@@ -839,22 +830,22 @@ bool _matches184(Object? value) =>
     (value is! Map<String, Object?> || value.containsKey("resourceType")) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("serverSequence") ||
-        _matches185(value["serverSequence"])) &&
+        _matches175(value["serverSequence"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("editedAt") ||
-        _matches186(value["editedAt"])) &&
+        _matches176(value["editedAt"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("envelope") ||
-        _matches187(value["envelope"])) &&
+        _matches177(value["envelope"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("resourceId") ||
-        _matches188(value["resourceId"])) &&
+        _matches178(value["resourceId"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("revision") ||
-        _matches189(value["revision"])) &&
+        _matches179(value["revision"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("resourceType") ||
-        _matches190(value["resourceType"])) &&
+        _matches180(value["resourceType"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(
           const <String>{
@@ -867,19 +858,19 @@ bool _matches184(Object? value) =>
           }.contains,
         )) &&
     ((value is Map<String, Object?>));
-bool _matches185(Object? value) =>
+bool _matches175(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches186(Object? value) => ((value is String));
-bool _matches187(Object? value) => (_matches144(value));
-bool _matches188(Object? value) => ((value is String));
-bool _matches189(Object? value) =>
+bool _matches176(Object? value) => ((value is String));
+bool _matches177(Object? value) => (_matches118(value));
+bool _matches178(Object? value) => ((value is String));
+bool _matches179(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches190(Object? value) =>
+bool _matches180(Object? value) =>
     (const <Object?>["folder"].contains(value)) && ((value is String));
-bool _matches191(Object? value) => (_matches192(value));
-bool _matches192(Object? value) =>
+bool _matches181(Object? value) => (_matches182(value));
+bool _matches182(Object? value) =>
     (value is! Map<String, Object?> || value.containsKey("serverSequence")) &&
     (value is! Map<String, Object?> || value.containsKey("editedAt")) &&
     (value is! Map<String, Object?> || value.containsKey("envelope")) &&
@@ -889,25 +880,25 @@ bool _matches192(Object? value) =>
     (value is! Map<String, Object?> || value.containsKey("resourceType")) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("serverSequence") ||
-        _matches193(value["serverSequence"])) &&
+        _matches183(value["serverSequence"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("editedAt") ||
-        _matches194(value["editedAt"])) &&
+        _matches184(value["editedAt"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("envelope") ||
-        _matches195(value["envelope"])) &&
+        _matches185(value["envelope"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("keyEpoch") ||
-        _matches196(value["keyEpoch"])) &&
+        _matches186(value["keyEpoch"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("resourceId") ||
-        _matches197(value["resourceId"])) &&
+        _matches187(value["resourceId"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("revision") ||
-        _matches198(value["revision"])) &&
+        _matches188(value["revision"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("resourceType") ||
-        _matches199(value["resourceType"])) &&
+        _matches189(value["resourceType"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(
           const <String>{
@@ -921,22 +912,22 @@ bool _matches192(Object? value) =>
           }.contains,
         )) &&
     ((value is Map<String, Object?>));
-bool _matches193(Object? value) =>
+bool _matches183(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches194(Object? value) => ((value is String));
-bool _matches195(Object? value) => (_matches144(value));
-bool _matches196(Object? value) =>
+bool _matches184(Object? value) => ((value is String));
+bool _matches185(Object? value) => (_matches118(value));
+bool _matches186(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches197(Object? value) => ((value is String));
-bool _matches198(Object? value) =>
+bool _matches187(Object? value) => ((value is String));
+bool _matches188(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches199(Object? value) =>
+bool _matches189(Object? value) =>
     (const <Object?>["collection"].contains(value)) && ((value is String));
-bool _matches200(Object? value) => (_matches201(value));
-bool _matches201(Object? value) =>
+bool _matches190(Object? value) => (_matches191(value));
+bool _matches191(Object? value) =>
     (value is! Map<String, Object?> || value.containsKey("collectionId")) &&
     (value is! Map<String, Object?> ||
         value.containsKey("recipientKeyEnvelope")) &&
@@ -945,19 +936,19 @@ bool _matches201(Object? value) =>
     (value is! Map<String, Object?> || value.containsKey("resourceType")) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("collectionId") ||
-        _matches202(value["collectionId"])) &&
+        _matches192(value["collectionId"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("recipientKeyEnvelope") ||
-        _matches203(value["recipientKeyEnvelope"])) &&
+        _matches193(value["recipientKeyEnvelope"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("resourceId") ||
-        _matches204(value["resourceId"])) &&
+        _matches194(value["resourceId"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("revision") ||
-        _matches205(value["revision"])) &&
+        _matches195(value["revision"])) &&
     (value is! Map<String, Object?> ||
         !value.containsKey("resourceType") ||
-        _matches206(value["resourceType"])) &&
+        _matches196(value["resourceType"])) &&
     (value is! Map<String, Object?> ||
         value.keys.every(
           const <String>{
@@ -969,17 +960,15 @@ bool _matches201(Object? value) =>
           }.contains,
         )) &&
     ((value is Map<String, Object?>));
-bool _matches202(Object? value) => ((value is String));
-bool _matches203(Object? value) => (_matches160(value));
-bool _matches204(Object? value) => ((value is String));
-bool _matches205(Object? value) =>
+bool _matches192(Object? value) => ((value is String));
+bool _matches193(Object? value) => (_matches134(value));
+bool _matches194(Object? value) => ((value is String));
+bool _matches195(Object? value) =>
     ((value is num &&
     (value is int || (value.isFinite && value == value.truncateToDouble()))));
-bool _matches206(Object? value) =>
+bool _matches196(Object? value) =>
     (const <Object?>["grant"].contains(value)) && ((value is String));
-bool _matches207(Object? value) =>
-    (const <Object?>[null].contains(value)) &&
-    ((value is Map<String, Object?>) || (value == null));
+bool _matches197(Object? value) => ((value == null));
 int _readJsonInteger(Object? value) {
   if (value is int) {
     return value;

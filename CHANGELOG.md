@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   challenge assumes no session, and restoring a session offers a retry and keeps the stored session. An enum value
   the client does not know still decodes, as an unknown value. Requests leave out a value that is not set instead of
   sending it as null; the API reads both the same way for every request the app sends.
+- The API client is regenerated from the Cerberus API's updated contract, which is now OpenAPI 3.1 and describes
+  the API's error answers. The requests the app sends and the answers it accepts are unchanged.
 
 ## [0.1.1] - 2026-11-14
 
