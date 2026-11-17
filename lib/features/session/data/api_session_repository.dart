@@ -1,7 +1,7 @@
 /// [SessionRepository] over the generated API clients (FR-DA-01, FR-DA-02).
 library;
 
-import 'package:cerberus_api_client/export.dart';
+import 'package:cerberus_api_client/exports.dart';
 import 'package:dio/dio.dart';
 
 import '../../../core/logging/app_log.dart';
@@ -49,8 +49,9 @@ class ApiSessionRepository implements SessionRepository {
       AppLog.event('sign-in.refused', {'kind': failure.kind.name});
       return failure;
     } on Object {
-      // A response the generated client could not decode. Unknown fields are
-      // ignored by the client itself (UC-03 AF-06); this is a malformed one.
+      // A response the generated client could not decode: a malformed one, or
+      // one carrying a field the contract does not declare, which the client
+      // refuses rather than ignores (UC-03 AF-06).
       AppLog.event('sign-in.unreadable');
       return const Failure(
         message: unreadableAnswer,
