@@ -253,7 +253,7 @@ graph LR
 | AF-03 | The instance is unreachable | A failure result is shown as a lost connection with a retry; no session is assumed. |
 | AF-04 | The API refuses for another reason, such as an inactive account or a pending closure | The API's own reason is shown. The cancellation path of UC-46 is offered only once the API reports a pending closure distinctly at sign-in ([System Requirements](System%20Requirements%20Document.md) §5.4); until then a pending closure is refused like any other sign-in, and the client infers nothing from the refusal. |
 | AF-05 | Secure storage is unavailable on a desktop or Android device | The system reports that the session cannot be kept and does not fall back to preferences or a file; the user may continue for this run with the token held in memory. |
-| AF-06 | The response carries a field the generated client does not know | The unknown field is ignored; the generated client is never hand-edited to accommodate it. |
+| AF-06 | The response carries a field the generated client does not know | The answer is refused like any answer the client cannot read: the sign-in fails with that reason and no session is assumed. Every schema in the contract forbids additional properties, and the generated client enforces it; it is never hand-edited to accommodate the field, which becomes known by taking the API's new contract. An enum value the client does not know still decodes, as an unknown value. |
 
 ---
 

@@ -150,8 +150,10 @@ There is no `ios/` and no `macos/` folder, and their absence is deliberate rathe
 dart run tool/generate_api_client.dart
 ```
 
-Runs `swagger_parser` over `api/cerberus.json`, then `build_runner` inside the generated package,
-then `dart format` over the package so the drift check compares like with like.
+Empties `packages/cerberus_api_client/lib`, runs `swagger_parser` over `api/cerberus.json` into it,
+then `build_runner` inside the generated package, then `dart format` over the package so the drift
+check compares like with like. Emptying the directory first means nothing the document no longer
+declares survives a regeneration. Consumers import the package's single `exports.dart`.
 
 `api/cerberus.json` is **copied from the Cerberus API repository**
 (`docs/contracts/openapi.json`), where that project generates it. It is not authored here, and
