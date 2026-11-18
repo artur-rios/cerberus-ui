@@ -24,6 +24,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The API client follows the Cerberus API's contract again, which now also lists the bodiless answers its web server
   gives to a request it cannot accept, such as one that is too slow or whose headers are too large. The client and the
   app are unchanged.
+- The API client follows the Cerberus API's contract again, which now answers a request body it cannot read with a
+  bad-request or timeout answer rather than a server error. The client and the app are unchanged.
 
 ## [0.1.1] - 2026-11-14
 
