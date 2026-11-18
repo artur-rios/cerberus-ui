@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   sending it as null; the API reads both the same way for every request the app sends.
 - The API client is regenerated from the Cerberus API's updated contract, which is now OpenAPI 3.1 and describes
   the API's error answers. The requests the app sends and the answers it accepts are unchanged.
+- The API client is regenerated from the Cerberus API's contract again, which now also describes its server-error
+  answer and lists only the JSON answers the API sends. The app is unchanged.
 
 ## [0.1.1] - 2026-11-14
 
