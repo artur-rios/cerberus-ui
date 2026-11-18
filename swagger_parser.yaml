@@ -27,9 +27,12 @@ swagger_parser:
     original_http_response: false
 
     # The contract is strict both ways (UC-03 AF-06): every schema the API
-    # publishes forbids additional properties, so a response carrying a field
-    # the client does not know fails to decode and is reported as an answer
-    # Cerberus could not read; the client is never hand-edited to accommodate
-    # it. An enum value the client does not know still decodes, to the
-    # enum's Unknown case, rather than failing the whole response.
+    # publishes except ProblemDetails forbids additional properties, so a
+    # response carrying a field the client does not know fails to decode and
+    # is reported as an answer Cerberus could not read; the client is never
+    # hand-edited to accommodate it. ProblemDetails, the body of a 415, allows
+    # extension members, which its model keeps in additionalProperties; the
+    # app does not decode it. An enum value the client does not know still
+    # decodes, to the enum's Unknown case, rather than failing the whole
+    # response.
     unknown_enum_values: preserve
