@@ -21,6 +21,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   answer and lists only the JSON answers the API sends. The app is unchanged.
 - The API client follows the Cerberus API's contract again, which no longer lists a conflict answer for reading the
   vault's protection or recovery material, since the API never sends one. The client and the app are unchanged.
+- The API client follows the Cerberus API's contract again, which now also lists the bodiless answers its web server
+  gives to a request it cannot accept, such as one that is too slow or whose headers are too large. The client and the
+  app are unchanged.
 
 ## [0.1.1] - 2026-11-14
 
